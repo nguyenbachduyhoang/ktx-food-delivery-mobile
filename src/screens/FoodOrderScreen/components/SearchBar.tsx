@@ -1,6 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
-import Animated, { FadeInUp } from "react-native-reanimated";
+import { View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import AnimatedPressable from "@components/AnimatedPressable";
 import { COLORS, SIZES } from "@constants/index";
@@ -19,7 +19,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   hasActiveFilters,
 }) => {
   return (
-    <Animated.View entering={FadeInUp.delay(200).duration(500).springify()} style={styles.container}>
+    <Animated.View style={styles.container} entering={FadeInDown.delay(300).duration(500)}>
       <View style={styles.searchBox}>
         <Ionicons name="search" size={20} color={COLORS.TEXT_LIGHT} />
         <TextInput

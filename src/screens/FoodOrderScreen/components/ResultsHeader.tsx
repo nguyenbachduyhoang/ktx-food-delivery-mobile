@@ -17,7 +17,7 @@ const ResultsHeader: React.FC<ResultsHeaderProps> = ({
   totalPages,
 }) => {
   return (
-    <Animated.View entering={FadeIn.delay(600).duration(400)} style={styles.container}>
+    <Animated.View style={styles.container} entering={FadeIn.delay(800).duration(500)}>
       <Text style={styles.resultsText}>
         {totalResults} món ăn {selectedCategory ? `• ${selectedCategory}` : ""}
       </Text>
