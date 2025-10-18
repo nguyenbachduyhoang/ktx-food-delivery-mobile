@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { useFocusEffect, useScrollToTop } from "@react-navigation/native";
-import withScreenContainer from "@components/layouts/withScreenContainer";
 import AddToCartModal from "@components/AddToCartModal";
 import { COLORS, SIZES } from "@constants/index";
 import {
@@ -115,20 +115,20 @@ const FoodOrderScreen: React.FC = () => {
     openNow: false,
   });
 
+  // Get safe area insets for proper spacing
+  const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
+
   // Enable scroll-to-top when re-tapping the active bottom tab icon
   useScrollToTop(flatListRef);
 
-  // Scroll to top function - improved for better reliability
-  const scrollToTop = useCallback(async () => {
-    try {
-      // Đợi một frame để đảm bảo state và layout đã update
-      await new Promise((resolve) => requestAnimationFrame(resolve));
+  // Scroll to top function - tối ưu cho bottom tab navigation
+  const scrollToTop = useCallback(() => {
+    // Sử dụng requestAnimationFrame thay vì setTimeout
+    requestAnimationFrame(() => {
       if (flatListRef.current) {
         flatListRef.current.scrollToOffset({ offset: 0, animated: true });
       }
-    } catch (error) {
-      console.warn("Scroll to top error:", error);
-    }
+    });
   }, []);
 
   // Scroll to top when screen is focused (when user taps bottom tab icon)
@@ -211,26 +211,25 @@ const FoodOrderScreen: React.FC = () => {
       return;
     }
 
-    let isMounted = true;
-
-    const handleDataChange = async () => {
-      // Đợi React re-render với data mới
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      // Đợi thêm một animation frame để đảm bảo layout đã hoàn tất
-      await new Promise((resolve) => requestAnimationFrame(resolve));
-
-      if (isMounted && flatListRef.current) {
-        flatListRef.current.scrollToOffset({ offset: 0, animated: true });
+    // Sử dụng requestAnimationFrame để đảm bảo DOM đã render xong
+    const frameId = requestAnimationFrame(() => {
+      if (flatListRef.current) {
+        console.log('📜 Scrolling to top... Current page:', currentPage, 'Items:', paginatedFoods.length);
+        
+        // Scroll ngay lập tức (animated: false) để UX tốt hơn
+        flatListRef.current.scrollToOffset({ 
+          offset: 0, 
+          animated: false 
+        });
+        
+        console.log('✅ ScrollToOffset(0) called');
       }
-    };
-
-    handleDataChange();
+    });
 
     return () => {
-      isMounted = false;
+      cancelAnimationFrame(frameId);
     };
-  }, [paginatedFoods, selectedCategory, filters]);
+  }, [currentPage, selectedCategory, filters.sortBy, filters.priceRange]);
 
   const handleCategoryPress = useCallback(
     (categoryId: string) => {
@@ -263,15 +262,6 @@ const FoodOrderScreen: React.FC = () => {
     filters.openNow;
 
   // Memoize handlers to prevent re-renders
-  const getItemLayout = useCallback(
-    (_: any, index: number) => ({
-      length: 140 + SIZES.SPACING.MD, // height of FoodItemCard + marginBottom
-      offset: (140 + SIZES.SPACING.MD) * index,
-      index,
-    }),
-    []
-  );
-
   const keyExtractor = useCallback((item: Food) => item.id, []);
 
   // Memoize renderItem to prevent unnecessary re-renders
@@ -315,20 +305,15 @@ const FoodOrderScreen: React.FC = () => {
   const renderEmpty = () => <EmptyState />;
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <FlatList
         ref={flatListRef}
         data={paginatedFoods}
         renderItem={renderFoodItem}
         keyExtractor={keyExtractor}
-        getItemLayout={getItemLayout}
-        removeClippedSubviews={true}
+        removeClippedSubviews={false}
         maxToRenderPerBatch={10}
         windowSize={5}
-        maintainVisibleContentPosition={{
-          minIndexForVisible: 0,
-          autoscrollToTopThreshold: 10,
-        }}
         onEndReachedThreshold={0.5}
         ListHeaderComponent={
           <FoodListHeader
@@ -346,7 +331,14 @@ const FoodOrderScreen: React.FC = () => {
         }
         ListFooterComponent={renderFooter}
         ListEmptyComponent={renderEmpty}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[
+          styles.listContent,
+          { 
+            paddingTop: topInset + SIZES.SPACING.MD,
+            // Tab bar height (62) + bottom inset + extra spacing
+            paddingBottom: 80 + bottomInset
+          }
+        ]}
         showsVerticalScrollIndicator={false}
       />
 
@@ -368,7 +360,7 @@ const FoodOrderScreen: React.FC = () => {
           description={selectedFood.description}
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -378,14 +370,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listContent: {
-    paddingBottom: SIZES.SPACING.XL,
     paddingHorizontal: SIZES.SPACING.MD,
-    paddingTop: SIZES.SPACING.MD,
   },
 });
 
-export default withScreenContainer(FoodOrderScreen);
-
-// Disable scroll since we're using FlatList
-type _StaticOpts = { useScreenScroll?: boolean };
-(FoodOrderScreen as unknown as _StaticOpts).useScreenScroll = false;
+export default FoodOrderScreen;

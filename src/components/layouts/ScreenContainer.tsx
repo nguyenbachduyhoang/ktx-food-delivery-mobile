@@ -22,10 +22,12 @@ const ScreenContainer: React.FC<ScreenContainerProps> = ({
 }) => {
   const insets = useSafeAreaInsets();
 
+  // Tab bar height is 62 + insets.bottom, so we need enough padding to avoid overlap
+  const TAB_BAR_HEIGHT = 62;
   const contentPadding = {
     paddingHorizontal: SIZES.SPACING.MD,
     paddingTop: insets.top + SIZES.SPACING.SM,
-    paddingBottom: insets.bottom + SIZES.SPACING.LG,
+    paddingBottom: TAB_BAR_HEIGHT + insets.bottom + SIZES.SPACING.SM,
   };
 
   if (scrollable) {
@@ -69,7 +71,7 @@ const ScreenContainer: React.FC<ScreenContainerProps> = ({
           styles.innerContainer,
           {
             paddingTop: insets.top + SIZES.SPACING.SM,
-            paddingBottom: insets.bottom + SIZES.SPACING.LG,
+            paddingBottom: TAB_BAR_HEIGHT + insets.bottom + SIZES.SPACING.SM,
           },
           style,
         ]}

@@ -137,11 +137,12 @@ export default function BottomTabs() {
         })}
       >
         <Tab.Screen name="Trang chủ" component={withScreenContainer(HomeScreen)} />
-        <Tab.Screen name="Đặt món" component={withScreenContainer(DatMonScreen)} />
+        {/* FoodOrderScreen tự quản lý SafeAreaView, không cần wrap */}
+        <Tab.Screen name="Đặt món" component={DatMonScreen} />
         {/* Cart tab (center) */}
         <Tab.Screen
           name="Giỏ hàng"
-          component={CartScreen}
+          component={withScreenContainer(CartScreen)}
           options={{
             tabBarIcon: ({ focused, color }) => (
               <Ionicons name={focused ? "cart" : "cart-outline"} size={24} color={color} />
@@ -151,7 +152,7 @@ export default function BottomTabs() {
         <Tab.Screen name="Đơn hàng" component={withScreenContainer(OrderScreen)} />
         <Tab.Screen
           name="Thông báo"
-          component={NotificationScreen}
+          component={withScreenContainer(NotificationScreen)}
           options={{
             tabBarBadge: notifCount > 0 ? String(notifCount) : undefined,
           }}
