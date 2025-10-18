@@ -43,17 +43,15 @@ const TopRatedCarousel: React.FC<TopRatedCarouselProps> = ({ foods, onFoodPress 
 
   const renderItem = ({ item, index }: { item: Food; index: number }) => (
     <Animated.View entering={FadeInUp.delay(index * 150).duration(600)}>
-      <TouchableOpacity 
-        style={styles.card} 
-        activeOpacity={0.9}
-        onPress={() => onFoodPress?.(item)}
-      >
+      <TouchableOpacity style={styles.card} activeOpacity={0.9} onPress={() => onFoodPress?.(item)}>
         <Image source={item.image} style={styles.image} />
-        
+
         {/* Badge */}
-        <Animated.View 
+        <Animated.View
+          entering={FadeInRight.delay(index * 100 + 200)
+            .duration(400)
+            .springify()}
           style={styles.badge}
-          entering={FadeInRight.delay(index * 150 + 300).duration(500)}
         >
           <Ionicons name="trophy" size={16} color={COLORS.WARNING} />
           <Text style={styles.badgeText}>Top Rated</Text>
@@ -82,7 +80,7 @@ const TopRatedCarousel: React.FC<TopRatedCarouselProps> = ({ foods, onFoodPress 
 
           <View style={styles.bottomRow}>
             <Text style={styles.price}>{item.price}</Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.addButton}
               onPress={(e) => {
                 e.stopPropagation();
@@ -254,4 +252,3 @@ const styles = StyleSheet.create({
 });
 
 export default TopRatedCarousel;
-

@@ -22,4 +22,3 @@ export interface FilterOptions {
   priceRange: "all" | "under50" | "50to100" | "over100";
   openNow: boolean;
 }
-

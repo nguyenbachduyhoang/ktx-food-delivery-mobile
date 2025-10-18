@@ -122,7 +122,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withScreenContainer(NotificationScreen);
-
+// Disable the ScreenContainer ScrollView for this screen because it uses FlatList (virtualized lists)
 type _StaticOpts = { useScreenScroll?: boolean };
 (NotificationScreen as unknown as _StaticOpts).useScreenScroll = false;
+
+export default withScreenContainer(NotificationScreen);

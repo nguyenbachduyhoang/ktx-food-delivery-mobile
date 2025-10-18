@@ -1,5 +1,11 @@
 import React, { ReactNode } from "react";
-import { Pressable, PressableProps, ViewStyle, GestureResponderEvent, StyleProp } from "react-native";
+import {
+  Pressable,
+  PressableProps,
+  ViewStyle,
+  GestureResponderEvent,
+  StyleProp,
+} from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,

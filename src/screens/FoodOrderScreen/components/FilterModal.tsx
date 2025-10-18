@@ -13,12 +13,7 @@ interface FilterModalProps {
   currentFilters: FilterOptions;
 }
 
-const FilterModal: React.FC<FilterModalProps> = ({
-  visible,
-  onClose,
-  onApply,
-  currentFilters,
-}) => {
+const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, onApply, currentFilters }) => {
   const [localFilters, setLocalFilters] = useState<FilterOptions>(currentFilters);
 
   const handleApply = () => {
@@ -52,7 +47,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
     label: string;
     selected: boolean;
     onPress: () => void;
-    icon?: string;
+    icon?: keyof typeof Ionicons.glyphMap;
   }) => (
     <AnimatedPressable
       style={[styles.option, selected && styles.optionSelected]}
@@ -63,7 +58,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
       {icon && (
         <View style={styles.optionIconContainer}>
           <Ionicons
-            name={icon as any}
+            name={icon as keyof typeof Ionicons.glyphMap}
             size={20}
             color={selected ? COLORS.PRIMARY : COLORS.TEXT_SECONDARY}
           />
@@ -362,4 +357,3 @@ const styles = StyleSheet.create({
 });
 
 export default FilterModal;
-

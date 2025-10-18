@@ -81,12 +81,13 @@ const styles = StyleSheet.create({
   checkoutButton: {
     backgroundColor: COLORS.PRIMARY,
     borderRadius: SIZES.RADIUS.MEDIUM,
-    marginTop: SIZES.SPACING.MD,
-    paddingVertical: SIZES.SPACING.MD,
+    marginTop: SIZES.SPACING.SM,
+    paddingVertical: SIZES.SPACING.SM,
   },
   checkoutButtonText: {
     ...TEXT_STYLES.BUTTON_LARGE,
     color: COLORS.BACKGROUND,
+    fontSize: 16,
     fontWeight: "700",
   },
   container: {
@@ -94,9 +95,9 @@ const styles = StyleSheet.create({
     borderTopColor: COLORS.DIVIDER,
     borderTopWidth: 1,
     elevation: 8,
-    paddingBottom: SIZES.SPACING.MD,
-    paddingHorizontal: SIZES.SPACING.MD,
-    paddingTop: SIZES.SPACING.MD,
+    paddingBottom: SIZES.SPACING.SM,
+    paddingHorizontal: SIZES.SPACING.SM,
+    paddingTop: SIZES.SPACING.SM,
     shadowColor: COLORS.TEXT_PRIMARY,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
   divider: {
     backgroundColor: COLORS.DIVIDER,
     height: 1,
-    marginVertical: SIZES.SPACING.MD,
+    marginVertical: SIZES.SPACING.SM,
   },
   free: {
     color: COLORS.SUCCESS,
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
   itemsText: {
     ...TEXT_STYLES.CAPTION,
     color: COLORS.TEXT_LIGHT,
-    marginTop: 2,
+    marginTop: 0,
   },
   label: {
     ...TEXT_STYLES.BODY_MEDIUM,
@@ -169,9 +170,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: COLORS.PRIMARY_LIGHT + "20",
     borderRadius: SIZES.RADIUS.SMALL,
-    height: 40,
+    height: 36,
     justifyContent: "center",
-    width: 40,
+    width: 36,
   },
   voucherLeft: {
     alignItems: "center",
@@ -184,12 +185,12 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.RADIUS.MEDIUM,
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: SIZES.SPACING.MD,
+    padding: SIZES.SPACING.SM,
   },
   voucherSubtitle: {
     ...TEXT_STYLES.CAPTION,
     color: COLORS.TEXT_LIGHT,
-    marginTop: 2,
+    marginTop: 0,
   },
   voucherTitle: {
     ...TEXT_STYLES.BODY_MEDIUM,

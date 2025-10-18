@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { Text, StyleSheet } from "react-native";
 import Animated, { ZoomIn } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, TEXT_STYLES, SIZES } from "@constants/index";
@@ -35,4 +35,3 @@ const styles = StyleSheet.create({
 });
 
 export default EmptyState;
-

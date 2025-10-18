@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
@@ -46,50 +47,57 @@ interface FoodListHeaderProps {
   onFoodPress: (food: Food) => void;
 }
 
-const FoodListHeader = React.memo<FoodListHeaderProps>(({
-  searchQuery,
-  onSearchChange,
-  onFilterPress,
-  hasActiveFilters,
-  selectedCategory,
-  onCategoryPress,
-  filteredCount,
-  currentPage,
-  totalPages,
-  onFoodPress,
-}) => {
-  return (
-    <View>
-      {/* Top Rated Carousel */}
-      <SectionHeader icon="trophy" iconColor={COLORS.WARNING} title="Món ăn được đánh giá cao nhất">
-        <TopRatedCarousel foods={topRatedFoods} onFoodPress={onFoodPress} />
-      </SectionHeader>
+// eslint-disable-next-line react/display-name
+const FoodListHeader = React.memo<FoodListHeaderProps>(
+  ({
+    searchQuery,
+    onSearchChange,
+    onFilterPress,
+    hasActiveFilters,
+    selectedCategory,
+    onCategoryPress,
+    filteredCount,
+    currentPage,
+    totalPages,
+    onFoodPress,
+  }) => {
+    return (
+      <View>
+        {/* Top Rated Carousel */}
+        <SectionHeader
+          icon="trophy"
+          iconColor={COLORS.WARNING}
+          title="Món ăn được đánh giá cao nhất"
+        >
+          <TopRatedCarousel foods={topRatedFoods} onFoodPress={onFoodPress} />
+        </SectionHeader>
 
-      {/* Search Bar */}
-      <SearchBar
-        searchQuery={searchQuery}
-        onSearchChange={onSearchChange}
-        onFilterPress={onFilterPress}
-        hasActiveFilters={hasActiveFilters}
-      />
+        {/* Search Bar */}
+        <SearchBar
+          searchQuery={searchQuery}
+          onSearchChange={onSearchChange}
+          onFilterPress={onFilterPress}
+          hasActiveFilters={hasActiveFilters}
+        />
 
-      {/* Quick Categories */}
-      <QuickCategories
-        categories={QUICK_CATEGORIES}
-        selectedCategory={selectedCategory}
-        onCategoryPress={onCategoryPress}
-      />
+        {/* Quick Categories */}
+        <QuickCategories
+          categories={QUICK_CATEGORIES}
+          selectedCategory={selectedCategory}
+          onCategoryPress={onCategoryPress}
+        />
 
-      {/* Results header */}
-      <ResultsHeader
-        totalResults={filteredCount}
-        selectedCategory={selectedCategory}
-        currentPage={currentPage}
-        totalPages={totalPages}
-      />
-    </View>
-  );
-});
+        {/* Results header */}
+        <ResultsHeader
+          totalResults={filteredCount}
+          selectedCategory={selectedCategory}
+          currentPage={currentPage}
+          totalPages={totalPages}
+        />
+      </View>
+    );
+  }
+);
 
 const FoodOrderScreen: React.FC = () => {
   const flatListRef = useRef<FlatList>(null);
@@ -114,12 +122,12 @@ const FoodOrderScreen: React.FC = () => {
   const scrollToTop = useCallback(async () => {
     try {
       // Đợi một frame để đảm bảo state và layout đã update
-      await new Promise(resolve => requestAnimationFrame(resolve));
+      await new Promise((resolve) => requestAnimationFrame(resolve));
       if (flatListRef.current) {
         flatListRef.current.scrollToOffset({ offset: 0, animated: true });
       }
     } catch (error) {
-      console.warn('Scroll to top error:', error);
+      console.warn("Scroll to top error:", error);
     }
   }, []);
 
@@ -143,8 +151,7 @@ const FoodOrderScreen: React.FC = () => {
       const query = searchQuery.toLowerCase();
       result = result.filter(
         (food) =>
-          food.title.toLowerCase().includes(query) ||
-          food.subtitle.toLowerCase().includes(query)
+          food.title.toLowerCase().includes(query) || food.subtitle.toLowerCase().includes(query)
       );
     }
 
@@ -208,11 +215,11 @@ const FoodOrderScreen: React.FC = () => {
 
     const handleDataChange = async () => {
       // Đợi React re-render với data mới
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       // Đợi thêm một animation frame để đảm bảo layout đã hoàn tất
-      await new Promise(resolve => requestAnimationFrame(resolve));
-      
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+
       if (isMounted && flatListRef.current) {
         flatListRef.current.scrollToOffset({ offset: 0, animated: true });
       }
@@ -225,15 +232,18 @@ const FoodOrderScreen: React.FC = () => {
     };
   }, [paginatedFoods, selectedCategory, filters]);
 
-  const handleCategoryPress = useCallback((categoryId: string) => {
-    if (selectedCategory === categoryId) {
-      setSelectedCategory(null);
-    } else {
-      setSelectedCategory(categoryId);
-    }
-    setCurrentPage(1);
-    // useEffect sẽ xử lý scroll sau khi data đã render
-  }, [selectedCategory]);
+  const handleCategoryPress = useCallback(
+    (categoryId: string) => {
+      if (selectedCategory === categoryId) {
+        setSelectedCategory(null);
+      } else {
+        setSelectedCategory(categoryId);
+      }
+      setCurrentPage(1);
+      // useEffect sẽ xử lý scroll sau khi data đã render
+    },
+    [selectedCategory]
+  );
 
   const handleApplyFilters = useCallback((newFilters: FilterOptions) => {
     setFilters(newFilters);
@@ -305,7 +315,7 @@ const FoodOrderScreen: React.FC = () => {
   const renderEmpty = () => <EmptyState />;
 
   return (
-  <View style={styles.container}>
+    <View style={styles.container}>
       <FlatList
         ref={flatListRef}
         data={paginatedFoods}
@@ -317,7 +327,7 @@ const FoodOrderScreen: React.FC = () => {
         windowSize={5}
         maintainVisibleContentPosition={{
           minIndexForVisible: 0,
-          autoscrollToTopThreshold: 10
+          autoscrollToTopThreshold: 10,
         }}
         onEndReachedThreshold={0.5}
         ListHeaderComponent={
@@ -358,8 +368,8 @@ const FoodOrderScreen: React.FC = () => {
           description={selectedFood.description}
         />
       )}
-  </View>
-);
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -373,5 +383,9 @@ const styles = StyleSheet.create({
     paddingTop: SIZES.SPACING.MD,
   },
 });
-// Export with HOC and ensure no ScrollView wrapper for this screen
-export default withScreenContainer(Object.assign(FoodOrderScreen, { useScreenScroll: false }));
+
+export default withScreenContainer(FoodOrderScreen);
+
+// Disable scroll since we're using FlatList
+type _StaticOpts = { useScreenScroll?: boolean };
+(FoodOrderScreen as unknown as _StaticOpts).useScreenScroll = false;
