@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Image, StyleSheet, ImageSourcePropType } from "react-native";
+import { View, Text, Image, StyleSheet, ImageSourcePropType, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, {
   useSharedValue,
@@ -86,7 +86,12 @@ const FoodItemCard: React.FC<FoodItemCardProps> = ({
         <Animated.View style={[styles.shimmer, shimmerStyle]} />
 
         {/* Favorite Button */}
-        <AnimatedPressable style={styles.favoriteButton} onPress={handleFavorite} scaleValue={0.8}>
+        <TouchableOpacity
+          style={styles.favoriteButton}
+          onPress={handleFavorite}
+          activeOpacity={0.8}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
           <Animated.View style={heartAnimatedStyle}>
             <Ionicons
               name={isFavorite ? "heart" : "heart-outline"}
@@ -94,7 +99,7 @@ const FoodItemCard: React.FC<FoodItemCardProps> = ({
               color={isFavorite ? COLORS.ERROR : COLORS.BACKGROUND}
             />
           </Animated.View>
-        </AnimatedPressable>
+        </TouchableOpacity>
       </View>
 
       {/* Content Section */}
@@ -135,14 +140,14 @@ const FoodItemCard: React.FC<FoodItemCardProps> = ({
             <Text style={styles.price}>{price}</Text>
           </View>
 
-          <AnimatedPressable
+          <TouchableOpacity
             style={styles.addButton}
             onPress={handleAddToCart}
-            scaleValue={0.85}
-            hapticType="medium"
+            activeOpacity={0.85}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
             <Ionicons name="add" size={20} color={COLORS.BACKGROUND} />
-          </AnimatedPressable>
+          </TouchableOpacity>
         </View>
       </View>
     </AnimatedPressable>

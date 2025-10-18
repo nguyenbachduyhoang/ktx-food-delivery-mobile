@@ -8,7 +8,7 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
-import Animated, { FadeInRight, ZoomIn } from "react-native-reanimated";
+import Animated, { FadeInRight, FadeInUp } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, SIZES, TEXT_STYLES } from "@constants/index";
 import type { Food } from "@screens/FoodOrderScreen/types";
@@ -19,9 +19,10 @@ const CARD_SPACING = SIZES.SPACING.MD;
 
 interface TopRatedCarouselProps {
   foods: Food[];
+  onFoodPress?: (food: Food) => void;
 }
 
-const TopRatedCarousel: React.FC<TopRatedCarouselProps> = ({ foods }) => {
+const TopRatedCarousel: React.FC<TopRatedCarouselProps> = ({ foods, onFoodPress }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef<FlatList<Food>>(null);
 
@@ -41,12 +42,8 @@ const TopRatedCarousel: React.FC<TopRatedCarouselProps> = ({ foods }) => {
   }, [activeIndex, foods.length]);
 
   const renderItem = ({ item, index }: { item: Food; index: number }) => (
-    <Animated.View
-      entering={ZoomIn.delay(index * 100)
-        .duration(500)
-        .springify()}
-    >
-      <TouchableOpacity style={styles.card} activeOpacity={0.9}>
+    <Animated.View entering={FadeInUp.delay(index * 150).duration(600)}>
+      <TouchableOpacity style={styles.card} activeOpacity={0.9} onPress={() => onFoodPress?.(item)}>
         <Image source={item.image} style={styles.image} />
 
         {/* Badge */}
@@ -83,7 +80,13 @@ const TopRatedCarousel: React.FC<TopRatedCarouselProps> = ({ foods }) => {
 
           <View style={styles.bottomRow}>
             <Text style={styles.price}>{item.price}</Text>
-            <TouchableOpacity style={styles.addButton}>
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={(e) => {
+                e.stopPropagation();
+                onFoodPress?.(item);
+              }}
+            >
               <Ionicons name="add" size={20} color={COLORS.BACKGROUND} />
             </TouchableOpacity>
           </View>
