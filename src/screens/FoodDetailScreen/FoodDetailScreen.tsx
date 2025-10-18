@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import Animated, { 
+import Animated, {
   FadeInDown,
   useSharedValue,
   useAnimatedScrollHandler,
@@ -41,12 +41,7 @@ const FoodDetailScreen = ({ navigation }: any) => {
   });
 
   const headerAnimatedStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(
-      scrollY.value,
-      [0, 100],
-      [0, 1],
-      Extrapolate.CLAMP
-    );
+    const opacity = interpolate(scrollY.value, [0, 100], [0, 1], Extrapolate.CLAMP);
 
     return {
       opacity,
@@ -141,7 +136,7 @@ const FoodDetailScreen = ({ navigation }: any) => {
         animatedStyle={headerAnimatedStyle}
       />
 
-      <Animated.ScrollView 
+      <Animated.ScrollView
         showsVerticalScrollIndicator={false}
         onScroll={scrollHandler}
         scrollEventThrottle={16}
@@ -166,9 +161,7 @@ const FoodDetailScreen = ({ navigation }: any) => {
           <FoodStats rating={4.8} orderCount="300+" deliveryTime="15 phút" />
 
           {/* Description */}
-          <FoodDescription
-            description="Phở bò là món ăn truyền thống nổi tiếng của Việt Nam, với nước dùng được hầm từ xương bò cùng các gia vị như quế, hồi, gừng, tạo nên hương vị đậm đà. Bánh phở mềm mại, thịt bò tươi ngon, ăn kèm với rau thơm và sa tế làm món ăn này trở thành lựa chọn yêu thích."
-          />
+          <FoodDescription description="Phở bò là món ăn truyền thống nổi tiếng của Việt Nam, với nước dùng được hầm từ xương bò cùng các gia vị như quế, hồi, gừng, tạo nên hương vị đậm đà. Bánh phở mềm mại, thịt bò tươi ngon, ăn kèm với rau thơm và sa tế làm món ăn này trở thành lựa chọn yêu thích." />
 
           {/* Quantity Selector */}
           <QuantitySelector
@@ -178,10 +171,7 @@ const FoodDetailScreen = ({ navigation }: any) => {
           />
 
           {/* Action Buttons */}
-          <ActionButtons
-            onAddToCart={handleAddToCart}
-            onCheckout={handleCheckout}
-          />
+          <ActionButtons onAddToCart={handleAddToCart} onCheckout={handleCheckout} />
         </Animated.View>
 
         {/* Suggested Items */}

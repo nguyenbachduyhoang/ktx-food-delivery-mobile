@@ -2,11 +2,7 @@ import React from "react";
 import { Image, ImageSourcePropType, StyleSheet, Text, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 import AnimatedPressable from "@components/AnimatedPressable";
 import { COLORS, SIZES, TEXT_STYLES } from "@constants/index";
 
@@ -113,20 +109,24 @@ const CartItem: React.FC<CartItemProps> = ({
             </View>
 
             <View style={styles.qtyRow}>
-              <AnimatedPressable 
-                style={[styles.qtyBtn, quantity <= 1 && styles.qtyBtnDisabled]} 
+              <AnimatedPressable
+                style={[styles.qtyBtn, quantity <= 1 ? styles.qtyBtnDisabled : null]}
                 onPress={onDecrease}
                 disabled={quantity <= 1}
                 scaleValue={0.9}
                 hapticType="light"
               >
-                <Ionicons name="remove" size={16} color={quantity <= 1 ? COLORS.TEXT_LIGHT : COLORS.PRIMARY} />
+                <Ionicons
+                  name="remove"
+                  size={16}
+                  color={quantity <= 1 ? COLORS.TEXT_LIGHT : COLORS.PRIMARY}
+                />
               </AnimatedPressable>
               <View style={styles.qtyDisplay}>
                 <Text style={styles.qty}>{quantity}</Text>
               </View>
-              <AnimatedPressable 
-                style={styles.qtyBtn} 
+              <AnimatedPressable
+                style={styles.qtyBtn}
                 onPress={onIncrease}
                 scaleValue={0.9}
                 hapticType="light"
@@ -151,11 +151,7 @@ const CartItem: React.FC<CartItemProps> = ({
 
       {/* Delete button (revealed on swipe) */}
       <View style={styles.deleteAction}>
-        <AnimatedPressable 
-          style={styles.deleteButton} 
-          onPress={handleDelete}
-          hapticType="medium"
-        >
+        <AnimatedPressable style={styles.deleteButton} onPress={handleDelete} hapticType="medium">
           <Ionicons name="trash" size={24} color={COLORS.TEXT_WHITE} />
           <Text style={styles.deleteText}>Xóa</Text>
         </AnimatedPressable>
@@ -242,7 +238,7 @@ const styles = StyleSheet.create({
   },
   imageOverlay: {
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    backgroundColor: COLORS.BACKGROUND + "E6", // 90% opacity
     bottom: 0,
     justifyContent: "center",
     left: 0,

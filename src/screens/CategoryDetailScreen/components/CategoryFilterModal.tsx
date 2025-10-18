@@ -24,10 +24,10 @@ const CategoryFilterModal: React.FC<CategoryFilterModalProps> = ({
   onApply,
   currentFilters,
 }) => {
-  const [filters, setFilters] = useState<FilterOptions>(currentFilters);
+  const [localFilters, setLocalFilters] = useState<FilterOptions>(currentFilters);
 
   const handleApply = () => {
-    onApply(filters);
+    onApply(localFilters);
     onClose();
   };
 
@@ -38,7 +38,7 @@ const CategoryFilterModal: React.FC<CategoryFilterModalProps> = ({
       priceRange: "all",
       openNow: false,
     };
-    setFilters(defaultFilters);
+    setLocalFilters(defaultFilters);
   };
 
   const FilterSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
@@ -84,28 +84,28 @@ const CategoryFilterModal: React.FC<CategoryFilterModalProps> = ({
             <FilterSection title="Sắp xếp theo">
               <FilterOption
                 label="Phổ biến nhất"
-                selected={filters.sortBy === "popular"}
-                onPress={() => setFilters({ ...filters, sortBy: "popular" })}
+                selected={localFilters.sortBy === "popular"}
+                onPress={() => setLocalFilters({ ...localFilters, sortBy: "popular" })}
               />
               <FilterOption
                 label="Gần tôi nhất"
-                selected={filters.sortBy === "distance"}
-                onPress={() => setFilters({ ...filters, sortBy: "distance" })}
+                selected={localFilters.sortBy === "distance"}
+                onPress={() => setLocalFilters({ ...localFilters, sortBy: "distance" })}
               />
               <FilterOption
                 label="Giá: Thấp đến cao"
-                selected={filters.sortBy === "priceAsc"}
-                onPress={() => setFilters({ ...filters, sortBy: "priceAsc" })}
+                selected={localFilters.sortBy === "priceAsc"}
+                onPress={() => setLocalFilters({ ...localFilters, sortBy: "priceAsc" })}
               />
               <FilterOption
                 label="Giá: Cao đến thấp"
-                selected={filters.sortBy === "priceDesc"}
-                onPress={() => setFilters({ ...filters, sortBy: "priceDesc" })}
+                selected={localFilters.sortBy === "priceDesc"}
+                onPress={() => setLocalFilters({ ...localFilters, sortBy: "priceDesc" })}
               />
               <FilterOption
                 label="Đánh giá cao nhất"
-                selected={filters.sortBy === "rating"}
-                onPress={() => setFilters({ ...filters, sortBy: "rating" })}
+                selected={localFilters.sortBy === "rating"}
+                onPress={() => setLocalFilters({ ...localFilters, sortBy: "rating" })}
               />
             </FilterSection>
 
@@ -113,23 +113,23 @@ const CategoryFilterModal: React.FC<CategoryFilterModalProps> = ({
             <FilterSection title="Khoảng cách">
               <FilterOption
                 label="Tất cả"
-                selected={filters.distance === "all"}
-                onPress={() => setFilters({ ...filters, distance: "all" })}
+                selected={localFilters.distance === "all"}
+                onPress={() => setLocalFilters({ ...localFilters, distance: "all" })}
               />
               <FilterOption
                 label="Dưới 1 km"
-                selected={filters.distance === "1km"}
-                onPress={() => setFilters({ ...filters, distance: "1km" })}
+                selected={localFilters.distance === "1km"}
+                onPress={() => setLocalFilters({ ...localFilters, distance: "1km" })}
               />
               <FilterOption
                 label="Dưới 3 km"
-                selected={filters.distance === "3km"}
-                onPress={() => setFilters({ ...filters, distance: "3km" })}
+                selected={localFilters.distance === "3km"}
+                onPress={() => setLocalFilters({ ...localFilters, distance: "3km" })}
               />
               <FilterOption
                 label="Dưới 5 km"
-                selected={filters.distance === "5km"}
-                onPress={() => setFilters({ ...filters, distance: "5km" })}
+                selected={localFilters.distance === "5km"}
+                onPress={() => setLocalFilters({ ...localFilters, distance: "5km" })}
               />
             </FilterSection>
 
@@ -137,23 +137,23 @@ const CategoryFilterModal: React.FC<CategoryFilterModalProps> = ({
             <FilterSection title="Khoảng giá">
               <FilterOption
                 label="Tất cả"
-                selected={filters.priceRange === "all"}
-                onPress={() => setFilters({ ...filters, priceRange: "all" })}
+                selected={localFilters.priceRange === "all"}
+                onPress={() => setLocalFilters({ ...localFilters, priceRange: "all" })}
               />
               <FilterOption
                 label="Dưới 50k"
-                selected={filters.priceRange === "under50"}
-                onPress={() => setFilters({ ...filters, priceRange: "under50" })}
+                selected={localFilters.priceRange === "under50"}
+                onPress={() => setLocalFilters({ ...localFilters, priceRange: "under50" })}
               />
               <FilterOption
                 label="50k - 100k"
-                selected={filters.priceRange === "50to100"}
-                onPress={() => setFilters({ ...filters, priceRange: "50to100" })}
+                selected={localFilters.priceRange === "50to100"}
+                onPress={() => setLocalFilters({ ...localFilters, priceRange: "50to100" })}
               />
               <FilterOption
                 label="Trên 100k"
-                selected={filters.priceRange === "over100"}
-                onPress={() => setFilters({ ...filters, priceRange: "over100" })}
+                selected={localFilters.priceRange === "over100"}
+                onPress={() => setLocalFilters({ ...localFilters, priceRange: "over100" })}
               />
             </FilterSection>
 
@@ -161,11 +161,13 @@ const CategoryFilterModal: React.FC<CategoryFilterModalProps> = ({
             <FilterSection title="Trạng thái">
               <TouchableOpacity
                 style={styles.checkboxOption}
-                onPress={() => setFilters({ ...filters, openNow: !filters.openNow})}
+                onPress={() => setLocalFilters({ ...localFilters, openNow: !localFilters.openNow })}
                 activeOpacity={0.7}
               >
-                <View style={[styles.checkbox, filters.openNow && styles.checkboxChecked]}>
-                  {filters.openNow && <Ionicons name="checkmark" size={18} color={COLORS.BACKGROUND} />}
+                <View style={[styles.checkbox, localFilters.openNow && styles.checkboxChecked]}>
+                  {localFilters.openNow && (
+                    <Ionicons name="checkmark" size={18} color={COLORS.BACKGROUND} />
+                  )}
                 </View>
                 <Text style={styles.checkboxLabel}>Chỉ hiển thị quán đang mở</Text>
               </TouchableOpacity>
@@ -226,9 +228,9 @@ const styles = StyleSheet.create({
     borderTopColor: COLORS.DIVIDER,
     borderTopWidth: 1,
     flexDirection: "row",
+    paddingBottom: SIZES.SPACING.MD,
     paddingHorizontal: SIZES.SPACING.MD,
     paddingTop: SIZES.SPACING.MD,
-    paddingBottom: SIZES.SPACING.MD,
   },
   header: {
     alignItems: "center",

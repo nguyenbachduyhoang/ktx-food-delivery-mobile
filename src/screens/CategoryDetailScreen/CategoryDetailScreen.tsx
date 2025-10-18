@@ -1,5 +1,13 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { View, StyleSheet, FlatList, ImageSourcePropType, TextInput, Text, RefreshControl } from "react-native";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  ImageSourcePropType,
+  TextInput,
+  Text,
+  RefreshControl,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, { FadeInDown, Layout } from "react-native-reanimated";
 import AnimatedPressable from "@components/AnimatedPressable";
@@ -8,7 +16,13 @@ import withScreenContainer from "@components/layouts/withScreenContainer";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import MenuItemCard from "@components/MenuItemCard";
-import { CategoryHeader, CategoryTabs, CategoryFilterModal, EmptyCategory, FilterOptions } from "./components";
+import {
+  CategoryHeader,
+  CategoryTabs,
+  CategoryFilterModal,
+  EmptyCategory,
+  FilterOptions,
+} from "./components";
 import { COLORS, SIZES, TEXT_STYLES } from "@constants/index";
 
 // Mock data
@@ -149,7 +163,7 @@ const CategoryDetailScreen: React.FC<CategoryDetailScreenProps> = ({ navigation,
     route.params ?? ({} as Partial<{ categoryName: string; categoryImage: ImageSourcePropType }>);
   const categoryName = params.categoryName ?? "Danh mục";
   const categoryImage = params.categoryImage ?? defaultCategory;
-  
+
   const [activeTab, setActiveTab] = useState("monAn");
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
@@ -208,8 +222,7 @@ const CategoryDetailScreen: React.FC<CategoryDetailScreenProps> = ({ navigation,
       const query = debouncedSearchQuery.toLowerCase();
       data = data.filter(
         (item) =>
-          item.name.toLowerCase().includes(query) ||
-          item.restaurant?.toLowerCase().includes(query)
+          item.name.toLowerCase().includes(query) || item.restaurant?.toLowerCase().includes(query)
       );
     }
 
@@ -266,7 +279,7 @@ const CategoryDetailScreen: React.FC<CategoryDetailScreenProps> = ({ navigation,
 
   const renderItem = ({ item, index }: { item: MenuItem; index: number }) => {
     return (
-      <Animated.View 
+      <Animated.View
         entering={FadeInDown.delay(index * 50).duration(400)}
         layout={Layout.springify()}
       >
@@ -319,10 +332,7 @@ const CategoryDetailScreen: React.FC<CategoryDetailScreenProps> = ({ navigation,
           />
           {searchQuery.length > 0 && (
             <Animated.View entering={FadeInDown}>
-              <AnimatedPressable 
-                onPress={() => setSearchQuery("")}
-                enableHaptic={false}
-              >
+              <AnimatedPressable onPress={() => setSearchQuery("")} enableHaptic={false}>
                 <Ionicons name="close-circle" size={20} color={COLORS.TEXT_LIGHT} />
               </AnimatedPressable>
             </Animated.View>

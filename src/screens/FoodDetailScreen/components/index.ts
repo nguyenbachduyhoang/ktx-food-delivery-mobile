@@ -8,4 +8,3 @@ export { default as QuantitySelector } from "./QuantitySelector";
 export { default as ActionButtons } from "./ActionButtons";
 export { default as SuggestedItems } from "./SuggestedItems";
 export type { SuggestedItem } from "./SuggestedItems";
-

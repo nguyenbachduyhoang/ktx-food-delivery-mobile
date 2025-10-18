@@ -17,7 +17,12 @@ const SearchBox: React.FC<SearchBoxProps> = ({
   if (!editable && onPress) {
     return (
       <TouchableOpacity style={styles.searchBox} onPress={onPress} activeOpacity={0.8}>
-        <Ionicons name="search" size={SIZES.HEADER.ICON_SIZE - 2} color={COLORS.TEXT_LIGHT} style={styles.searchIcon} />
+        <Ionicons
+          name="search"
+          size={SIZES.HEADER.ICON_SIZE - 2}
+          color={COLORS.TEXT_LIGHT}
+          style={styles.searchIcon}
+        />
         <Text style={styles.placeholderText}>{placeholder}</Text>
       </TouchableOpacity>
     );
@@ -25,7 +30,12 @@ const SearchBox: React.FC<SearchBoxProps> = ({
 
   return (
     <View style={styles.searchBox}>
-      <Ionicons name="search" size={SIZES.HEADER.ICON_SIZE - 2} color={COLORS.TEXT_LIGHT} style={styles.searchIcon} />
+      <Ionicons
+        name="search"
+        size={SIZES.HEADER.ICON_SIZE - 2}
+        color={COLORS.TEXT_LIGHT}
+        style={styles.searchIcon}
+      />
       <TextInput
         style={styles.input}
         placeholder={placeholder}

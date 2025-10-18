@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Pressable, PressableProps, ViewStyle } from "react-native";
+import { Pressable, PressableProps, ViewStyle, GestureResponderEvent } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -49,7 +49,7 @@ const AnimatedPressable: React.FC<AnimatedPressableProps> = ({
     opacity.value = withTiming(1, { duration: 100 });
   };
 
-  const handlePress = (e: any) => {
+  const handlePress = (e: GestureResponderEvent) => {
     if (enableHaptic) {
       switch (hapticType) {
         case "light":
@@ -79,4 +79,3 @@ const AnimatedPressable: React.FC<AnimatedPressableProps> = ({
 };
 
 export default AnimatedPressable;
-

@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: COLORS.OVERLAY || "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     zIndex: 9999,
   },
@@ -45,4 +45,3 @@ const styles = StyleSheet.create({
 });
 
 export default LoadingOverlay;
-

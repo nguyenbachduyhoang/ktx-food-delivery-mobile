@@ -13,10 +13,10 @@ interface ButtonProps {
   variant?: "primary" | "secondary" | "outline";
 }
 
-export default function Button({ 
-  title, 
-  onPress, 
-  style, 
+export default function Button({
+  title,
+  onPress,
+  style,
   textStyle,
   disabled = false,
   loading = false,
@@ -43,13 +43,8 @@ export default function Button({
   };
 
   return (
-    <AnimatedPressable 
-      style={[
-        styles.button, 
-        getButtonStyle(),
-        disabled && styles.buttonDisabled,
-        style
-      ]} 
+    <AnimatedPressable
+      style={[styles.button, getButtonStyle(), disabled ? styles.buttonDisabled : null, style]}
       onPress={onPress}
       disabled={disabled || loading}
       enableHaptic={!disabled && !loading}
@@ -58,9 +53,7 @@ export default function Button({
       {loading ? (
         <ActivityIndicator color={variant === "outline" ? COLORS.PRIMARY : COLORS.TEXT_WHITE} />
       ) : (
-        <Text style={[getTextStyle(), textStyle, disabled && styles.textDisabled]}>
-          {title}
-        </Text>
+        <Text style={[getTextStyle(), textStyle, disabled && styles.textDisabled]}>{title}</Text>
       )}
     </AnimatedPressable>
   );
@@ -81,7 +74,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   buttonOutline: {
-    backgroundColor: "transparent",
+    backgroundColor: COLORS.TRANSPARENT || "transparent",
     borderColor: COLORS.PRIMARY,
     borderWidth: 2,
   },

@@ -76,10 +76,10 @@ const FoodCard: React.FC<FoodCardProps> = ({
         </View>
         <AnimatedPressable onPress={handleFavorite} enableHaptic={false}>
           <Animated.View style={heartAnimatedStyle}>
-            <Ionicons 
-              name={isFavorite ? "heart" : "heart-outline"} 
-              size={22} 
-              color={isFavorite ? COLORS.ERROR : COLOR_HEART} 
+            <Ionicons
+              name={isFavorite ? "heart" : "heart-outline"}
+              size={22}
+              color={isFavorite ? COLORS.ERROR : COLOR_HEART}
             />
           </Animated.View>
         </AnimatedPressable>
@@ -87,8 +87,12 @@ const FoodCard: React.FC<FoodCardProps> = ({
       {/* Image */}
       <Image source={image} style={styles.image} />
       {/* Title & subtitle */}
-      <Text style={styles.title} numberOfLines={2}>{title}</Text>
-      <Text style={styles.subtitle} numberOfLines={1}>{subtitle}</Text>
+      <Text style={styles.title} numberOfLines={2}>
+        {title}
+      </Text>
+      <Text style={styles.subtitle} numberOfLines={1}>
+        {subtitle}
+      </Text>
       {/* Info row */}
       <View style={styles.infoRow}>
         <Ionicons
@@ -104,8 +108,8 @@ const FoodCard: React.FC<FoodCardProps> = ({
       {/* Price & add button */}
       <View style={styles.bottomRow}>
         <Text style={styles.price}>{price}</Text>
-        <AnimatedPressable 
-          style={styles.addBtn} 
+        <AnimatedPressable
+          style={styles.addBtn}
           onPress={handleAdd}
           scaleValue={0.85}
           enableHaptic={false}

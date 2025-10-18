@@ -19,11 +19,7 @@ const EmptyCart: React.FC<EmptyCartProps> = ({ onStartShopping }) => {
         Bạn chưa có món ăn nào trong giỏ hàng.{"\n"}
         Hãy khám phá và thêm món yêu thích của bạn!
       </Text>
-      <Button 
-        title="Khám phá ngay" 
-        onPress={onStartShopping || (() => {})}
-        style={styles.button}
-      />
+      <Button title="Khám phá ngay" onPress={onStartShopping || (() => {})} style={styles.button} />
     </View>
   );
 };
@@ -62,4 +58,3 @@ const styles = StyleSheet.create({
 });
 
 export default EmptyCart;
-

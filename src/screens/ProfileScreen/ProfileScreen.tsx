@@ -61,31 +61,31 @@ const ProfileScreen = () => {
             <Icon name="pencil" size={SIZES.HEADER.ICON_SIZE - 2} color={ICON_COLOR} />
           </TouchableOpacity>
         </View>
-      <View style={styles.section}>
-        {menuItems.map((item) => (
-          <MenuItem key={item.label} icon={item.icon} label={item.label} color={ICON_COLOR} />
-        ))}
-      </View>
-      <View style={styles.section}>
-        {supportItems.map((item) =>
-          item.isSwitch ? (
-            <View key={item.label} style={styles.menuItem}>
-              <View style={styles.menuLeft}>
-                <Icon name={item.icon} size={SIZES.HEADER.ICON_SIZE} color={ICON_COLOR} />
-                <Text style={styles.menuLabel}>{item.label}</Text>
-              </View>
-              <Switch
-                value={isDarkMode}
-                onValueChange={setIsDarkMode}
-                trackColor={{ false: COLORS.BORDER, true: COLORS.SUCCESS }}
-                thumbColor={isDarkMode ? COLORS.SUCCESS : COLORS.BACKGROUND_DARK}
-              />
-            </View>
-          ) : (
+        <View style={styles.section}>
+          {menuItems.map((item) => (
             <MenuItem key={item.label} icon={item.icon} label={item.label} color={ICON_COLOR} />
-          )
-        )}
-      </View>
+          ))}
+        </View>
+        <View style={styles.section}>
+          {supportItems.map((item) =>
+            item.isSwitch ? (
+              <View key={item.label} style={styles.menuItem}>
+                <View style={styles.menuLeft}>
+                  <Icon name={item.icon} size={SIZES.HEADER.ICON_SIZE} color={ICON_COLOR} />
+                  <Text style={styles.menuLabel}>{item.label}</Text>
+                </View>
+                <Switch
+                  value={isDarkMode}
+                  onValueChange={setIsDarkMode}
+                  trackColor={{ false: COLORS.BORDER, true: COLORS.SUCCESS }}
+                  thumbColor={isDarkMode ? COLORS.SUCCESS : COLORS.BACKGROUND_DARK}
+                />
+              </View>
+            ) : (
+              <MenuItem key={item.label} icon={item.icon} label={item.label} color={ICON_COLOR} />
+            )
+          )}
+        </View>
         <TouchableOpacity style={styles.logoutBtn}>
           <Icon name="logout" size={SIZES.HEADER.ICON_SIZE} color={ICON_COLOR} />
           <Text style={styles.logoutText}>Logout</Text>

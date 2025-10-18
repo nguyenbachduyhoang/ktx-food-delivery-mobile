@@ -20,11 +20,7 @@ const EmptyCategory: React.FC<EmptyCategoryProps> = ({ categoryName, onGoBack })
         Hiện chưa có món {categoryName} nào ở gần bạn.{"\n"}
         Hãy thử danh mục khác nhé!
       </Text>
-      <Button 
-        title="Quay lại trang chủ" 
-        onPress={onGoBack || (() => {})}
-        style={styles.button}
-      />
+      <Button title="Quay lại trang chủ" onPress={onGoBack || (() => {})} style={styles.button} />
     </View>
   );
 };
@@ -63,4 +59,3 @@ const styles = StyleSheet.create({
 });
 
 export default EmptyCategory;
-

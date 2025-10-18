@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { COLORS, TEXT_STYLES, SIZES } from "@constants/index";
+import { COLORS, TEXT_STYLES } from "@constants/index";
 
 interface FoodStatsProps {
   rating: number;
@@ -49,4 +49,3 @@ const styles = StyleSheet.create({
 });
 
 export default FoodStats;
-

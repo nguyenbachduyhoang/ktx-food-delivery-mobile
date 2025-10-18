@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  ScrollView,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, TextInput, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, { FadeInDown, FadeIn, FadeOut } from "react-native-reanimated";
 import AnimatedPressable from "@components/AnimatedPressable";
@@ -75,21 +68,27 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ navigation }) => {
     navigation.goBack();
   };
 
-  const handleSearch = useCallback((text: string) => {
-    if (text.trim()) {
-      // Add to recent searches if not already there
-      if (!recentSearches.includes(text.trim())) {
-        setRecentSearches([text.trim(), ...recentSearches.slice(0, 5)]);
+  const handleSearch = useCallback(
+    (text: string) => {
+      if (text.trim()) {
+        // Add to recent searches if not already there
+        if (!recentSearches.includes(text.trim())) {
+          setRecentSearches([text.trim(), ...recentSearches.slice(0, 5)]);
+        }
+        // Navigate to search results or perform search
+        console.log("Searching for:", text);
       }
-      // Navigate to search results or perform search
-      console.log("Searching for:", text);
-    }
-  }, [recentSearches]);
+    },
+    [recentSearches]
+  );
 
-  const handleSuggestionPress = useCallback((suggestion: string) => {
-    setSearchText(suggestion);
-    handleSearch(suggestion);
-  }, [handleSearch]);
+  const handleSuggestionPress = useCallback(
+    (suggestion: string) => {
+      setSearchText(suggestion);
+      handleSearch(suggestion);
+    },
+    [handleSearch]
+  );
 
   const clearSearch = useCallback(() => {
     setSearchText("");
@@ -101,12 +100,9 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ navigation }) => {
   }, []);
 
   const renderSearchTag = (text: string, onPress: () => void, index: number) => (
-    <Animated.View 
-      key={text} 
-      entering={FadeInDown.delay(index * 50).duration(300)}
-    >
-      <AnimatedPressable 
-        style={styles.searchTag} 
+    <Animated.View key={text} entering={FadeInDown.delay(index * 50).duration(300)}>
+      <AnimatedPressable
+        style={styles.searchTag}
         onPress={onPress}
         scaleValue={0.95}
         hapticType="light"
@@ -121,11 +117,16 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ navigation }) => {
   return (
     <View style={styles.wrapper}>
       <SharedHeader title="Tìm kiếm" showBackButton onBackPress={handleBackPress} />
-      
+
       <View style={styles.container}>
         <View style={styles.searchContainer}>
           <View style={styles.searchBox}>
-            <Ionicons name="search" size={SIZES.HEADER.ICON_SIZE} color={COLORS.TEXT_LIGHT} style={styles.searchIcon} />
+            <Ionicons
+              name="search"
+              size={SIZES.HEADER.ICON_SIZE}
+              color={COLORS.TEXT_LIGHT}
+              style={styles.searchIcon}
+            />
             <TextInput
               style={styles.searchInput}
               placeholder="Tìm món ăn, quán ăn..."
@@ -136,17 +137,19 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ navigation }) => {
               autoFocus
               returnKeyType="search"
             />
-            {isSearching && (
-              <ActivityIndicator size="small" color={COLORS.PRIMARY} />
-            )}
+            {isSearching && <ActivityIndicator size="small" color={COLORS.PRIMARY} />}
             {searchText.length > 0 && !isSearching && (
               <Animated.View entering={FadeIn} exiting={FadeOut}>
-                <AnimatedPressable 
-                  onPress={clearSearch} 
+                <AnimatedPressable
+                  onPress={clearSearch}
                   style={styles.clearButton}
                   enableHaptic={false}
                 >
-                  <Ionicons name="close-circle" size={SIZES.HEADER.ICON_SIZE} color={COLORS.TEXT_LIGHT} />
+                  <Ionicons
+                    name="close-circle"
+                    size={SIZES.HEADER.ICON_SIZE}
+                    color={COLORS.TEXT_LIGHT}
+                  />
                 </AnimatedPressable>
               </Animated.View>
             )}
@@ -154,61 +157,57 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ navigation }) => {
         </View>
 
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {showSuggestions ? (
-          /* Search Suggestions */
-          <Animated.View entering={FadeIn} style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>
-                Kết quả cho "{debouncedSearchText}"
-              </Text>
-              <Text style={styles.resultCount}>
-                {searchSuggestions.length} kết quả
-              </Text>
-            </View>
-            {searchSuggestions.length > 0 ? (
-              <View style={styles.tagsContainer}>
-                {searchSuggestions.map((suggestion, index) =>
-                  renderSearchTag(suggestion, () => handleSuggestionPress(suggestion), index)
-                )}
+          {showSuggestions ? (
+            /* Search Suggestions */
+            <Animated.View entering={FadeIn} style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Kết quả cho &quot;{debouncedSearchText}&quot;</Text>
+                <Text style={styles.resultCount}>{searchSuggestions.length} kết quả</Text>
               </View>
-            ) : (
-              <Animated.View entering={FadeInDown} style={styles.emptyState}>
-                <Ionicons name="search-outline" size={48} color={COLORS.TEXT_LIGHT} />
-                <Text style={styles.emptyText}>Không tìm thấy kết quả</Text>
-                <Text style={styles.emptySubtext}>Thử tìm kiếm với từ khóa khác</Text>
-              </Animated.View>
-            )}
-          </Animated.View>
-        ) : (
-          <>
-            {/* Recent Searches */}
-            {recentSearches.length > 0 && (
-              <Animated.View entering={FadeInDown.delay(100)} style={styles.section}>
-                <View style={styles.sectionHeader}>
-                  <Text style={styles.sectionTitle}>Tìm kiếm gần đây</Text>
-                  <AnimatedPressable onPress={clearRecentSearches}>
-                    <Text style={styles.clearAllText}>Xóa tất cả</Text>
-                  </AnimatedPressable>
-                </View>
+              {searchSuggestions.length > 0 ? (
                 <View style={styles.tagsContainer}>
-                  {recentSearches.map((search, index) =>
+                  {searchSuggestions.map((suggestion, index) =>
+                    renderSearchTag(suggestion, () => handleSuggestionPress(suggestion), index)
+                  )}
+                </View>
+              ) : (
+                <Animated.View entering={FadeInDown} style={styles.emptyState}>
+                  <Ionicons name="search-outline" size={48} color={COLORS.TEXT_LIGHT} />
+                  <Text style={styles.emptyText}>Không tìm thấy kết quả</Text>
+                  <Text style={styles.emptySubtext}>Thử tìm kiếm với từ khóa khác</Text>
+                </Animated.View>
+              )}
+            </Animated.View>
+          ) : (
+            <>
+              {/* Recent Searches */}
+              {recentSearches.length > 0 && (
+                <Animated.View entering={FadeInDown.delay(100)} style={styles.section}>
+                  <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>Tìm kiếm gần đây</Text>
+                    <AnimatedPressable onPress={clearRecentSearches}>
+                      <Text style={styles.clearAllText}>Xóa tất cả</Text>
+                    </AnimatedPressable>
+                  </View>
+                  <View style={styles.tagsContainer}>
+                    {recentSearches.map((search, index) =>
+                      renderSearchTag(search, () => handleSuggestionPress(search), index)
+                    )}
+                  </View>
+                </Animated.View>
+              )}
+
+              {/* Popular Searches */}
+              <Animated.View entering={FadeInDown.delay(200)} style={styles.section}>
+                <Text style={styles.sectionTitle}>Phổ biến</Text>
+                <View style={styles.tagsContainer}>
+                  {popularSearches.map((search, index) =>
                     renderSearchTag(search, () => handleSuggestionPress(search), index)
                   )}
                 </View>
               </Animated.View>
-            )}
-
-            {/* Popular Searches */}
-            <Animated.View entering={FadeInDown.delay(200)} style={styles.section}>
-              <Text style={styles.sectionTitle}>Phổ biến</Text>
-              <View style={styles.tagsContainer}>
-                {popularSearches.map((search, index) =>
-                  renderSearchTag(search, () => handleSuggestionPress(search), index)
-                )}
-              </View>
-            </Animated.View>
-          </>
-        )}
+            </>
+          )}
         </ScrollView>
       </View>
     </View>

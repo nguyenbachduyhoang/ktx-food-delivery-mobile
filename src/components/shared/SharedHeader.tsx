@@ -33,11 +33,7 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
       <View style={styles.leftContainer}>
         {showBackButton && (
           <TouchableOpacity style={styles.backButton} onPress={onBackPress}>
-            <Ionicons
-              name="arrow-back"
-              size={SIZES.HEADER.ICON_SIZE}
-              color={COLORS.TEXT_PRIMARY}
-            />
+            <Ionicons name="arrow-back" size={SIZES.HEADER.ICON_SIZE} color={COLORS.TEXT_PRIMARY} />
           </TouchableOpacity>
         )}
         <View style={styles.titleContainer}>

@@ -24,13 +24,13 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({
   };
 
   const hasDiscount = originalPrice && originalPrice > price;
-  const discountPercent = hasDiscount 
-    ? Math.round(((originalPrice - price) / originalPrice) * 100) 
+  const discountPercent = hasDiscount
+    ? Math.round(((originalPrice - price) / originalPrice) * 100)
     : 0;
 
   return (
-    <AnimatedPressable 
-      style={styles.container} 
+    <AnimatedPressable
+      style={styles.container}
       onPress={onPress}
       scaleValue={0.97}
       hapticType="light"

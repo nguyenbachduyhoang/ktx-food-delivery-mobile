@@ -52,8 +52,8 @@ const CartScreen: React.FC = () => {
   const deleteSelected = () => {
     const deletedCount = items.filter((item) => item.checked).length;
     setItems((prev) => prev.filter((item) => !item.checked));
-    showToast({ 
-      message: `Đã xóa ${deletedCount} món khỏi giỏ hàng`, 
+    showToast({
+      message: `Đã xóa ${deletedCount} món khỏi giỏ hàng`,
       type: "success",
       duration: 2000,
     });
@@ -63,8 +63,8 @@ const CartScreen: React.FC = () => {
     const item = items.find((i) => i.id === id);
     setItems((prev) => prev.filter((item) => item.id !== id));
     if (item) {
-      showToast({ 
-        message: `Đã xóa "${item.title}" khỏi giỏ hàng`, 
+      showToast({
+        message: `Đã xóa "${item.title}" khỏi giỏ hàng`,
         type: "success",
         duration: 2000,
       });
@@ -102,22 +102,27 @@ const CartScreen: React.FC = () => {
       <View style={styles.container}>
         {/* Select all header */}
         <Animated.View entering={FadeInDown.delay(100)} style={styles.selectAllRow}>
-          <AnimatedPressable 
-            style={styles.selectAllButton} 
+          <AnimatedPressable
+            style={styles.selectAllButton}
             onPress={toggleAll}
             enableHaptic={true}
             hapticType="light"
           >
-            <View style={[styles.checkbox, allChecked ? styles.checkboxChecked : styles.checkboxUnchecked]}>
+            <View
+              style={[
+                styles.checkbox,
+                allChecked ? styles.checkboxChecked : styles.checkboxUnchecked,
+              ]}
+            >
               {allChecked && <Ionicons name="checkmark" size={16} color={COLORS.BACKGROUND} />}
             </View>
             <Text style={styles.selectAllText}>Chọn tất cả ({items.length})</Text>
           </AnimatedPressable>
-          
+
           {checkedCount > 0 && (
             <Animated.View entering={FadeInDown} exiting={FadeOut}>
-              <AnimatedPressable 
-                style={styles.deleteButton} 
+              <AnimatedPressable
+                style={styles.deleteButton}
                 onPress={deleteSelected}
                 hapticType="medium"
               >

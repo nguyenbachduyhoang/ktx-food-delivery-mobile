@@ -42,7 +42,12 @@ const CartFooter: React.FC<CartFooterProps> = ({ itemCount, subtotal, shipping, 
         <View style={styles.row}>
           <View style={styles.shippingLabel}>
             <Text style={styles.label}>Phí giao hàng</Text>
-            <Ionicons name="information-circle-outline" size={16} color={COLORS.TEXT_LIGHT} style={styles.infoIcon} />
+            <Ionicons
+              name="information-circle-outline"
+              size={16}
+              color={COLORS.TEXT_LIGHT}
+              style={styles.infoIcon}
+            />
           </View>
           <Text style={[styles.value, styles.free]}>{shipping}</Text>
         </View>
@@ -62,9 +67,9 @@ const CartFooter: React.FC<CartFooterProps> = ({ itemCount, subtotal, shipping, 
       </View>
 
       {/* Checkout Button */}
-      <Button 
-        title="Tiến hành đặt hàng" 
-        onPress={onCheckout || (() => {})} 
+      <Button
+        title="Tiến hành đặt hàng"
+        onPress={onCheckout || (() => {})}
         style={styles.checkoutButton}
         textStyle={styles.checkoutButtonText}
       />

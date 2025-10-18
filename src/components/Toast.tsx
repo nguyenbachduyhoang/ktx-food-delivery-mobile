@@ -19,12 +19,7 @@ interface ToastProps {
   onHide?: () => void;
 }
 
-const Toast: React.FC<ToastProps> = ({
-  message,
-  type = "info",
-  duration = 3000,
-  onHide,
-}) => {
+const Toast: React.FC<ToastProps> = ({ message, type = "info", duration = 3000, onHide }) => {
   const translateY = useSharedValue(-100);
   const opacity = useSharedValue(0);
 
@@ -39,14 +34,18 @@ const Toast: React.FC<ToastProps> = ({
     // Hide animation after duration
     translateY.value = withDelay(
       duration,
-      withSpring(-100, {
-        damping: 15,
-        stiffness: 150,
-      }, () => {
-        if (onHide) {
-          runOnJS(onHide)();
+      withSpring(
+        -100,
+        {
+          damping: 15,
+          stiffness: 150,
+        },
+        () => {
+          if (onHide) {
+            runOnJS(onHide)();
+          }
         }
-      })
+      )
     );
     opacity.value = withDelay(duration, withSpring(0));
   }, []);
@@ -90,11 +89,7 @@ const Toast: React.FC<ToastProps> = ({
 
   return (
     <Animated.View
-      style={[
-        styles.container,
-        { backgroundColor: config.backgroundColor },
-        animatedStyle,
-      ]}
+      style={[styles.container, { backgroundColor: config.backgroundColor }, animatedStyle]}
     >
       <Ionicons name={config.icon} size={24} color={config.color} />
       <Text style={[styles.message, { color: config.color }]}>{message}</Text>
@@ -103,11 +98,11 @@ const Toast: React.FC<ToastProps> = ({
 };
 
 // Toast Manager Hook
-let toastCallback: ((props: ToastProps) => void) | null = null;
+let toastCallback: ((toastProps: ToastProps) => void) | null = null;
 
-export const showToast = (props: ToastProps) => {
+export const showToast = (toastProps: ToastProps) => {
   if (toastCallback) {
-    toastCallback(props);
+    toastCallback(toastProps);
   }
 };
 
@@ -115,8 +110,8 @@ export const ToastContainer: React.FC = () => {
   const [toast, setToast] = React.useState<ToastProps | null>(null);
 
   useEffect(() => {
-    toastCallback = (props: ToastProps) => {
-      setToast(props);
+    toastCallback = (toastProps: ToastProps) => {
+      setToast(toastProps);
     };
 
     return () => {
@@ -169,4 +164,3 @@ const styles = StyleSheet.create({
 });
 
 export default Toast;
-

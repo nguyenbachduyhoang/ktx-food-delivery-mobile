@@ -1,6 +1,6 @@
 import React from "react";
 import { Image, ImageSourcePropType, StyleSheet } from "react-native";
-import { COLORS, SIZES } from "@constants/index";
+import { COLORS } from "@constants/index";
 
 interface AvatarProps {
   source: ImageSourcePropType;

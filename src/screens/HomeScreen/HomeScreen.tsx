@@ -168,10 +168,7 @@ const HomeScreen: React.FC = () => {
         >
           <View style={styles.centerContainer}>
             <Text style={styles.errorText}>Có lỗi xảy ra: {error}</Text>
-            <AnimatedPressable 
-              style={styles.retryButton} 
-              onPress={onRefresh}
-            >
+            <AnimatedPressable style={styles.retryButton} onPress={onRefresh}>
               <Text style={styles.retryText}>Thử lại</Text>
             </AnimatedPressable>
           </View>
@@ -211,24 +208,24 @@ const HomeScreen: React.FC = () => {
         <Animated.View entering={FadeInDown.delay(300).duration(400)}>
           {/* Quick actions */}
           <View style={styles.quickActions}>
-            <AnimatedPressable 
-              style={styles.quickActionCard} 
+            <AnimatedPressable
+              style={styles.quickActionCard}
               onPress={() => console.log("Favorites")}
               scaleValue={0.95}
             >
               <Text style={styles.quickActionText}>❤️</Text>
               <Text style={styles.quickActionLabel}>Yêu thích</Text>
             </AnimatedPressable>
-            <AnimatedPressable 
-              style={styles.quickActionCard} 
+            <AnimatedPressable
+              style={styles.quickActionCard}
               onPress={() => console.log("Repeat")}
               scaleValue={0.95}
             >
               <Text style={styles.quickActionText}>🔄</Text>
               <Text style={styles.quickActionLabel}>Đặt lại</Text>
             </AnimatedPressable>
-            <AnimatedPressable 
-              style={styles.quickActionCard} 
+            <AnimatedPressable
+              style={styles.quickActionCard}
               onPress={() => console.log("Recent")}
               scaleValue={0.95}
             >
@@ -254,7 +251,7 @@ const HomeScreen: React.FC = () => {
               horizontal
               showsHorizontalScrollIndicator={false}
               renderItem={({ item, index }) => (
-                <Animated.View 
+                <Animated.View
                   entering={FadeInDown.delay(index * 50).duration(400)}
                   style={styles.foodCardWrapper}
                 >
@@ -281,7 +278,7 @@ const HomeScreen: React.FC = () => {
               horizontal
               showsHorizontalScrollIndicator={false}
               renderItem={({ item, index }) => (
-                <Animated.View 
+                <Animated.View
                   entering={FadeInDown.delay(index * 50).duration(400)}
                   style={styles.merchantCard}
                 >

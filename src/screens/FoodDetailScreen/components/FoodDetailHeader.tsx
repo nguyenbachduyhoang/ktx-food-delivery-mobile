@@ -21,27 +21,23 @@ const FoodDetailHeader: React.FC<FoodDetailHeaderProps> = ({
 }) => {
   return (
     <Animated.View style={[styles.header, animatedStyle]}>
-      <AnimatedPressable 
-        onPress={onBackPress} 
-        style={styles.headerBtn}
-        hapticType="light"
-      >
+      <AnimatedPressable onPress={onBackPress} style={styles.headerBtn} hapticType="light">
         <Ionicons name="arrow-back" size={SIZES.HEADER.ICON_SIZE} color={COLORS.TEXT_PRIMARY} />
       </AnimatedPressable>
       <View style={styles.headerRight}>
-        <AnimatedPressable 
-          style={styles.headerBtn} 
-          hapticType="light"
-          onPress={onSharePress}
-        >
-          <Ionicons name="share-social-outline" size={SIZES.HEADER.ICON_SIZE} color={COLORS.TEXT_PRIMARY} />
+        <AnimatedPressable style={styles.headerBtn} hapticType="light" onPress={onSharePress}>
+          <Ionicons
+            name="share-social-outline"
+            size={SIZES.HEADER.ICON_SIZE}
+            color={COLORS.TEXT_PRIMARY}
+          />
         </AnimatedPressable>
-        <AnimatedPressable 
-          style={styles.headerBtn} 
-          hapticType="light"
-          onPress={onMorePress}
-        >
-          <Ionicons name="ellipsis-horizontal" size={SIZES.HEADER.ICON_SIZE} color={COLORS.TEXT_PRIMARY} />
+        <AnimatedPressable style={styles.headerBtn} hapticType="light" onPress={onMorePress}>
+          <Ionicons
+            name="ellipsis-horizontal"
+            size={SIZES.HEADER.ICON_SIZE}
+            color={COLORS.TEXT_PRIMARY}
+          />
         </AnimatedPressable>
       </View>
     </Animated.View>
@@ -83,4 +79,3 @@ const styles = StyleSheet.create({
 });
 
 export default FoodDetailHeader;
-

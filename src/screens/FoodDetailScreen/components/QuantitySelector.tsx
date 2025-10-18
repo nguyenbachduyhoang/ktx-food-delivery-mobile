@@ -22,19 +22,11 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
     <Animated.View entering={FadeInDown.delay(delay)} style={styles.quantitySection}>
       <Text style={styles.quantityLabel}>Số lượng:</Text>
       <View style={styles.quantityControl}>
-        <AnimatedPressable
-          style={styles.quantityBtn}
-          onPress={onDecrease}
-          hapticType="light"
-        >
+        <AnimatedPressable style={styles.quantityBtn} onPress={onDecrease} hapticType="light">
           <Ionicons name="remove" size={20} color={COLORS.BACKGROUND} />
         </AnimatedPressable>
         <Text style={styles.quantityText}>{quantity}</Text>
-        <AnimatedPressable
-          style={styles.quantityBtn}
-          onPress={onIncrease}
-          hapticType="light"
-        >
+        <AnimatedPressable style={styles.quantityBtn} onPress={onIncrease} hapticType="light">
           <Ionicons name="add" size={20} color={COLORS.BACKGROUND} />
         </AnimatedPressable>
       </View>
@@ -77,4 +69,3 @@ const styles = StyleSheet.create({
 });
 
 export default QuantitySelector;
-

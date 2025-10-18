@@ -25,19 +25,11 @@ const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
   const shimmer = useSharedValue(0);
 
   useEffect(() => {
-    shimmer.value = withRepeat(
-      withTiming(1, { duration: 1500 }),
-      -1,
-      false
-    );
+    shimmer.value = withRepeat(withTiming(1, { duration: 1500 }), -1, false);
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(
-      shimmer.value,
-      [0, 0.5, 1],
-      [0.3, 0.6, 0.3]
-    );
+    const opacity = interpolate(shimmer.value, [0, 0.5, 1], [0.3, 0.6, 0.3]);
 
     return {
       opacity,
@@ -57,8 +49,8 @@ export const SkeletonCard: React.FC = () => (
     <SkeletonLoader width="100%" height={100} borderRadius={8} />
     <View style={styles.skeletonContent}>
       <SkeletonLoader width="80%" height={16} />
-      <SkeletonLoader width="60%" height={14} style={{ marginTop: 8 }} />
-      <SkeletonLoader width="40%" height={14} style={{ marginTop: 8 }} />
+      <SkeletonLoader width="60%" height={14} style={styles.skeletonMargin} />
+      <SkeletonLoader width="40%" height={14} style={styles.skeletonMargin} />
     </View>
   </View>
 );
@@ -68,8 +60,8 @@ export const SkeletonListItem: React.FC = () => (
     <SkeletonLoader width={60} height={60} borderRadius={8} />
     <View style={styles.skeletonListContent}>
       <SkeletonLoader width="70%" height={16} />
-      <SkeletonLoader width="50%" height={14} style={{ marginTop: 8 }} />
-      <SkeletonLoader width="30%" height={14} style={{ marginTop: 8 }} />
+      <SkeletonLoader width="50%" height={14} style={styles.skeletonMargin} />
+      <SkeletonLoader width="30%" height={14} style={styles.skeletonMargin} />
     </View>
   </View>
 );
@@ -106,7 +98,9 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     padding: 12,
   },
+  skeletonMargin: {
+    marginTop: 8,
+  },
 });
 
 export default SkeletonLoader;
-
