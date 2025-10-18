@@ -1,10 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { COLORS, TEXT_STYLES } from "@constants/index";
-
-const BORDER_COLOR = COLORS.BORDER;
-const TEXT_COLOR = COLORS.TEXT_PRIMARY;
+import { COLORS, TEXT_STYLES, SIZES } from "@constants/index";
 
 interface MenuItemProps {
   icon: string;
@@ -21,27 +18,27 @@ const MenuItem: React.FC<MenuItemProps> = ({
 }) => (
   <View style={styles.menuItem}>
     <View style={styles.menuLeft}>
-      <Icon name={icon} size={24} color={color} />
+      <Icon name={icon} size={SIZES.HEADER.ICON_SIZE} color={color} />
       <Text style={styles.menuLabel}>{label}</Text>
     </View>
-    <Icon name={rightIcon} size={24} color={color} />
+    <Icon name={rightIcon} size={SIZES.HEADER.ICON_SIZE} color={color} />
   </View>
 );
 
 const styles = StyleSheet.create({
   menuItem: {
     alignItems: "center",
-    borderBottomColor: BORDER_COLOR,
+    borderBottomColor: COLORS.BORDER,
     borderBottomWidth: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 10,
-    paddingVertical: 14,
+    paddingHorizontal: SIZES.SPACING.SM,
+    paddingVertical: SIZES.SPACING.MD,
   },
   menuLabel: {
     ...TEXT_STYLES.BODY_LARGE,
-    color: TEXT_COLOR,
-    marginLeft: 12,
+    color: COLORS.TEXT_PRIMARY,
+    marginLeft: SIZES.SPACING.MD,
   },
   menuLeft: {
     alignItems: "center",

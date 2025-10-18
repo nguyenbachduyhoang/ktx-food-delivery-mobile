@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, Switch, ScrollView } f
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import avatar from "../../../assets/avatar/avatar.png";
-import { COLORS, TEXT_STYLES } from "@constants/index";
+import { COLORS, TEXT_STYLES, SIZES } from "@constants/index";
 import { SharedHeader } from "@components/shared";
 import withScreenContainer from "@components/layouts/withScreenContainer";
 
@@ -40,26 +40,27 @@ const ProfileScreen = () => {
   const insets = useSafeAreaInsets();
 
   return (
-    <ScrollView
-      style={[styles.scroll, { paddingTop: insets.top + 10 }]}
-      contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 80 }]}
-    >
+    <View style={styles.wrapper}>
       <SharedHeader
         title="Hồ sơ"
         showSearch={true}
         rightIcon="ellipsis-horizontal"
         onSearchPress={() => console.log("More options")}
       />
-      <View style={styles.profileRow}>
-        <Image source={user.avatar} style={styles.avatar} />
-        <View style={styles.profileInfo}>
-          <Text style={styles.profileName}>{user.name}</Text>
-          <Text style={styles.profilePhone}>{user.phone}</Text>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 80 }]}
+      >
+        <View style={styles.profileRow}>
+          <Image source={user.avatar} style={styles.avatar} />
+          <View style={styles.profileInfo}>
+            <Text style={styles.profileName}>{user.name}</Text>
+            <Text style={styles.profilePhone}>{user.phone}</Text>
+          </View>
+          <TouchableOpacity>
+            <Icon name="pencil" size={SIZES.HEADER.ICON_SIZE - 2} color={ICON_COLOR} />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity>
-          <Icon name="pencil" size={22} color={ICON_COLOR} />
-        </TouchableOpacity>
-      </View>
       <View style={styles.section}>
         {menuItems.map((item) => (
           <MenuItem key={item.label} icon={item.icon} label={item.label} color={ICON_COLOR} />
@@ -70,14 +71,14 @@ const ProfileScreen = () => {
           item.isSwitch ? (
             <View key={item.label} style={styles.menuItem}>
               <View style={styles.menuLeft}>
-                <Icon name={item.icon} size={24} color={ICON_COLOR} />
+                <Icon name={item.icon} size={SIZES.HEADER.ICON_SIZE} color={ICON_COLOR} />
                 <Text style={styles.menuLabel}>{item.label}</Text>
               </View>
               <Switch
                 value={isDarkMode}
                 onValueChange={setIsDarkMode}
-                trackColor={{ false: "#ccc", true: "#2ecc40" }}
-                thumbColor={isDarkMode ? "#2ecc40" : "#f4f3f4"}
+                trackColor={{ false: COLORS.BORDER, true: COLORS.SUCCESS }}
+                thumbColor={isDarkMode ? COLORS.SUCCESS : COLORS.BACKGROUND_DARK}
               />
             </View>
           ) : (
@@ -85,11 +86,12 @@ const ProfileScreen = () => {
           )
         )}
       </View>
-      <TouchableOpacity style={styles.logoutBtn}>
-        <Icon name="logout" size={24} color={ICON_COLOR} />
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        <TouchableOpacity style={styles.logoutBtn}>
+          <Icon name="logout" size={SIZES.HEADER.ICON_SIZE} color={ICON_COLOR} />
+          <Text style={styles.logoutText}>Logout</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -98,24 +100,26 @@ const styles = StyleSheet.create({
     backgroundColor: AVATAR_BG,
     borderRadius: 30,
     height: 60,
-    marginRight: 14,
+    marginRight: SIZES.SPACING.MD,
     width: 60,
   },
   container: {
     backgroundColor: BG_COLOR,
-    paddingBottom: 40,
+    paddingBottom: SIZES.SPACING.LG,
+    paddingHorizontal: SIZES.SPACING.MD,
+    paddingTop: SIZES.SPACING.MD,
   },
   logoutBtn: {
     alignItems: "center",
     flexDirection: "row",
-    paddingHorizontal: 10,
-    paddingTop: 10,
-    paddingVertical: 4,
+    paddingHorizontal: SIZES.SPACING.SM,
+    paddingTop: SIZES.SPACING.SM,
+    paddingVertical: SIZES.SPACING.XS,
   },
   logoutText: {
     ...TEXT_STYLES.BUTTON_LARGE,
     color: LOGOUT_COLOR,
-    marginLeft: 10,
+    marginLeft: SIZES.SPACING.SM,
   },
   menuItem: {
     alignItems: "center",
@@ -123,13 +127,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 10,
-    paddingVertical: 14,
+    paddingHorizontal: SIZES.SPACING.SM,
+    paddingVertical: SIZES.SPACING.MD,
   },
   menuLabel: {
     ...TEXT_STYLES.BODY_LARGE,
     color: TEXT_COLOR,
-    marginLeft: 12,
+    marginLeft: SIZES.SPACING.MD,
   },
   menuLeft: {
     alignItems: "center",
@@ -145,12 +149,12 @@ const styles = StyleSheet.create({
   profilePhone: {
     ...TEXT_STYLES.BODY_MEDIUM,
     color: SUBTEXT_COLOR,
-    marginTop: 2,
+    marginTop: SIZES.SPACING.XS,
   },
   profileRow: {
     alignItems: "center",
     flexDirection: "row",
-    marginBottom: 18,
+    marginBottom: SIZES.SPACING.MD,
   },
   scroll: {
     backgroundColor: BG_COLOR,
@@ -159,10 +163,13 @@ const styles = StyleSheet.create({
   section: {
     backgroundColor: BG_COLOR,
     borderColor: BORDER_COLOR,
-    borderRadius: 12,
+    borderRadius: SIZES.RADIUS.MEDIUM,
     borderWidth: 1,
-    marginBottom: 18,
+    marginBottom: SIZES.SPACING.MD,
     overflow: "hidden",
+  },
+  wrapper: {
+    flex: 1,
   },
 });
 

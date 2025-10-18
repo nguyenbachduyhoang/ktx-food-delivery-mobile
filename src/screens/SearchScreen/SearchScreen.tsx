@@ -1,16 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
   TextInput,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
-  SafeAreaView,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import Animated, { FadeInDown, FadeIn, FadeOut } from "react-native-reanimated";
+import AnimatedPressable from "@components/AnimatedPressable";
 import withScreenContainer from "@components/layouts/withScreenContainer";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SharedHeader } from "@components/shared";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { COLORS, TEXT_STYLES, SIZES } from "@constants/index";
 
@@ -24,6 +25,8 @@ interface SearchScreenProps {
 
 const SearchScreen: React.FC<SearchScreenProps> = ({ navigation }) => {
   const [searchText, setSearchText] = useState("");
+  const [debouncedSearchText, setDebouncedSearchText] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const [recentSearches, setRecentSearches] = useState([
     "Cơm Tấm",
     "Bún Bò",
@@ -40,22 +43,39 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ navigation }) => {
     "Trà sữa",
     "Bánh mì",
   ]);
-  const [searchSuggestions] = useState([
-    "Cơm Tấm",
-    "Bún Bò",
-    "Mì trộn",
-    "Ăn vặt",
-    "Trà sữa",
-    "Bánh mì",
-  ]);
+  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
 
-  const insets = useSafeAreaInsets();
+  // Debounce search text
+  useEffect(() => {
+    setIsSearching(true);
+    const timer = setTimeout(() => {
+      setDebouncedSearchText(searchText);
+      setIsSearching(false);
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [searchText]);
+
+  // Filter suggestions based on debounced search text
+  useEffect(() => {
+    if (debouncedSearchText.trim()) {
+      const allItems = [...recentSearches, ...popularSearches];
+      const filtered = allItems.filter((item) =>
+        item.toLowerCase().includes(debouncedSearchText.toLowerCase())
+      );
+      setSearchSuggestions([...new Set(filtered)]);
+    } else {
+      setSearchSuggestions([]);
+    }
+  }, [debouncedSearchText, recentSearches, popularSearches]);
 
   const handleBackPress = () => {
     navigation.goBack();
   };
 
-  const handleSearch = (text: string) => {
+  const handleSearch = useCallback((text: string) => {
     if (text.trim()) {
       // Add to recent searches if not already there
       if (!recentSearches.includes(text.trim())) {
@@ -64,104 +84,149 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ navigation }) => {
       // Navigate to search results or perform search
       console.log("Searching for:", text);
     }
-  };
+  }, [recentSearches]);
 
-  const handleSuggestionPress = (suggestion: string) => {
+  const handleSuggestionPress = useCallback((suggestion: string) => {
     setSearchText(suggestion);
     handleSearch(suggestion);
-  };
+  }, [handleSearch]);
 
-  const clearSearch = () => {
+  const clearSearch = useCallback(() => {
     setSearchText("");
-  };
+    setDebouncedSearchText("");
+  }, []);
 
-  const renderSearchTag = (text: string, onPress: () => void) => (
-    <TouchableOpacity key={text} style={styles.searchTag} onPress={onPress}>
-      <Text style={styles.searchTagText}>{text}</Text>
-    </TouchableOpacity>
+  const clearRecentSearches = useCallback(() => {
+    setRecentSearches([]);
+  }, []);
+
+  const renderSearchTag = (text: string, onPress: () => void, index: number) => (
+    <Animated.View 
+      key={text} 
+      entering={FadeInDown.delay(index * 50).duration(300)}
+    >
+      <AnimatedPressable 
+        style={styles.searchTag} 
+        onPress={onPress}
+        scaleValue={0.95}
+        hapticType="light"
+      >
+        <Text style={styles.searchTagText}>{text}</Text>
+      </AnimatedPressable>
+    </Animated.View>
   );
 
-  const showSuggestions = searchText.length > 0;
+  const showSuggestions = debouncedSearchText.length > 0;
 
   return (
-    <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
-          <Ionicons name="arrow-back" size={24} color={COLORS.TEXT_PRIMARY} />
-        </TouchableOpacity>
-
+    <View style={styles.wrapper}>
+      <SharedHeader title="Tìm kiếm" showBackButton onBackPress={handleBackPress} />
+      
+      <View style={styles.container}>
         <View style={styles.searchContainer}>
           <View style={styles.searchBox}>
-            <Ionicons name="search" size={20} color={COLORS.TEXT_LIGHT} style={styles.searchIcon} />
+            <Ionicons name="search" size={SIZES.HEADER.ICON_SIZE} color={COLORS.TEXT_LIGHT} style={styles.searchIcon} />
             <TextInput
               style={styles.searchInput}
-              placeholder="Mì Ý"
+              placeholder="Tìm món ăn, quán ăn..."
               placeholderTextColor={COLORS.TEXT_LIGHT}
               value={searchText}
               onChangeText={setSearchText}
               onSubmitEditing={() => handleSearch(searchText)}
               autoFocus
+              returnKeyType="search"
             />
-            {searchText.length > 0 && (
-              <TouchableOpacity onPress={clearSearch} style={styles.clearButton}>
-                <Ionicons name="close" size={20} color={COLORS.TEXT_LIGHT} />
-              </TouchableOpacity>
+            {isSearching && (
+              <ActivityIndicator size="small" color={COLORS.PRIMARY} />
+            )}
+            {searchText.length > 0 && !isSearching && (
+              <Animated.View entering={FadeIn} exiting={FadeOut}>
+                <AnimatedPressable 
+                  onPress={clearSearch} 
+                  style={styles.clearButton}
+                  enableHaptic={false}
+                >
+                  <Ionicons name="close-circle" size={SIZES.HEADER.ICON_SIZE} color={COLORS.TEXT_LIGHT} />
+                </AnimatedPressable>
+              </Animated.View>
             )}
           </View>
         </View>
-      </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {showSuggestions ? (
           /* Search Suggestions */
-          <View style={styles.section}>
-            <View style={styles.tagsContainer}>
-              {searchSuggestions.map((suggestion) =>
-                renderSearchTag(suggestion, () => handleSuggestionPress(suggestion))
-              )}
+          <Animated.View entering={FadeIn} style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>
+                Kết quả cho "{debouncedSearchText}"
+              </Text>
+              <Text style={styles.resultCount}>
+                {searchSuggestions.length} kết quả
+              </Text>
             </View>
-          </View>
+            {searchSuggestions.length > 0 ? (
+              <View style={styles.tagsContainer}>
+                {searchSuggestions.map((suggestion, index) =>
+                  renderSearchTag(suggestion, () => handleSuggestionPress(suggestion), index)
+                )}
+              </View>
+            ) : (
+              <Animated.View entering={FadeInDown} style={styles.emptyState}>
+                <Ionicons name="search-outline" size={48} color={COLORS.TEXT_LIGHT} />
+                <Text style={styles.emptyText}>Không tìm thấy kết quả</Text>
+                <Text style={styles.emptySubtext}>Thử tìm kiếm với từ khóa khác</Text>
+              </Animated.View>
+            )}
+          </Animated.View>
         ) : (
           <>
             {/* Recent Searches */}
             {recentSearches.length > 0 && (
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Tìm kiếm gần đây</Text>
+              <Animated.View entering={FadeInDown.delay(100)} style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>Tìm kiếm gần đây</Text>
+                  <AnimatedPressable onPress={clearRecentSearches}>
+                    <Text style={styles.clearAllText}>Xóa tất cả</Text>
+                  </AnimatedPressable>
+                </View>
                 <View style={styles.tagsContainer}>
-                  {recentSearches.map((search) =>
-                    renderSearchTag(search, () => handleSuggestionPress(search))
+                  {recentSearches.map((search, index) =>
+                    renderSearchTag(search, () => handleSuggestionPress(search), index)
                   )}
                 </View>
-              </View>
+              </Animated.View>
             )}
 
             {/* Popular Searches */}
-            <View style={styles.section}>
+            <Animated.View entering={FadeInDown.delay(200)} style={styles.section}>
               <Text style={styles.sectionTitle}>Phổ biến</Text>
               <View style={styles.tagsContainer}>
-                {popularSearches.map((search) =>
-                  renderSearchTag(search, () => handleSuggestionPress(search))
+                {popularSearches.map((search, index) =>
+                  renderSearchTag(search, () => handleSuggestionPress(search), index)
                 )}
               </View>
-            </View>
+            </Animated.View>
           </>
         )}
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  backButton: {
-    alignItems: "center",
-    height: 40,
-    justifyContent: "center",
-    marginRight: SIZES.SPACING.SM,
-    width: 40,
+  clearAllText: {
+    ...TEXT_STYLES.BODY_SMALL,
+    color: COLORS.PRIMARY,
+    fontWeight: "600",
   },
   clearButton: {
-    padding: 4,
+    alignItems: "center",
+    height: SIZES.HEADER.BUTTON_SIZE,
+    justifyContent: "center",
+    marginLeft: SIZES.SPACING.XS,
+    width: SIZES.HEADER.BUTTON_SIZE,
   },
   container: {
     backgroundColor: COLORS.BACKGROUND_LIGHT,
@@ -170,61 +235,90 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: SIZES.SPACING.MD,
+    paddingTop: SIZES.SPACING.SM,
   },
-  header: {
+  emptyState: {
     alignItems: "center",
-    backgroundColor: COLORS.BACKGROUND_LIGHT,
-    flexDirection: "row",
-    paddingHorizontal: SIZES.SPACING.MD,
-    paddingVertical: SIZES.SPACING.SM,
+    paddingVertical: SIZES.SPACING.XL * 2,
+  },
+  emptySubtext: {
+    ...TEXT_STYLES.BODY_SMALL,
+    color: COLORS.TEXT_LIGHT,
+    marginTop: SIZES.SPACING.XS,
+  },
+  emptyText: {
+    ...TEXT_STYLES.BODY_LARGE,
+    color: COLORS.TEXT_SECONDARY,
+    marginTop: SIZES.SPACING.MD,
+  },
+  resultCount: {
+    ...TEXT_STYLES.BODY_SMALL,
+    color: COLORS.TEXT_SECONDARY,
   },
   searchBox: {
     alignItems: "center",
     backgroundColor: COLORS.BACKGROUND,
-    borderColor: COLORS.ERROR,
+    borderColor: COLORS.PRIMARY,
     borderRadius: SIZES.RADIUS.MEDIUM,
-    borderWidth: 1,
+    borderWidth: 1.5,
+    elevation: 2,
     flexDirection: "row",
-    height: 44,
-    paddingHorizontal: SIZES.SPACING.SM,
+    height: 48,
+    paddingHorizontal: SIZES.SPACING.MD,
+    shadowColor: COLORS.PRIMARY,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   searchContainer: {
-    flex: 1,
+    backgroundColor: COLORS.BACKGROUND,
+    paddingBottom: SIZES.SPACING.MD,
+    paddingHorizontal: SIZES.SPACING.MD,
+    paddingTop: SIZES.SPACING.SM,
   },
   searchIcon: {
-    marginRight: SIZES.SPACING.XS,
+    marginRight: SIZES.SPACING.SM,
   },
   searchInput: {
-    flex: 1,
-    ...TEXT_STYLES.BODY_MEDIUM,
+    ...TEXT_STYLES.INPUT_TEXT,
     color: COLORS.TEXT_PRIMARY,
+    flex: 1,
     padding: 0,
   },
   searchTag: {
     backgroundColor: COLORS.BACKGROUND,
-    borderColor: COLORS.ERROR,
+    borderColor: COLORS.PRIMARY,
     borderRadius: SIZES.RADIUS.EXTRA_LARGE,
-    borderWidth: 1,
+    borderWidth: 1.5,
     paddingHorizontal: SIZES.SPACING.MD,
-    paddingVertical: SIZES.SPACING.XS,
+    paddingVertical: SIZES.SPACING.SM,
   },
   searchTagText: {
     ...TEXT_STYLES.BODY_MEDIUM,
-    color: COLORS.ERROR,
+    color: COLORS.PRIMARY,
+    fontWeight: "600",
   },
   section: {
     marginBottom: SIZES.SPACING.LG,
   },
-  sectionTitle: {
-    ...TEXT_STYLES.BODY_LARGE,
-    color: COLORS.TEXT_PRIMARY,
-    fontWeight: "600",
+  sectionHeader: {
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: SIZES.SPACING.MD,
+  },
+  sectionTitle: {
+    ...TEXT_STYLES.H6,
+    color: COLORS.TEXT_PRIMARY,
+    fontWeight: "700",
   },
   tagsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: SIZES.SPACING.SM,
+  },
+  wrapper: {
+    flex: 1,
   },
 });
 

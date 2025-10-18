@@ -3,21 +3,24 @@ import {
   StyleSheet,
   View,
   Text,
-  ActivityIndicator,
   ImageSourcePropType,
   FlatList,
-  TouchableOpacity,
+  RefreshControl,
+  ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { HomeHeader } from "@components/shared";
 import Label from "@components/Label";
 import Carousel from "@components/Carousel";
 import CategoryGrid, { CategoryItem } from "@components/CategoryGrid";
 import FoodCard from "@components/FoodCard";
+import AnimatedPressable from "@components/AnimatedPressable";
+import { SkeletonCard } from "@components/SkeletonLoader";
 import withScreenContainer from "@components/layouts/withScreenContainer";
 import { useProducts } from "@hooks/useProducts";
-import { COLORS, SIZES } from "@constants/index";
+import { COLORS, SIZES, TEXT_STYLES } from "@constants/index";
 
 import phoIcon from "@assets/category/pho.png";
 import goicuonIcon from "@assets/category/goicuon.png";
@@ -39,6 +42,7 @@ type RootStackParamList = {
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { products, loading, error } = useProducts();
+  const [refreshing, setRefreshing] = React.useState(false);
 
   // Local state for basic typeahead/search suggestions
   const [query] = React.useState("");
@@ -53,6 +57,14 @@ const HomeScreen: React.FC = () => {
     const results = products.filter((p) => p.title.toLowerCase().includes(q)).slice(0, 8);
     setSuggestions(results);
   }, [query, products]);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    // Simulate refresh - in real app, refetch data
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1500);
+  }, []);
 
   const handleCategoryPress = (category: CategoryItem) => {
     navigation.navigate("CategoryDetail", {
@@ -108,6 +120,20 @@ const HomeScreen: React.FC = () => {
     },
   ];
 
+  const renderLoadingSkeleton = () => (
+    <ScrollView style={styles.container}>
+      <View style={styles.section}>
+        <FlatList
+          data={[1, 2, 3]}
+          keyExtractor={(item) => `skeleton-${item}`}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          renderItem={() => <SkeletonCard />}
+        />
+      </View>
+    </ScrollView>
+  );
+
   if (loading) {
     return (
       <>
@@ -116,10 +142,7 @@ const HomeScreen: React.FC = () => {
           onCartPress={() => console.log("Cart pressed")}
           onSearchPress={handleSearchPress}
         />
-        <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={COLORS.PRIMARY} />
-          <Text style={styles.loadingText}>Đang tải dữ liệu...</Text>
-        </View>
+        {renderLoadingSkeleton()}
       </>
     );
   }
@@ -132,9 +155,27 @@ const HomeScreen: React.FC = () => {
           onCartPress={() => console.log("Cart pressed")}
           onSearchPress={handleSearchPress}
         />
-        <View style={styles.centerContainer}>
-          <Text style={styles.errorText}>Có lỗi xảy ra: {error}</Text>
-        </View>
+        <ScrollView
+          style={styles.container}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[COLORS.PRIMARY]}
+              tintColor={COLORS.PRIMARY}
+            />
+          }
+        >
+          <View style={styles.centerContainer}>
+            <Text style={styles.errorText}>Có lỗi xảy ra: {error}</Text>
+            <AnimatedPressable 
+              style={styles.retryButton} 
+              onPress={onRefresh}
+            >
+              <Text style={styles.retryText}>Thử lại</Text>
+            </AnimatedPressable>
+          </View>
+        </ScrollView>
       </>
     );
   }
@@ -146,81 +187,123 @@ const HomeScreen: React.FC = () => {
         onCartPress={() => console.log("Cart pressed")}
         onSearchPress={handleSearchPress}
       />
+      <ScrollView
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[COLORS.PRIMARY]}
+            tintColor={COLORS.PRIMARY}
+          />
+        }
+      >
+        <Animated.View entering={FadeInDown.delay(100).duration(400)}>
+          <Label title="Món ăn giảm giá" style={styles.section} allStyle={styles.labelAllBlue} />
+          <Carousel style={styles.section} />
+        </Animated.View>
 
-      <Label title="Món ăn giảm giá" style={styles.section} allStyle={styles.labelAllBlue} />
-      <Carousel style={styles.section} />
-      <CategoryGrid data={categories} style={styles.section} />
+        <Animated.View entering={FadeInDown.delay(200).duration(400)}>
+          <CategoryGrid data={categories} style={styles.section} />
+        </Animated.View>
 
-      {/* Quick actions */}
-      <View style={styles.quickActions}>
-        <TouchableOpacity style={styles.quickActionCard} onPress={() => console.log("Favorites")}>
-          <Text style={styles.quickActionText}>Quán yêu thích</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.quickActionCard} onPress={() => console.log("Repeat")}>
-          <Text style={styles.quickActionText}>Đặt lại đơn trước</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.quickActionCard} onPress={() => console.log("Recent")}>
-          <Text style={styles.quickActionText}>Gần đây</Text>
-        </TouchableOpacity>
-      </View>
+        <Animated.View entering={FadeInDown.delay(300).duration(400)}>
+          {/* Quick actions */}
+          <View style={styles.quickActions}>
+            <AnimatedPressable 
+              style={styles.quickActionCard} 
+              onPress={() => console.log("Favorites")}
+              scaleValue={0.95}
+            >
+              <Text style={styles.quickActionText}>❤️</Text>
+              <Text style={styles.quickActionLabel}>Yêu thích</Text>
+            </AnimatedPressable>
+            <AnimatedPressable 
+              style={styles.quickActionCard} 
+              onPress={() => console.log("Repeat")}
+              scaleValue={0.95}
+            >
+              <Text style={styles.quickActionText}>🔄</Text>
+              <Text style={styles.quickActionLabel}>Đặt lại</Text>
+            </AnimatedPressable>
+            <AnimatedPressable 
+              style={styles.quickActionCard} 
+              onPress={() => console.log("Recent")}
+              scaleValue={0.95}
+            >
+              <Text style={styles.quickActionText}>🕐</Text>
+              <Text style={styles.quickActionLabel}>Gần đây</Text>
+            </AnimatedPressable>
+          </View>
+        </Animated.View>
 
-      <Label
-        title="Món ăn nổi bật"
-        allText="Tất cả"
-        style={styles.section}
-        allStyle={styles.labelAllRed}
-      />
+        <Animated.View entering={FadeInDown.delay(400).duration(400)}>
+          <Label
+            title="Món ăn nổi bật"
+            allText="Tất cả"
+            style={styles.section}
+            allStyle={styles.labelAllRed}
+          />
 
-      {/* Suggestions (typeahead) or merchant list */}
-      {query ? (
-        <FlatList
-          data={suggestions}
-          keyExtractor={(item) => String(item.id)}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <View style={styles.foodCardWrapper}>
-              <FoodCard
-                image={item.image}
-                title={item.title}
-                subtitle={item.subtitle}
-                rating={item.rating}
-                ratingCount={item.ratingCount}
-                isFavorite={item.isFavorite}
-                time={item.time}
-                kcal={item.kcal}
-                price={item.price}
-                onAdd={() => {}}
-                onFavorite={() => {}}
-              />
-            </View>
+          {/* Suggestions (typeahead) or merchant list */}
+          {query ? (
+            <FlatList
+              data={suggestions}
+              keyExtractor={(item) => String(item.id)}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item, index }) => (
+                <Animated.View 
+                  entering={FadeInDown.delay(index * 50).duration(400)}
+                  style={styles.foodCardWrapper}
+                >
+                  <FoodCard
+                    image={item.image}
+                    title={item.title}
+                    subtitle={item.subtitle}
+                    rating={item.rating}
+                    ratingCount={item.ratingCount}
+                    isFavorite={item.isFavorite}
+                    time={item.time}
+                    kcal={item.kcal}
+                    price={item.price}
+                    onAdd={() => {}}
+                    onFavorite={() => {}}
+                  />
+                </Animated.View>
+              )}
+            />
+          ) : (
+            <FlatList
+              data={products.slice(0, 10)}
+              keyExtractor={(item) => String(item.id)}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item, index }) => (
+                <Animated.View 
+                  entering={FadeInDown.delay(index * 50).duration(400)}
+                  style={styles.merchantCard}
+                >
+                  <FoodCard
+                    image={item.image}
+                    title={item.title}
+                    subtitle={`${item.kcal} • ${item.time} phút`}
+                    rating={item.rating}
+                    ratingCount={item.ratingCount}
+                    isFavorite={item.isFavorite}
+                    time={item.time}
+                    kcal={item.kcal}
+                    price={item.price}
+                    onAdd={() => {}}
+                    onFavorite={() => {}}
+                  />
+                </Animated.View>
+              )}
+            />
           )}
-        />
-      ) : (
-        <FlatList
-          data={products.slice(0, 10)}
-          keyExtractor={(item) => String(item.id)}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <View style={styles.merchantCard}>
-              <FoodCard
-                image={item.image}
-                title={item.title}
-                subtitle={`${item.kcal} • ${item.time} phút`}
-                rating={item.rating}
-                ratingCount={item.ratingCount}
-                isFavorite={item.isFavorite}
-                time={item.time}
-                kcal={item.kcal}
-                price={item.price}
-                onAdd={() => {}}
-                onFavorite={() => {}}
-              />
-            </View>
-          )}
-        />
-      )}
+        </Animated.View>
+      </ScrollView>
     </>
   );
 };
@@ -230,14 +313,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
     justifyContent: "center",
-    padding: SIZES.SPACING.MD,
+    padding: SIZES.SPACING.XL,
+  },
+  container: {
+    flex: 1,
   },
   errorText: {
+    ...TEXT_STYLES.BODY_LARGE,
     color: COLORS.ERROR,
-    fontSize: SIZES.FONT.MEDIUM,
+    marginBottom: SIZES.SPACING.MD,
     textAlign: "center",
   },
-
   foodCardWrapper: {
     marginBottom: SIZES.SPACING.SM,
     width: "48%",
@@ -248,33 +334,49 @@ const styles = StyleSheet.create({
   labelAllRed: {
     color: COLORS.PRIMARY,
   },
-  loadingText: {
-    color: COLORS.TEXT_PRIMARY,
-    fontSize: SIZES.FONT.MEDIUM,
-    marginTop: SIZES.SPACING.SM,
-  },
   merchantCard: {
     marginRight: SIZES.SPACING.SM,
     width: 200,
   },
   quickActionCard: {
     alignItems: "center",
-    backgroundColor: COLORS.BACKGROUND_LIGHT,
-    borderRadius: SIZES.RADIUS.MEDIUM,
-    minWidth: 100,
-    padding: SIZES.SPACING.SM,
+    backgroundColor: COLORS.BACKGROUND,
+    borderRadius: SIZES.RADIUS.LARGE,
+    elevation: 2,
+    flex: 1,
+    marginHorizontal: SIZES.SPACING.XS,
+    paddingVertical: SIZES.SPACING.MD,
+    shadowColor: COLORS.SHADOW,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+  },
+  quickActionLabel: {
+    ...TEXT_STYLES.CAPTION,
+    color: COLORS.TEXT_PRIMARY,
+    fontWeight: "600",
+    marginTop: SIZES.SPACING.XS,
   },
   quickActionText: {
-    color: COLORS.TEXT_PRIMARY,
-    fontSize: SIZES.FONT.MEDIUM,
+    fontSize: 24,
   },
   quickActions: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    gap: SIZES.SPACING.SM,
     marginTop: SIZES.SPACING.SM,
     paddingHorizontal: SIZES.SPACING.MD,
   },
-
+  retryButton: {
+    backgroundColor: COLORS.PRIMARY,
+    borderRadius: SIZES.RADIUS.MEDIUM,
+    paddingHorizontal: SIZES.SPACING.XL,
+    paddingVertical: SIZES.SPACING.SM,
+  },
+  retryText: {
+    ...TEXT_STYLES.BUTTON_MEDIUM,
+    color: COLORS.TEXT_WHITE,
+    fontWeight: "600",
+  },
   section: {
     marginVertical: SIZES.SPACING.SM,
   },

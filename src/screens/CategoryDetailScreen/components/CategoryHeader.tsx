@@ -9,6 +9,7 @@ interface CategoryHeaderProps {
   backgroundImage: ImageSourcePropType;
   onBackPress: () => void;
   onSharePress?: () => void;
+  onFilterPress?: () => void;
 }
 
 const CategoryHeader: React.FC<CategoryHeaderProps> = ({
@@ -17,6 +18,7 @@ const CategoryHeader: React.FC<CategoryHeaderProps> = ({
   backgroundImage,
   onBackPress,
   onSharePress,
+  onFilterPress,
 }) => {
   return (
     <View style={styles.container}>
@@ -26,15 +28,26 @@ const CategoryHeader: React.FC<CategoryHeaderProps> = ({
           <TouchableOpacity style={styles.backButton} onPress={onBackPress}>
             <Ionicons name="arrow-back" size={SIZES.HEADER.ICON_SIZE} color={COLORS.BACKGROUND} />
           </TouchableOpacity>
-          {onSharePress && (
-            <TouchableOpacity style={styles.shareButton} onPress={onSharePress}>
-              <Ionicons
-                name="share-outline"
-                size={SIZES.HEADER.ICON_SIZE}
-                color={COLORS.BACKGROUND}
-              />
-            </TouchableOpacity>
-          )}
+          <View style={styles.rightButtons}>
+            {onFilterPress && (
+              <TouchableOpacity style={styles.filterButton} onPress={onFilterPress}>
+                <Ionicons
+                  name="options-outline"
+                  size={SIZES.HEADER.ICON_SIZE}
+                  color={COLORS.BACKGROUND}
+                />
+              </TouchableOpacity>
+            )}
+            {onSharePress && (
+              <TouchableOpacity style={styles.shareButton} onPress={onSharePress}>
+                <Ionicons
+                  name="share-outline"
+                  size={SIZES.HEADER.ICON_SIZE}
+                  color={COLORS.BACKGROUND}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
         <View style={styles.content}>
           <Text style={styles.title}>{title}</Text>
@@ -74,6 +87,15 @@ const styles = StyleSheet.create({
     color: COLORS.BACKGROUND,
     marginTop: SIZES.SPACING.XS,
   },
+  filterButton: {
+    alignItems: "center",
+    backgroundColor: COLORS.OVERLAY,
+    borderRadius: SIZES.HEADER.BUTTON_SIZE / 2,
+    height: SIZES.HEADER.BUTTON_SIZE,
+    justifyContent: "center",
+    marginRight: SIZES.SPACING.SM,
+    width: SIZES.HEADER.BUTTON_SIZE,
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -83,6 +105,9 @@ const styles = StyleSheet.create({
   overlay: {
     backgroundColor: COLORS.OVERLAY,
     flex: 1,
+  },
+  rightButtons: {
+    flexDirection: "row",
   },
   shareButton: {
     alignItems: "center",
