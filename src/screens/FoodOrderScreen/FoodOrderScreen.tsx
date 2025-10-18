@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
@@ -46,50 +47,57 @@ interface FoodListHeaderProps {
   onFoodPress: (food: Food) => void;
 }
 
-const FoodListHeader = React.memo<FoodListHeaderProps>(({
-  searchQuery,
-  onSearchChange,
-  onFilterPress,
-  hasActiveFilters,
-  selectedCategory,
-  onCategoryPress,
-  filteredCount,
-  currentPage,
-  totalPages,
-  onFoodPress,
-}) => {
-  return (
-    <View>
-      {/* Top Rated Carousel */}
-      <SectionHeader icon="trophy" iconColor={COLORS.WARNING} title="Món ăn được đánh giá cao nhất">
-        <TopRatedCarousel foods={topRatedFoods} onFoodPress={onFoodPress} />
-      </SectionHeader>
+// eslint-disable-next-line react/display-name
+const FoodListHeader = React.memo<FoodListHeaderProps>(
+  ({
+    searchQuery,
+    onSearchChange,
+    onFilterPress,
+    hasActiveFilters,
+    selectedCategory,
+    onCategoryPress,
+    filteredCount,
+    currentPage,
+    totalPages,
+    onFoodPress,
+  }) => {
+    return (
+      <View>
+        {/* Top Rated Carousel */}
+        <SectionHeader
+          icon="trophy"
+          iconColor={COLORS.WARNING}
+          title="Món ăn được đánh giá cao nhất"
+        >
+          <TopRatedCarousel foods={topRatedFoods} onFoodPress={onFoodPress} />
+        </SectionHeader>
 
-      {/* Search Bar */}
-      <SearchBar
-        searchQuery={searchQuery}
-        onSearchChange={onSearchChange}
-        onFilterPress={onFilterPress}
-        hasActiveFilters={hasActiveFilters}
-      />
+        {/* Search Bar */}
+        <SearchBar
+          searchQuery={searchQuery}
+          onSearchChange={onSearchChange}
+          onFilterPress={onFilterPress}
+          hasActiveFilters={hasActiveFilters}
+        />
 
-      {/* Quick Categories */}
-      <QuickCategories
-        categories={QUICK_CATEGORIES}
-        selectedCategory={selectedCategory}
-        onCategoryPress={onCategoryPress}
-      />
+        {/* Quick Categories */}
+        <QuickCategories
+          categories={QUICK_CATEGORIES}
+          selectedCategory={selectedCategory}
+          onCategoryPress={onCategoryPress}
+        />
 
-      {/* Results header */}
-      <ResultsHeader
-        totalResults={filteredCount}
-        selectedCategory={selectedCategory}
-        currentPage={currentPage}
-        totalPages={totalPages}
-      />
-    </View>
-  );
-});
+        {/* Results header */}
+        <ResultsHeader
+          totalResults={filteredCount}
+          selectedCategory={selectedCategory}
+          currentPage={currentPage}
+          totalPages={totalPages}
+        />
+      </View>
+    );
+  }
+);
 
 const FoodOrderScreen: React.FC = () => {
   const flatListRef = useRef<FlatList>(null);
@@ -143,8 +151,7 @@ const FoodOrderScreen: React.FC = () => {
       const query = searchQuery.toLowerCase();
       result = result.filter(
         (food) =>
-          food.title.toLowerCase().includes(query) ||
-          food.subtitle.toLowerCase().includes(query)
+          food.title.toLowerCase().includes(query) || food.subtitle.toLowerCase().includes(query)
       );
     }
 
@@ -224,15 +231,18 @@ const FoodOrderScreen: React.FC = () => {
     };
   }, [currentPage, selectedCategory, filters.sortBy, filters.priceRange]);
 
-  const handleCategoryPress = useCallback((categoryId: string) => {
-    if (selectedCategory === categoryId) {
-      setSelectedCategory(null);
-    } else {
-      setSelectedCategory(categoryId);
-    }
-    setCurrentPage(1);
-    // useEffect sẽ xử lý scroll sau khi data đã render
-  }, [selectedCategory]);
+  const handleCategoryPress = useCallback(
+    (categoryId: string) => {
+      if (selectedCategory === categoryId) {
+        setSelectedCategory(null);
+      } else {
+        setSelectedCategory(categoryId);
+      }
+      setCurrentPage(1);
+      // useEffect sẽ xử lý scroll sau khi data đã render
+    },
+    [selectedCategory]
+  );
 
   const handleApplyFilters = useCallback((newFilters: FilterOptions) => {
     setFilters(newFilters);

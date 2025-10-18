@@ -98,7 +98,7 @@ const Toast: React.FC<ToastProps> = ({ message, type = "info", duration = 3000, 
 };
 
 // Toast Manager Hook
-let toastCallback: ((toastProps: ToastProps) => void) | null = null;
+let toastCallback: Function | null = null;
 
 export const showToast = (toastProps: ToastProps) => {
   if (toastCallback) {

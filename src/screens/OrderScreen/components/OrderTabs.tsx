@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { COLORS, SIZES, TEXT_STYLES } from "@constants/index";
 
 interface OrderTabsProps {
@@ -18,48 +18,66 @@ const tabs = [
 const OrderTabs: React.FC<OrderTabsProps> = ({ activeTab, onTabChange }) => {
   return (
     <View style={styles.container}>
-      {tabs.map((tab) => (
-        <TouchableOpacity
-          key={tab.key}
-          style={[styles.tab, activeTab === tab.key && styles.activeTab]}
-          onPress={() => onTabChange(tab.key)}
-        >
-          <Text style={[styles.tabText, activeTab === tab.key && styles.activeTabText]}>
-            {tab.label}
-          </Text>
-        </TouchableOpacity>
-      ))}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {tabs.map((tab) => (
+          <TouchableOpacity
+            key={tab.key}
+            style={[styles.tab, activeTab === tab.key && styles.activeTab]}
+            onPress={() => onTabChange(tab.key)}
+            activeOpacity={0.8}
+          >
+            <Text style={[styles.tabText, activeTab === tab.key && styles.activeTabText]}>
+              {tab.label}
+            </Text>
+            {activeTab === tab.key && <View style={styles.underline} />}
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   activeTab: {
-    borderBottomColor: COLORS.PRIMARY,
-    borderBottomWidth: 2,
+    // no-op for pill style
   },
   activeTabText: {
     ...TEXT_STYLES.TAB_ACTIVE,
     color: COLORS.PRIMARY,
+    fontWeight: "700",
   },
   container: {
     backgroundColor: COLORS.BACKGROUND,
     borderBottomColor: COLORS.BORDER,
     borderBottomWidth: 1,
-    flexDirection: "row",
+  },
+  scrollContent: {
+    alignItems: "center",
+    paddingHorizontal: SIZES.SPACING.MD,
   },
   tab: {
     alignItems: "center",
-    borderBottomColor: COLORS.TRANSPARENT,
-    borderBottomWidth: 2,
-    flex: 1,
-    paddingBottom: SIZES.SPACING.SM,
-    paddingTop: SIZES.SPACING.SM,
+    backgroundColor: COLORS.BACKGROUND,
+    borderRadius: 999,
+    marginRight: SIZES.SPACING.SM,
+    paddingHorizontal: SIZES.SPACING.MD,
+    paddingVertical: SIZES.SPACING.SM,
+    position: "relative",
   },
   tabText: {
-    ...TEXT_STYLES.TAB_INACTIVE,
+    ...TEXT_STYLES.BODY_MEDIUM,
     color: COLORS.TEXT_SECONDARY,
-    textAlign: "center",
+  },
+  underline: {
+    backgroundColor: COLORS.PRIMARY,
+    borderRadius: 2,
+    height: 3,
+    marginTop: SIZES.SPACING.XS,
+    width: "60%",
   },
 });
 

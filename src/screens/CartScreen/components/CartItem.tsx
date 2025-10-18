@@ -108,30 +108,32 @@ const CartItem: React.FC<CartItemProps> = ({
               <Text style={styles.price}>{price}</Text>
             </View>
 
-            <View style={styles.qtyRow}>
+            <View style={styles.qtyPill}>
               <AnimatedPressable
-                style={[styles.qtyBtn, quantity <= 1 ? styles.qtyBtnDisabled : null]}
+                style={[styles.qtyPillBtn, quantity <= 1 ? styles.qtyPillBtnDisabled : null]}
                 onPress={onDecrease}
                 disabled={quantity <= 1}
-                scaleValue={0.9}
+                scaleValue={0.95}
                 hapticType="light"
               >
                 <Ionicons
                   name="remove"
-                  size={16}
+                  size={18}
                   color={quantity <= 1 ? COLORS.TEXT_LIGHT : COLORS.PRIMARY}
                 />
               </AnimatedPressable>
-              <View style={styles.qtyDisplay}>
+
+              <View style={styles.qtyPillDisplay}>
                 <Text style={styles.qty}>{quantity}</Text>
               </View>
+
               <AnimatedPressable
-                style={styles.qtyBtn}
+                style={styles.qtyPillBtn}
                 onPress={onIncrease}
-                scaleValue={0.9}
+                scaleValue={0.95}
                 hapticType="light"
               >
-                <Ionicons name="add" size={16} color={COLORS.PRIMARY} />
+                <Ionicons name="add" size={18} color={COLORS.PRIMARY} />
               </AnimatedPressable>
             </View>
           </View>
@@ -152,8 +154,7 @@ const CartItem: React.FC<CartItemProps> = ({
       {/* Delete button (revealed on swipe) */}
       <View style={styles.deleteAction}>
         <AnimatedPressable style={styles.deleteButton} onPress={handleDelete} hapticType="medium">
-          <Ionicons name="trash" size={24} color={COLORS.TEXT_WHITE} />
-          <Text style={styles.deleteText}>Xóa</Text>
+          <Ionicons name="trash" size={20} color={COLORS.TEXT_WHITE} />
         </AnimatedPressable>
       </View>
     </View>
@@ -213,19 +214,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 0,
     top: 0,
-    width: 80,
+    width: 72,
   },
   deleteButton: {
     alignItems: "center",
     height: "100%",
     justifyContent: "center",
     width: "100%",
-  },
-  deleteText: {
-    ...TEXT_STYLES.CAPTION,
-    color: COLORS.TEXT_WHITE,
-    fontWeight: "600",
-    marginTop: SIZES.SPACING.XS,
   },
   dot: {
     color: COLORS.TEXT_LIGHT,
@@ -271,26 +266,28 @@ const styles = StyleSheet.create({
     minWidth: 24,
     textAlign: "center",
   },
-  qtyBtn: {
+  /* pill style quantity */
+  qtyPill: {
     alignItems: "center",
     backgroundColor: COLORS.BACKGROUND_LIGHT,
-    borderRadius: SIZES.RADIUS.SMALL,
-    height: 32,
-    justifyContent: "center",
-    width: 32,
+    borderRadius: 20,
+    flexDirection: "row",
+    gap: SIZES.SPACING.SM,
+    padding: 4,
   },
-  qtyBtnDisabled: {
+  qtyPillBtn: {
+    alignItems: "center",
+    height: 36,
+    justifyContent: "center",
+    width: 36,
+  },
+  qtyPillBtnDisabled: {
     opacity: 0.5,
   },
-  qtyDisplay: {
+  qtyPillDisplay: {
     alignItems: "center",
     justifyContent: "center",
-    minWidth: 40,
-  },
-  qtyRow: {
-    alignItems: "center",
-    flexDirection: "row",
-    gap: SIZES.SPACING.XS,
+    minWidth: 36,
   },
   restaurant: {
     ...TEXT_STYLES.BODY_LARGE,

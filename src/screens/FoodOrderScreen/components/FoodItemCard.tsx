@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Image, StyleSheet, ImageSourcePropType } from "react-native";
+import { View, Text, Image, StyleSheet, ImageSourcePropType, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, {
   useSharedValue,
@@ -11,6 +11,8 @@ import Animated, {
 import * as Haptics from "expo-haptics";
 import AnimatedPressable from "@components/AnimatedPressable";
 import { COLORS, TEXT_STYLES, SIZES } from "@constants/index";
+
+const SHIMMER_COLOR = "rgba(255, 255, 255, 0.3)";
 
 interface FoodItemCardProps {
   image: ImageSourcePropType;
@@ -79,12 +81,17 @@ const FoodItemCard: React.FC<FoodItemCardProps> = ({
       {/* Image Section */}
       <View style={styles.imageContainer}>
         <Image source={image} style={styles.image} />
-        
+
         {/* Shimmer overlay effect */}
         <Animated.View style={[styles.shimmer, shimmerStyle]} />
 
         {/* Favorite Button */}
-        <AnimatedPressable style={styles.favoriteButton} onPress={handleFavorite} scaleValue={0.8}>
+        <TouchableOpacity
+          style={styles.favoriteButton}
+          onPress={handleFavorite}
+          activeOpacity={0.8}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
           <Animated.View style={heartAnimatedStyle}>
             <Ionicons
               name={isFavorite ? "heart" : "heart-outline"}
@@ -92,7 +99,7 @@ const FoodItemCard: React.FC<FoodItemCardProps> = ({
               color={isFavorite ? COLORS.ERROR : COLORS.BACKGROUND}
             />
           </Animated.View>
-        </AnimatedPressable>
+        </TouchableOpacity>
       </View>
 
       {/* Content Section */}
@@ -133,14 +140,14 @@ const FoodItemCard: React.FC<FoodItemCardProps> = ({
             <Text style={styles.price}>{price}</Text>
           </View>
 
-          <AnimatedPressable
+          <TouchableOpacity
             style={styles.addButton}
             onPress={handleAddToCart}
-            scaleValue={0.85}
-            hapticType="medium"
+            activeOpacity={0.85}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
             <Ionicons name="add" size={20} color={COLORS.BACKGROUND} />
-          </AnimatedPressable>
+          </TouchableOpacity>
         </View>
       </View>
     </AnimatedPressable>
@@ -148,17 +155,6 @@ const FoodItemCard: React.FC<FoodItemCardProps> = ({
 };
 
 const styles = StyleSheet.create({
-  address: {
-    ...TEXT_STYLES.CAPTION,
-    color: COLORS.TEXT_LIGHT,
-    flex: 1,
-    marginLeft: SIZES.SPACING.XS / 2,
-  },
-  addressRow: {
-    alignItems: "center",
-    flexDirection: "row",
-    marginTop: SIZES.SPACING.XS,
-  },
   addButton: {
     alignItems: "center",
     backgroundColor: COLORS.PRIMARY,
@@ -171,6 +167,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 4,
     width: 36,
+  },
+  address: {
+    ...TEXT_STYLES.CAPTION,
+    color: COLORS.TEXT_LIGHT,
+    flex: 1,
+    marginLeft: SIZES.SPACING.XS / 2,
+  },
+  addressRow: {
+    alignItems: "center",
+    flexDirection: "row",
+    marginTop: SIZES.SPACING.XS,
   },
   bottomRow: {
     alignItems: "center",
@@ -260,13 +267,8 @@ const styles = StyleSheet.create({
     flex: 1,
     fontWeight: "700",
   },
-  topRow: {
-    alignItems: "center",
-    flexDirection: "row",
-    marginBottom: SIZES.SPACING.XS / 2,
-  },
   shimmer: {
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: SHIMMER_COLOR,
     height: "100%",
     left: 0,
     position: "absolute",
@@ -278,7 +280,11 @@ const styles = StyleSheet.create({
     color: COLORS.TEXT_SECONDARY,
     marginTop: SIZES.SPACING.XS / 2,
   },
+  topRow: {
+    alignItems: "center",
+    flexDirection: "row",
+    marginBottom: SIZES.SPACING.XS / 2,
+  },
 });
 
 export default FoodItemCard;
-

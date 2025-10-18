@@ -44,7 +44,9 @@ const CategoryTabs: React.FC<CategoryTabsProps> = ({ tabs, activeTab, onTabChang
 
 const styles = StyleSheet.create({
   activeTab: {
-    borderBottomWidth: 0,
+    // stronger fill for active
+    backgroundColor: COLORS.BACKGROUND,
+    borderWidth: 0,
   },
   activeTabText: {
     color: COLORS.PRIMARY,
@@ -52,21 +54,30 @@ const styles = StyleSheet.create({
   },
   container: {
     backgroundColor: COLORS.BACKGROUND,
-    borderBottomColor: COLORS.BORDER,
-    borderBottomWidth: 1,
+    marginBottom: SIZES.SPACING.SM,
+    paddingVertical: SIZES.SPACING.SM,
   },
   tab: {
     alignItems: "center",
-    marginRight: SIZES.SPACING.LG,
-    paddingBottom: SIZES.SPACING.SM,
-    paddingTop: SIZES.SPACING.MD,
+    backgroundColor: COLORS.BACKGROUND_LIGHT + "CC", // translucent pill
+    borderRadius: 999,
+    elevation: 6,
+    marginRight: SIZES.SPACING.MD,
+    paddingHorizontal: SIZES.SPACING.MD,
+    paddingVertical: SIZES.SPACING.SM,
     position: "relative",
+    // subtle shadow to make pill float (iOS)
+    shadowColor: COLORS.SHADOW,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
   },
   tabText: {
     ...TEXT_STYLES.BODY_MEDIUM,
     color: COLORS.TEXT_SECONDARY,
   },
   tabsContainer: {
+    alignItems: "center",
     paddingHorizontal: SIZES.SPACING.MD,
   },
   underline: {

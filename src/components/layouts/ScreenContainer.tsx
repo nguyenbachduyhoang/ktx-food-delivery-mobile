@@ -76,6 +76,7 @@ const ScreenContainer: React.FC<ScreenContainerProps> = ({
           style,
         ]}
       >
+        {/* allow the centered wrapper to grow so VirtualizedLists can expand to fill the screen */}
         <View style={styles.centered}>{children}</View>
       </View>
     </SafeAreaView>
@@ -85,6 +86,7 @@ const ScreenContainer: React.FC<ScreenContainerProps> = ({
 const styles = StyleSheet.create({
   centered: {
     alignSelf: "center",
+    flex: 1,
     maxWidth: 900,
     width: "100%",
   },

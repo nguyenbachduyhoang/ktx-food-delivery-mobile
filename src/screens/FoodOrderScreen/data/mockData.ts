@@ -39,7 +39,8 @@ export const topRatedFoods: Food[] = [
     kcal: "350",
     price: "75,000đ",
     category: "anvat",
-    description: "Nguyên liệu Cá tây sơ lấy, tôm tây, xúc xích Đức By, 2 cơm com, 2v Hồ lô, 2 cơn Tôm, 5 bạu nà, 2 bành bao cành. Ăn kèm rau muống, Cải chua, Dưa leo🥒 và sốt thần thánh.",
+    description:
+      "Nguyên liệu Cá tây sơ lấy, tôm tây, xúc xích Đức By, 2 cơm com, 2v Hồ lô, 2 cơn Tôm, 5 bạu nà, 2 bành bao cành. Ăn kèm rau muống, Cải chua, Dưa leo🥒 và sốt thần thánh.",
   },
   {
     id: "top2",
@@ -54,7 +55,8 @@ export const topRatedFoods: Food[] = [
     kcal: "450",
     price: "55,000đ",
     category: "pho",
-    description: "Phở bò truyền thống với nước dùng được ninh từ xương trong 24 giờ, thịt bò tươi ngon, bánh phở dai mềm. Ăn kèm với rau thơm, giá đỗ, chanh và tương ớt đặc biệt của quán.",
+    description:
+      "Phở bò truyền thống với nước dùng được ninh từ xương trong 24 giờ, thịt bò tươi ngon, bánh phở dai mềm. Ăn kèm với rau thơm, giá đỗ, chanh và tương ớt đặc biệt của quán.",
   },
   {
     id: "top3",
@@ -69,7 +71,8 @@ export const topRatedFoods: Food[] = [
     kcal: "580",
     price: "45,000đ",
     category: "com",
-    description: "Cơm tấm sườn nướng thơm phức, bì giòn rụm, chả trứng đặc biệt. Đi kèm với nước mắm pha chuẩn vị miền Nam, dưa leo, cà chua và đồ chua tự làm. Cơm được chọn từ gạo tấm chất lượng cao.",
+    description:
+      "Cơm tấm sườn nướng thơm phức, bì giòn rụm, chả trứng đặc biệt. Đi kèm với nước mắm pha chuẩn vị miền Nam, dưa leo, cà chua và đồ chua tự làm. Cơm được chọn từ gạo tấm chất lượng cao.",
   },
   {
     id: "top4",
@@ -84,7 +87,8 @@ export const topRatedFoods: Food[] = [
     kcal: "420",
     price: "50,000đ",
     category: "bun",
-    description: "Bún bò Huế chuẩn vị xứ Huế với nước dùng sả tía to, thịt bò, chả cua, giò heo. Được tẩm ướp gia vị đậm đà, ăn kèm rau sống tươi và mắm ruốc đặc trưng của miền Trung.",
+    description:
+      "Bún bò Huế chuẩn vị xứ Huế với nước dùng sả tía to, thịt bò, chả cua, giò heo. Được tẩm ướp gia vị đậm đà, ăn kèm rau sống tươi và mắm ruốc đặc trưng của miền Trung.",
   },
   {
     id: "top5",
@@ -99,7 +103,8 @@ export const topRatedFoods: Food[] = [
     kcal: "280",
     price: "35,000đ",
     category: "trasua",
-    description: "Trà sữa trân châu đường đen nguyên chất với trà đen Ô Long cao cấp, sữa tươi Úc, trân châu dẻo mềm được nấu mỗi ngày. Độ ngọt có thể điều chỉnh theo ý thích.",
+    description:
+      "Trà sữa trân châu đường đen nguyên chất với trà đen Ô Long cao cấp, sữa tươi Úc, trân châu dẻo mềm được nấu mỗi ngày. Độ ngọt có thể điều chỉnh theo ý thích.",
   },
 ];
 
@@ -119,7 +124,8 @@ export const mockFoodData: Food[] = [
     kcal: "580",
     price: "45,000đ",
     category: "com",
-    description: "Cơm tấm sườn nướng thơm phức, bì giòn rụm, chả trứng đặc biệt. Đi kèm với nước mắm pha chuẩn vị miền Nam, dưa leo, cà chua và đồ chua tự làm.",
+    description:
+      "Cơm tấm sườn nướng thơm phức, bì giòn rụm, chả trứng đặc biệt. Đi kèm với nước mắm pha chuẩn vị miền Nam, dưa leo, cà chua và đồ chua tự làm.",
   },
   {
     id: "2",
@@ -134,7 +140,8 @@ export const mockFoodData: Food[] = [
     kcal: "520",
     price: "40,000đ",
     category: "com",
-    description: "Cơm gà xối mỡ truyền thống với gà luộc chín vàng, da giòn, thịt ngọt. Xối mỡ gà thơm nồng, ăn kèm nước chấm gừng và rau răm.",
+    description:
+      "Cơm gà xối mỡ truyền thống với gà luộc chín vàng, da giòn, thịt ngọt. Xối mỡ gà thơm nồng, ăn kèm nước chấm gừng và rau răm.",
   },
   {
     id: "3",
@@ -149,7 +156,8 @@ export const mockFoodData: Food[] = [
     kcal: "650",
     price: "55,000đ",
     category: "com",
-    description: "Cơm chiên đặc biệt với tôm tươi, mực, ghẹ, trứng gà, rau củ xào giòn. Hạt cơm tơi, khô, thấm gia vị đậm đà theo công thức riêng.",
+    description:
+      "Cơm chiên đặc biệt với tôm tươi, mực, ghẹ, trứng gà, rau củ xào giòn. Hạt cơm tơi, khô, thấm gia vị đậm đà theo công thức riêng.",
   },
   {
     id: "4",
@@ -164,7 +172,8 @@ export const mockFoodData: Food[] = [
     kcal: "550",
     price: "42,000đ",
     category: "com",
-    description: "Sườn nướng mật ong thơm lừng, vị ngọt đậm đà. Cơm tấm dẻo mềm, ăn kèm với trứng ốp la, mỡ hành và nước mắm pha chuẩn.",
+    description:
+      "Sườn nướng mật ong thơm lừng, vị ngọt đậm đà. Cơm tấm dẻo mềm, ăn kèm với trứng ốp la, mỡ hành và nước mắm pha chuẩn.",
   },
   {
     id: "5",
@@ -179,7 +188,8 @@ export const mockFoodData: Food[] = [
     kcal: "600",
     price: "48,000đ",
     category: "com",
-    description: "Cơm rang Dương Châu kiểu Hong Kong với xá xíu, lạp xưởng, tôm, trứng, đậu Hà Lan. Rang với lửa lớn tạo hương thơm đặc trưng.",
+    description:
+      "Cơm rang Dương Châu kiểu Hong Kong với xá xíu, lạp xưởng, tôm, trứng, đậu Hà Lan. Rang với lửa lớn tạo hương thơm đặc trưng.",
   },
 
   // Bún (15 món)
@@ -196,7 +206,8 @@ export const mockFoodData: Food[] = [
     kcal: "420",
     price: "50,000đ",
     category: "bun",
-    description: "Bún bò Huế chuẩn vị xứ Huế với nước dùng sả tía to, thịt bò, chả cua, giò heo. Được tẩm ướp gia vị đậm đà, ăn kèm rau sống tươi.",
+    description:
+      "Bún bò Huế chuẩn vị xứ Huế với nước dùng sả tía to, thịt bò, chả cua, giò heo. Được tẩm ướp gia vị đậm đà, ăn kèm rau sống tươi.",
   },
   {
     id: "7",
@@ -211,7 +222,8 @@ export const mockFoodData: Food[] = [
     kcal: "380",
     price: "45,000đ",
     category: "bun",
-    description: "Chả nướng thơm lừng với nước mắm pha chua ngọt vừa vặn. Bún tươi dai, ăn kèm rau sống và nem chua Thanh Hóa.",
+    description:
+      "Chả nướng thơm lừng với nước mắm pha chua ngọt vừa vặn. Bún tươi dai, ăn kèm rau sống và nem chua Thanh Hóa.",
   },
   {
     id: "8",
@@ -226,7 +238,8 @@ export const mockFoodData: Food[] = [
     kcal: "450",
     price: "55,000đ",
     category: "bun",
-    description: "Đậu phụ rán vàng giòn, chả cốm, nem chua, thịt luộc. Mắm tôm thơm nồng pha chế chuẩn vị Hà Nội, ăn kèm bún tươi và rau sống.",
+    description:
+      "Đậu phụ rán vàng giòn, chả cốm, nem chua, thịt luộc. Mắm tôm thơm nồng pha chế chuẩn vị Hà Nội, ăn kèm bún tươi và rau sống.",
   },
   {
     id: "9",
@@ -241,7 +254,8 @@ export const mockFoodData: Food[] = [
     kcal: "400",
     price: "42,000đ",
     category: "bun",
-    description: "Riêu cua đồng béo ngậy, cà chua chua ngọt, đậu bắp mềm. Nước dùng trong veo, thơm mùi mắm ruốc, ăn kèm rau muống và giá.",
+    description:
+      "Riêu cua đồng béo ngậy, cà chua chua ngọt, đậu bắp mềm. Nước dùng trong veo, thơm mùi mắm ruốc, ăn kèm rau muống và giá.",
   },
   {
     id: "10",
@@ -256,7 +270,8 @@ export const mockFoodData: Food[] = [
     kcal: "410",
     price: "48,000đ",
     category: "bun",
-    description: "Thịt nướng săn chắc, thấm gia vị thơm phức. Bún tươi dai, ăn kèm rau sống, đồ chua, đậu phộng rang và nước mắm ngon.",
+    description:
+      "Thịt nướng săn chắc, thấm gia vị thơm phức. Bún tươi dai, ăn kèm rau sống, đồ chua, đậu phộng rang và nước mắm ngon.",
   },
 
   // Phở (15 món)
@@ -273,7 +288,8 @@ export const mockFoodData: Food[] = [
     kcal: "450",
     price: "55,000đ",
     category: "pho",
-    description: "Phở bò truyền thống với nước dùng được ninh từ xương 24 giờ, thịt bò tươi ngon, bánh phở dai mềm. Ăn kèm rau thơm, giá đỗ và chanh.",
+    description:
+      "Phở bò truyền thống với nước dùng được ninh từ xương 24 giờ, thịt bò tươi ngon, bánh phở dai mềm. Ăn kèm rau thơm, giá đỗ và chanh.",
   },
   {
     id: "12",
@@ -670,14 +686,15 @@ export const mockFoodData: Food[] = [
     title: `Món ăn đặc biệt ${i + 41}`,
     subtitle: `Quán ${Math.floor(i / 10) + 1}`,
     address: getAddress(i),
-    rating: 4.3 + (Math.random() * 0.6),
+    rating: 4.3 + Math.random() * 0.6,
     ratingCount: `${Math.floor(Math.random() * 10) + 1}k+`,
     isFavorite: Math.random() > 0.7,
     time: `${5 + Math.floor(Math.random() * 20)}-${10 + Math.floor(Math.random() * 20)}`,
     kcal: `${200 + Math.floor(Math.random() * 400)}`,
     price: `${20 + Math.floor(Math.random() * 100)},000đ`,
     category: ["com", "bun", "pho", "mi", "trasua", "caphe", "anvat", "banhmi"][i % 8],
-    description: "Món ăn đặc biệt được chế biến từ nguyên liệu tươi ngon, đậm đà hương vị. Ăn kèm với rau sống và nước chấm đặc trưng.",
+    description:
+      "Món ăn đặc biệt được chế biến từ nguyên liệu tươi ngon, đậm đà hương vị. Ăn kèm với rau sống và nước chấm đặc trưng.",
   })),
 ].map((item, index) => {
   // Add default descriptions for items without them
@@ -712,11 +729,10 @@ export const mockFoodData: Food[] = [
     "39": "Bánh mì chả cá Đà Nẵng với chả cá chiên vàng, rau sống tươi. Chấm nước mắm pha chua ngọt cay.",
     "40": "Bánh mì thập cẩm đủ vị với thịt nguội, pate, jambon, trứng, xúc xích. Đồ chua, rau thơm đầy đủ.",
   };
-  
+
   return {
     ...item,
     address: item.address || getAddress(index),
     description: item.description || descriptions[item.id] || undefined,
   };
 });
-
