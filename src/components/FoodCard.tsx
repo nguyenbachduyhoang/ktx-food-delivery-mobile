@@ -1,7 +1,10 @@
-import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity, ImageSourcePropType } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Image, StyleSheet, ImageSourcePropType } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { COLORS, TEXT_STYLES } from "@constants/index";
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
+import AnimatedPressable from "./AnimatedPressable";
+import { COLORS, TEXT_STYLES, SIZES } from "@constants/index";
 
 // Color constants
 const COLOR_WHITE = COLORS.BACKGROUND;
@@ -34,51 +37,89 @@ const FoodCard: React.FC<FoodCardProps> = ({
   subtitle,
   rating,
   ratingCount,
-  isFavorite,
+  isFavorite: initialFavorite = false,
   time,
   kcal,
   price,
   onAdd,
   onFavorite,
-}) => (
-  <View style={styles.card}>
-    {/* Top row: rating + heart */}
-    <View style={styles.topRow}>
-      <View style={styles.ratingRow}>
-        <Ionicons name="star" size={18} color={COLOR_STAR} style={styles.iconMarginRight} />
-        <Text style={styles.rating}>{rating}</Text>
-        <Text style={styles.ratingCount}>({ratingCount})</Text>
+}) => {
+  const [isFavorite, setIsFavorite] = useState(initialFavorite);
+  const heartScale = useSharedValue(1);
+
+  const heartAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: heartScale.value }],
+  }));
+
+  const handleFavorite = () => {
+    heartScale.value = withSpring(1.3, {}, () => {
+      heartScale.value = withSpring(1);
+    });
+    setIsFavorite(!isFavorite);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    onFavorite?.();
+  };
+
+  const handleAdd = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onAdd?.();
+  };
+
+  return (
+    <AnimatedPressable style={styles.card} enableHaptic={false}>
+      {/* Top row: rating + heart */}
+      <View style={styles.topRow}>
+        <View style={styles.ratingRow}>
+          <Ionicons name="star" size={18} color={COLOR_STAR} style={styles.iconMarginRight} />
+          <Text style={styles.rating}>{rating}</Text>
+          <Text style={styles.ratingCount}>({ratingCount})</Text>
+        </View>
+        <AnimatedPressable onPress={handleFavorite} enableHaptic={false}>
+          <Animated.View style={heartAnimatedStyle}>
+            <Ionicons
+              name={isFavorite ? "heart" : "heart-outline"}
+              size={22}
+              color={isFavorite ? COLORS.ERROR : COLOR_HEART}
+            />
+          </Animated.View>
+        </AnimatedPressable>
       </View>
-      <TouchableOpacity onPress={onFavorite}>
-        <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={22} color={COLOR_HEART} />
-      </TouchableOpacity>
-    </View>
-    {/* Image */}
-    <Image source={image} style={styles.image} />
-    {/* Title & subtitle */}
-    <Text style={styles.title}>{title}</Text>
-    <Text style={styles.subtitle}>{subtitle}</Text>
-    {/* Info row */}
-    <View style={styles.infoRow}>
-      <Ionicons
-        name="time-outline"
-        size={16}
-        color={COLOR_TEXT_SECONDARY}
-        style={styles.iconMarginRight}
-      />
-      <Text style={styles.infoText}>{time}</Text>
-      <Text style={styles.dot}>•</Text>
-      <Text style={styles.infoText}>{kcal} Kcal</Text>
-    </View>
-    {/* Price & add button */}
-    <View style={styles.bottomRow}>
-      <Text style={styles.price}>{price}</Text>
-      <TouchableOpacity style={styles.addBtn} onPress={onAdd}>
-        <Ionicons name="add" size={22} color={COLOR_WHITE} />
-      </TouchableOpacity>
-    </View>
-  </View>
-);
+      {/* Image */}
+      <Image source={image} style={styles.image} />
+      {/* Title & subtitle */}
+      <Text style={styles.title} numberOfLines={2}>
+        {title}
+      </Text>
+      <Text style={styles.subtitle} numberOfLines={1}>
+        {subtitle}
+      </Text>
+      {/* Info row */}
+      <View style={styles.infoRow}>
+        <Ionicons
+          name="time-outline"
+          size={16}
+          color={COLOR_TEXT_SECONDARY}
+          style={styles.iconMarginRight}
+        />
+        <Text style={styles.infoText}>{time}</Text>
+        <Text style={styles.dot}>•</Text>
+        <Text style={styles.infoText}>{kcal} Kcal</Text>
+      </View>
+      {/* Price & add button */}
+      <View style={styles.bottomRow}>
+        <Text style={styles.price}>{price}</Text>
+        <AnimatedPressable
+          style={styles.addBtn}
+          onPress={handleAdd}
+          scaleValue={0.85}
+          enableHaptic={false}
+        >
+          <Ionicons name="add" size={22} color={COLOR_WHITE} />
+        </AnimatedPressable>
+      </View>
+    </AnimatedPressable>
+  );
+};
 
 const styles = StyleSheet.create({
   addBtn: {
@@ -96,15 +137,15 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: COLOR_WHITE,
     borderColor: COLOR_BORDER,
-    borderRadius: 14,
+    borderRadius: SIZES.RADIUS.LARGE,
     borderWidth: 1,
-    elevation: 2,
+    elevation: 3,
     marginVertical: 6,
     padding: 10,
     shadowColor: COLOR_BLACK,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
     width: 160,
   },
   dot: {

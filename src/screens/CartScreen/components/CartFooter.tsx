@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import Button from "@components/ui/Button";
 import { COLORS, SIZES, TEXT_STYLES } from "@constants/index";
 
@@ -11,51 +12,114 @@ interface CartFooterProps {
 }
 
 const CartFooter: React.FC<CartFooterProps> = ({ itemCount, subtotal, shipping, onCheckout }) => {
-  // Tính tổng thanh toán (nếu cần logic phức tạp hơn)
-  const total = subtotal;
+  const total = subtotal; // In real app, calculate: subtotal + shipping - discount
 
   return (
     <View style={styles.container}>
-      <View style={styles.row}>
-        <Text style={styles.label}>Tổng cộng ({itemCount} món)</Text>
-        <Text style={styles.value}>{subtotal}</Text>
-      </View>
+      {/* Voucher Section */}
+      <TouchableOpacity style={styles.voucherSection} activeOpacity={0.8}>
+        <View style={styles.voucherLeft}>
+          <View style={styles.voucherIcon}>
+            <Ionicons name="pricetags" size={20} color={COLORS.PRIMARY} />
+          </View>
+          <View style={styles.voucherContent}>
+            <Text style={styles.voucherTitle}>Mã giảm giá</Text>
+            <Text style={styles.voucherSubtitle}>Chọn hoặc nhập mã</Text>
+          </View>
+        </View>
+        <Ionicons name="chevron-forward" size={24} color={COLORS.TEXT_LIGHT} />
+      </TouchableOpacity>
 
-      <View style={styles.row}>
-        <Text style={styles.label}>Phí giao hàng</Text>
-        <Text style={[styles.value, styles.free]}>{shipping}</Text>
+      <View style={styles.divider} />
+
+      {/* Price Summary */}
+      <View style={styles.summarySection}>
+        <View style={styles.row}>
+          <Text style={styles.label}>Tổng tiền hàng</Text>
+          <Text style={styles.value}>{subtotal}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <View style={styles.shippingLabel}>
+            <Text style={styles.label}>Phí giao hàng</Text>
+            <Ionicons
+              name="information-circle-outline"
+              size={16}
+              color={COLORS.TEXT_LIGHT}
+              style={styles.infoIcon}
+            />
+          </View>
+          <Text style={[styles.value, styles.free]}>{shipping}</Text>
+        </View>
       </View>
 
       <View style={styles.divider} />
 
-      <View style={styles.totalRow}>
-        <View style={styles.totalInfo}>
-          <Text style={styles.totalLabel}>Tổng thanh toán</Text>
+      {/* Total */}
+      <View style={styles.totalSection}>
+        <View style={styles.totalRow}>
+          <View style={styles.totalLeft}>
+            <Text style={styles.totalLabel}>Tổng thanh toán</Text>
+            <Text style={styles.itemsText}>({itemCount} món)</Text>
+          </View>
           <Text style={styles.totalValue}>{total}</Text>
         </View>
-        <Button title="Đặt hàng ngay" onPress={onCheckout || (() => {})} />
       </View>
+
+      {/* Checkout Button */}
+      <Button
+        title="Tiến hành đặt hàng"
+        onPress={onCheckout || (() => {})}
+        style={styles.checkoutButton}
+        textStyle={styles.checkoutButtonText}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  checkoutButton: {
+    backgroundColor: COLORS.PRIMARY,
+    borderRadius: SIZES.RADIUS.MEDIUM,
+    marginTop: SIZES.SPACING.MD,
+    paddingVertical: SIZES.SPACING.MD,
+  },
+  checkoutButtonText: {
+    ...TEXT_STYLES.BUTTON_LARGE,
+    color: COLORS.BACKGROUND,
+    fontWeight: "700",
+  },
   container: {
     backgroundColor: COLORS.BACKGROUND,
-    borderColor: COLORS.DIVIDER,
+    borderTopColor: COLORS.DIVIDER,
     borderTopWidth: 1,
-    padding: SIZES.SPACING.MD,
+    elevation: 8,
+    paddingBottom: SIZES.SPACING.MD,
+    paddingHorizontal: SIZES.SPACING.MD,
+    paddingTop: SIZES.SPACING.MD,
+    shadowColor: COLORS.TEXT_PRIMARY,
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
   },
   divider: {
     backgroundColor: COLORS.DIVIDER,
     height: 1,
-    marginVertical: SIZES.SPACING.SM,
+    marginVertical: SIZES.SPACING.MD,
   },
   free: {
     color: COLORS.SUCCESS,
   },
+  infoIcon: {
+    marginLeft: SIZES.SPACING.XS / 2,
+  },
+  itemsText: {
+    ...TEXT_STYLES.CAPTION,
+    color: COLORS.TEXT_LIGHT,
+    marginTop: 2,
+  },
   label: {
-    ...TEXT_STYLES.BODY_SMALL,
+    ...TEXT_STYLES.BODY_MEDIUM,
     color: COLORS.TEXT_SECONDARY,
   },
   row: {
@@ -64,27 +128,73 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: SIZES.SPACING.SM,
   },
-  totalInfo: {
-    flex: 1,
+  shippingLabel: {
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  summarySection: {
+    marginBottom: 0,
   },
   totalLabel: {
-    ...TEXT_STYLES.CAPTION,
-    color: COLORS.TEXT_SECONDARY,
-    marginBottom: 4,
+    ...TEXT_STYLES.BODY_LARGE,
+    color: COLORS.TEXT_PRIMARY,
+    fontWeight: "600",
+  },
+  totalLeft: {
+    flex: 1,
   },
   totalRow: {
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
   },
+  totalSection: {
+    marginBottom: 0,
+  },
   totalValue: {
-    ...TEXT_STYLES.H4,
+    ...TEXT_STYLES.H3,
     color: COLORS.PRIMARY,
     fontWeight: "700",
   },
   value: {
     ...TEXT_STYLES.BODY_MEDIUM,
-    fontWeight: "700",
+    color: COLORS.TEXT_PRIMARY,
+    fontWeight: "600",
+  },
+  voucherContent: {
+    flex: 1,
+    marginLeft: SIZES.SPACING.SM,
+  },
+  voucherIcon: {
+    alignItems: "center",
+    backgroundColor: COLORS.PRIMARY_LIGHT + "20",
+    borderRadius: SIZES.RADIUS.SMALL,
+    height: 40,
+    justifyContent: "center",
+    width: 40,
+  },
+  voucherLeft: {
+    alignItems: "center",
+    flex: 1,
+    flexDirection: "row",
+  },
+  voucherSection: {
+    alignItems: "center",
+    backgroundColor: COLORS.BACKGROUND_LIGHT,
+    borderRadius: SIZES.RADIUS.MEDIUM,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: SIZES.SPACING.MD,
+  },
+  voucherSubtitle: {
+    ...TEXT_STYLES.CAPTION,
+    color: COLORS.TEXT_LIGHT,
+    marginTop: 2,
+  },
+  voucherTitle: {
+    ...TEXT_STYLES.BODY_MEDIUM,
+    color: COLORS.TEXT_PRIMARY,
+    fontWeight: "600",
   },
 });
 

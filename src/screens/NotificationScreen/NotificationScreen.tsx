@@ -68,9 +68,11 @@ const NotificationScreen: React.FC = () => {
     />
   );
 
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
   if (notifications.length === 0) {
     return (
-      <>
+      <View style={styles.container}>
         <SharedHeader
           title="Thông báo"
           showNotificationBadge={false}
@@ -78,14 +80,12 @@ const NotificationScreen: React.FC = () => {
           onRightButtonPress={markAllAsRead}
         />
         <EmptyNotification />
-      </>
+      </View>
     );
   }
 
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
-
   return (
-    <>
+    <View style={styles.container}>
       <SharedHeader
         title="Thông báo"
         showNotificationBadge={true}
@@ -103,11 +103,14 @@ const NotificationScreen: React.FC = () => {
           contentContainerStyle={styles.listContent}
         />
       </View>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   flexFill: {
     flex: 1,
   },

@@ -3,8 +3,8 @@ import { Text, StyleSheet, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import withScreenContainer from "@components/layouts/withScreenContainer";
-import Button from "../components/Button";
-import deliveryImg from "../../assets/welcome/delivery.png"; // ✅ import thay cho require
+import Button from "../../components/Button";
+import deliveryImg from "../../../assets/welcome/delivery.png"; // ✅ import thay cho require
 import { StackNavigationProp } from "@react-navigation/stack";
 import { COLORS, TEXT_STYLES } from "@constants/index";
 

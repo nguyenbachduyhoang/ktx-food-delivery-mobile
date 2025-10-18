@@ -19,7 +19,7 @@ const OrderScreen: React.FC = () => {
   };
 
   return (
-    <>
+    <View style={styles.container}>
       <SharedHeader
         title="Đơn hàng"
         showSearch={true}
@@ -28,11 +28,14 @@ const OrderScreen: React.FC = () => {
       />
       <OrderTabs activeTab={activeTab} onTabChange={handleTabChange} />
       <View style={styles.content}>{renderContent()}</View>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   content: {
     flex: 1,
   },

@@ -1,13 +1,12 @@
 import React from "react";
 import { Image, ImageSourcePropType, StyleSheet } from "react-native";
-
-const COLORS = {
-  avatarBg: "#E0E0E0",
-};
+import { COLORS } from "@constants/index";
 
 interface AvatarProps {
   source: ImageSourcePropType;
 }
+
+const AVATAR_SIZE = 48;
 
 const Avatar: React.FC<AvatarProps> = ({ source }) => (
   <Image source={source} style={styles.avatar} />
@@ -15,10 +14,10 @@ const Avatar: React.FC<AvatarProps> = ({ source }) => (
 
 const styles = StyleSheet.create({
   avatar: {
-    backgroundColor: COLORS.avatarBg,
-    borderRadius: 24,
-    height: 48,
-    width: 48,
+    backgroundColor: COLORS.BACKGROUND_DARK,
+    borderRadius: AVATAR_SIZE / 2,
+    height: AVATAR_SIZE,
+    width: AVATAR_SIZE,
   },
 });
 

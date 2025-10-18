@@ -1,6 +1,9 @@
 import React from "react";
-import { Image, ImageSourcePropType, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, ImageSourcePropType, StyleSheet, Text, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { GestureDetector, Gesture } from "react-native-gesture-handler";
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
+import AnimatedPressable from "@components/AnimatedPressable";
 import { COLORS, SIZES, TEXT_STYLES } from "@constants/index";
 
 interface CartItemProps {
@@ -15,6 +18,7 @@ interface CartItemProps {
   onIncrease?: () => void;
   onDecrease?: () => void;
   onToggle?: () => void;
+  onDelete?: () => void;
 }
 
 const CartItem: React.FC<CartItemProps> = ({
@@ -29,87 +33,165 @@ const CartItem: React.FC<CartItemProps> = ({
   onIncrease,
   onDecrease,
   onToggle,
+  onDelete,
 }) => {
+  const translateX = useSharedValue(0);
+  const SWIPE_THRESHOLD = -80;
+
+  const panGesture = Gesture.Pan()
+    .activeOffsetX([-10, 10])
+    .onUpdate((event) => {
+      // Only allow left swipe
+      if (event.translationX < 0) {
+        translateX.value = Math.max(event.translationX, SWIPE_THRESHOLD);
+      }
+    })
+    .onEnd(() => {
+      if (translateX.value < SWIPE_THRESHOLD / 2) {
+        translateX.value = withSpring(SWIPE_THRESHOLD);
+      } else {
+        translateX.value = withSpring(0);
+      }
+    });
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
+
+  const handleDelete = () => {
+    translateX.value = withSpring(0);
+    onDelete?.();
+  };
+
   return (
-    <View style={styles.card}>
-      <View style={styles.rowTop}>
-        <TouchableOpacity
-          style={[styles.checkbox, checked ? styles.checkboxChecked : styles.checkboxUnchecked]}
-          onPress={onToggle}
-          activeOpacity={0.7}
-        >
-          {checked && <Ionicons name="checkmark" size={16} color={COLORS.BACKGROUND} />}
-        </TouchableOpacity>
+    <View style={styles.wrapper}>
+      <GestureDetector gesture={panGesture}>
+        <Animated.View style={[styles.card, checked && styles.cardChecked, animatedStyle]}>
+          <View style={styles.rowTop}>
+            <AnimatedPressable
+              style={[styles.checkbox, checked ? styles.checkboxChecked : styles.checkboxUnchecked]}
+              onPress={onToggle}
+              enableHaptic={true}
+              hapticType="light"
+            >
+              {checked && <Ionicons name="checkmark" size={18} color={COLORS.BACKGROUND} />}
+            </AnimatedPressable>
 
-        <View style={styles.thumbWrap}>
-          <Image source={image} style={styles.image} />
-        </View>
+            <View style={styles.thumbWrap}>
+              <Image source={image} style={styles.image} />
+              {checked && (
+                <View style={styles.imageOverlay}>
+                  <Ionicons name="checkmark-circle" size={24} color={COLORS.PRIMARY} />
+                </View>
+              )}
+            </View>
 
-        <View style={styles.content}>
-          <Text style={styles.restaurant} numberOfLines={1}>
-            {restaurant}
-          </Text>
-          <Text style={styles.title} numberOfLines={2}>
-            {title}
-          </Text>
-          <View style={styles.metaRow}>
-            <Text style={styles.meta}>{distance}</Text>
-            <Text style={styles.dot}>•</Text>
-            <Ionicons name="star" size={12} color="#FFA500" />
-            <Text style={styles.meta}>{rating} (1.2k)</Text>
+            <View style={styles.content}>
+              <Text style={styles.restaurant} numberOfLines={1}>
+                {restaurant}
+              </Text>
+              <Text style={styles.title} numberOfLines={2}>
+                {title}
+              </Text>
+              <View style={styles.metaRow}>
+                <Ionicons name="location-outline" size={14} color={COLORS.TEXT_LIGHT} />
+                <Text style={styles.meta}>{distance}</Text>
+                <Text style={styles.dot}>•</Text>
+                <Ionicons name="star" size={14} color={COLORS.WARNING} />
+                <Text style={styles.meta}>{rating}</Text>
+              </View>
+            </View>
           </View>
-        </View>
 
-        <View style={styles.actions}>
-          <Text style={styles.price}>{price}</Text>
-          <View style={styles.qtyRow}>
-            <TouchableOpacity style={styles.qtyBtn} onPress={onDecrease} activeOpacity={0.7}>
-              <Ionicons name="remove" size={14} color={COLORS.TEXT_PRIMARY} />
-            </TouchableOpacity>
-            <Text style={styles.qty}>{quantity}</Text>
-            <TouchableOpacity style={styles.qtyBtn} onPress={onIncrease} activeOpacity={0.7}>
-              <Ionicons name="add" size={14} color={COLORS.TEXT_PRIMARY} />
-            </TouchableOpacity>
+          <View style={styles.bottomRow}>
+            <View style={styles.priceContainer}>
+              <Text style={styles.price}>{price}</Text>
+            </View>
+
+            <View style={styles.qtyRow}>
+              <AnimatedPressable
+                style={[styles.qtyBtn, quantity <= 1 ? styles.qtyBtnDisabled : null]}
+                onPress={onDecrease}
+                disabled={quantity <= 1}
+                scaleValue={0.9}
+                hapticType="light"
+              >
+                <Ionicons
+                  name="remove"
+                  size={16}
+                  color={quantity <= 1 ? COLORS.TEXT_LIGHT : COLORS.PRIMARY}
+                />
+              </AnimatedPressable>
+              <View style={styles.qtyDisplay}>
+                <Text style={styles.qty}>{quantity}</Text>
+              </View>
+              <AnimatedPressable
+                style={styles.qtyBtn}
+                onPress={onIncrease}
+                scaleValue={0.9}
+                hapticType="light"
+              >
+                <Ionicons name="add" size={16} color={COLORS.PRIMARY} />
+              </AnimatedPressable>
+            </View>
           </View>
-        </View>
+
+          <AnimatedPressable style={styles.voucherRow} scaleValue={0.98} hapticType="light">
+            <View style={styles.voucherIcon}>
+              <Ionicons name="pricetag" size={16} color={COLORS.PRIMARY} />
+            </View>
+            <View style={styles.voucherContent}>
+              <Text style={styles.voucherText}>Áp dụng voucher quán</Text>
+              <Text style={styles.voucherDesc}>Giảm thêm 10% - 20k cho đơn từ 50k</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={COLORS.TEXT_LIGHT} />
+          </AnimatedPressable>
+        </Animated.View>
+      </GestureDetector>
+
+      {/* Delete button (revealed on swipe) */}
+      <View style={styles.deleteAction}>
+        <AnimatedPressable style={styles.deleteButton} onPress={handleDelete} hapticType="medium">
+          <Ionicons name="trash" size={24} color={COLORS.TEXT_WHITE} />
+          <Text style={styles.deleteText}>Xóa</Text>
+        </AnimatedPressable>
       </View>
-
-      <TouchableOpacity style={styles.voucherRow} activeOpacity={0.8}>
-        <Ionicons name="pricetag-outline" size={14} color={COLORS.ERROR} />
-        <Text style={styles.voucherText}>Thêm Quán Voucher</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.voucherDesc}>Miễn phí ship(áp dụng cho sinh viên trong kí túc xá)</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  actions: {
-    alignItems: "flex-end",
+  bottomRow: {
+    alignItems: "center",
+    flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: SIZES.SPACING.MD,
   },
   card: {
     backgroundColor: COLORS.BACKGROUND,
     borderColor: COLORS.DIVIDER,
-    borderRadius: 14,
+    borderRadius: SIZES.RADIUS.MEDIUM,
     borderWidth: 1,
     elevation: 2,
-    marginBottom: SIZES.SPACING.MD,
     padding: SIZES.SPACING.MD,
-    shadowColor: COLORS.TEXT_PRIMARY,
+    position: "relative",
+    shadowColor: COLORS.SHADOW,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+  },
+  cardChecked: {
+    borderColor: COLORS.PRIMARY,
+    borderWidth: 2,
   },
   checkbox: {
     alignItems: "center",
-    borderRadius: 4,
-    borderWidth: 1,
-    height: 22,
+    borderRadius: SIZES.RADIUS.SMALL / 2,
+    borderWidth: 2,
+    height: 24,
     justifyContent: "center",
     marginRight: SIZES.SPACING.SM,
-    width: 22,
+    width: 24,
   },
   checkboxChecked: {
     backgroundColor: COLORS.PRIMARY,
@@ -122,91 +204,150 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
+  deleteAction: {
+    alignItems: "center",
+    backgroundColor: COLORS.ERROR,
+    borderRadius: SIZES.RADIUS.MEDIUM,
+    bottom: 0,
+    justifyContent: "center",
+    position: "absolute",
+    right: 0,
+    top: 0,
+    width: 80,
+  },
+  deleteButton: {
+    alignItems: "center",
+    height: "100%",
+    justifyContent: "center",
+    width: "100%",
+  },
+  deleteText: {
+    ...TEXT_STYLES.CAPTION,
+    color: COLORS.TEXT_WHITE,
+    fontWeight: "600",
+    marginTop: SIZES.SPACING.XS,
+  },
   dot: {
     color: COLORS.TEXT_LIGHT,
-    marginHorizontal: 6,
+    marginHorizontal: SIZES.SPACING.XS,
   },
   image: {
     height: "100%",
     resizeMode: "cover",
     width: "100%",
   },
+  imageOverlay: {
+    alignItems: "center",
+    backgroundColor: COLORS.BACKGROUND + "E6", // 90% opacity
+    bottom: 0,
+    justifyContent: "center",
+    left: 0,
+    position: "absolute",
+    right: 0,
+    top: 0,
+  },
   meta: {
     ...TEXT_STYLES.CAPTION,
     color: COLORS.TEXT_SECONDARY,
-    marginLeft: 6,
+    marginLeft: SIZES.SPACING.XS / 2,
   },
   metaRow: {
     alignItems: "center",
     flexDirection: "row",
+    marginTop: SIZES.SPACING.XS,
   },
   price: {
-    ...TEXT_STYLES.BODY_MEDIUM,
-    alignSelf: "flex-end",
-    color: COLORS.ERROR,
+    ...TEXT_STYLES.H6,
+    color: COLORS.PRIMARY,
     fontWeight: "700",
-    marginBottom: 2,
+  },
+  priceContainer: {
+    flex: 1,
   },
   qty: {
     ...TEXT_STYLES.BODY_MEDIUM,
-    marginHorizontal: SIZES.SPACING.SM,
-    minWidth: 20,
+    color: COLORS.TEXT_PRIMARY,
+    fontWeight: "600",
+    minWidth: 24,
     textAlign: "center",
   },
   qtyBtn: {
     alignItems: "center",
-    backgroundColor: COLORS.BACKGROUND,
-    borderColor: COLORS.BORDER,
-    borderRadius: 4,
-    borderWidth: 1,
-    height: 24,
+    backgroundColor: COLORS.BACKGROUND_LIGHT,
+    borderRadius: SIZES.RADIUS.SMALL,
+    height: 32,
     justifyContent: "center",
-    padding: 2,
-    width: 24,
+    width: 32,
+  },
+  qtyBtnDisabled: {
+    opacity: 0.5,
+  },
+  qtyDisplay: {
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: 40,
   },
   qtyRow: {
     alignItems: "center",
-    alignSelf: "flex-end",
     flexDirection: "row",
-    marginTop: 4,
+    gap: SIZES.SPACING.XS,
   },
   restaurant: {
-    ...TEXT_STYLES.BODY_MEDIUM,
+    ...TEXT_STYLES.BODY_LARGE,
     color: COLORS.TEXT_PRIMARY,
     fontWeight: "700",
-    marginBottom: 2,
+    marginBottom: SIZES.SPACING.XS / 2,
   },
   rowTop: {
-    alignItems: "center",
+    alignItems: "flex-start",
     flexDirection: "row",
   },
   thumbWrap: {
-    borderRadius: 10,
-    height: 60,
+    borderRadius: SIZES.RADIUS.MEDIUM,
+    height: 80,
     marginRight: SIZES.SPACING.MD,
     overflow: "hidden",
-    width: 60,
+    position: "relative",
+    width: 80,
   },
   title: {
-    ...TEXT_STYLES.BODY_SMALL,
+    ...TEXT_STYLES.BODY_MEDIUM,
     color: COLORS.TEXT_SECONDARY,
-    marginBottom: 6,
+  },
+  voucherContent: {
+    flex: 1,
+    marginLeft: SIZES.SPACING.SM,
   },
   voucherDesc: {
     ...TEXT_STYLES.CAPTION,
-    color: COLORS.TEXT_SECONDARY,
-    marginTop: SIZES.SPACING.SM,
+    color: COLORS.TEXT_LIGHT,
+    marginTop: 2,
+  },
+  voucherIcon: {
+    alignItems: "center",
+    backgroundColor: COLORS.PRIMARY_LIGHT + "20",
+    borderRadius: SIZES.RADIUS.SMALL,
+    height: 32,
+    justifyContent: "center",
+    width: 32,
   },
   voucherRow: {
     alignItems: "center",
+    backgroundColor: COLORS.BACKGROUND_LIGHT,
+    borderRadius: SIZES.RADIUS.SMALL,
     flexDirection: "row",
-    marginTop: SIZES.SPACING.SM,
+    marginTop: SIZES.SPACING.MD,
+    padding: SIZES.SPACING.SM,
   },
   voucherText: {
-    ...TEXT_STYLES.BODY_SMALL,
-    color: COLORS.ERROR,
+    ...TEXT_STYLES.BODY_MEDIUM,
+    color: COLORS.TEXT_PRIMARY,
     fontWeight: "600",
-    marginLeft: SIZES.SPACING.SM,
+  },
+  wrapper: {
+    marginBottom: SIZES.SPACING.MD,
+    overflow: "hidden",
+    position: "relative",
   },
 });
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, TextStyle, ViewStyle } from "react-native";
-import { COLORS, TEXT_STYLES } from "@constants/index";
+import { COLORS, TEXT_STYLES, SIZES } from "@constants/index";
 
 interface LabelProps {
   title: string;
@@ -27,23 +27,21 @@ const Label: React.FC<LabelProps> = ({
   </View>
 );
 
-const COLOR_LABEL = COLORS.PRIMARY;
-
 const styles = StyleSheet.create({
   all: {
     ...TEXT_STYLES.BODY_MEDIUM,
-    color: COLOR_LABEL,
+    color: COLORS.PRIMARY,
     fontWeight: "700",
   },
   header: {
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 8,
-    marginHorizontal: 4,
+    marginBottom: SIZES.SPACING.SM,
+    paddingHorizontal: SIZES.SPACING.MD,
   },
   title: {
-    ...TEXT_STYLES.BODY_LARGE,
+    ...TEXT_STYLES.H6,
     fontWeight: "700",
   },
 });

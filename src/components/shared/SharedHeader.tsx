@@ -12,6 +12,8 @@ interface SharedHeaderProps {
   onSearchPress?: () => void;
   onRightButtonPress?: () => void;
   rightIcon?: string;
+  showBackButton?: boolean;
+  onBackPress?: () => void;
 }
 
 const SharedHeader: React.FC<SharedHeaderProps> = ({
@@ -23,16 +25,25 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
   onSearchPress,
   onRightButtonPress,
   rightIcon = "search-outline",
+  showBackButton = false,
+  onBackPress,
 }) => {
   return (
     <View style={styles.container}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>{title}</Text>
-        {showNotificationBadge && badgeCount > 0 && (
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>{badgeCount}</Text>
-          </View>
+      <View style={styles.leftContainer}>
+        {showBackButton && (
+          <TouchableOpacity style={styles.backButton} onPress={onBackPress}>
+            <Ionicons name="arrow-back" size={SIZES.HEADER.ICON_SIZE} color={COLORS.TEXT_PRIMARY} />
+          </TouchableOpacity>
         )}
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>{title}</Text>
+          {showNotificationBadge && badgeCount > 0 && (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{badgeCount}</Text>
+            </View>
+          )}
+        </View>
       </View>
 
       <View style={styles.rightContainer}>
@@ -57,6 +68,13 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
 };
 
 const styles = StyleSheet.create({
+  backButton: {
+    alignItems: "center",
+    height: SIZES.HEADER.BUTTON_SIZE,
+    justifyContent: "center",
+    marginRight: SIZES.SPACING.SM,
+    width: SIZES.HEADER.BUTTON_SIZE,
+  },
   badge: {
     alignItems: "center",
     backgroundColor: COLORS.ERROR,
@@ -89,6 +107,11 @@ const styles = StyleSheet.create({
     height: SIZES.HEADER.BUTTON_SIZE,
     justifyContent: "center",
     width: SIZES.HEADER.BUTTON_SIZE,
+  },
+  leftContainer: {
+    alignItems: "center",
+    flex: 1,
+    flexDirection: "row",
   },
   rightContainer: {
     alignItems: "center",
