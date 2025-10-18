@@ -13,13 +13,13 @@ interface SectionHeaderProps {
 
 const SectionHeader: React.FC<SectionHeaderProps> = ({ icon, iconColor, title, children }) => {
   return (
-    <Animated.View entering={FadeInDown.duration(600).springify()} style={styles.section}>
-      <View style={styles.header}>
+    <View style={styles.section}>
+      <Animated.View style={styles.header} entering={FadeInDown.duration(500)}>
         <Ionicons name={icon} size={20} color={iconColor} />
         <Text style={styles.title}>{title}</Text>
-      </View>
+      </Animated.View>
       {children}
-    </Animated.View>
+    </View>
   );
 };
 

@@ -13,6 +13,7 @@ export interface Food {
   kcal: string;
   price: string;
   category: string;
+  description?: string;
 }
 
 export interface FilterOptions {

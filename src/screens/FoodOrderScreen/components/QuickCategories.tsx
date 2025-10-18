@@ -1,6 +1,6 @@
 import React from "react";
-import { Text, StyleSheet, ScrollView } from "react-native";
-import Animated, { SlideInRight } from "react-native-reanimated";
+import { Text, StyleSheet, FlatList, View } from "react-native";
+import Animated, { FadeInLeft } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import AnimatedPressable from "@components/AnimatedPressable";
 import { COLORS, TEXT_STYLES, SIZES } from "@constants/index";
@@ -23,18 +23,14 @@ const QuickCategories: React.FC<QuickCategoriesProps> = ({
   onCategoryPress,
 }) => {
   return (
-    <ScrollView
+    <FlatList
+      data={categories}
+      keyExtractor={(item) => item.id}
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.container}
-    >
-      {categories.map((category, index) => (
-        <Animated.View
-          key={category.id}
-          entering={SlideInRight.delay(300 + index * 50)
-            .duration(400)
-            .springify()}
-        >
+      renderItem={({ item: category, index }) => (
+        <Animated.View entering={FadeInLeft.delay(400 + index * 80).duration(500)}>
           <AnimatedPressable
             style={[styles.chip, selectedCategory === category.id && styles.chipActive]}
             onPress={() => onCategoryPress(category.id)}
@@ -55,8 +51,8 @@ const QuickCategories: React.FC<QuickCategoriesProps> = ({
             </Text>
           </AnimatedPressable>
         </Animated.View>
-      ))}
-    </ScrollView>
+      )}
+    />
   );
 };
 
