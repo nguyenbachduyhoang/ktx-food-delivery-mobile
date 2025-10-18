@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Pressable, PressableProps, ViewStyle, GestureResponderEvent } from "react-native";
+import { Pressable, PressableProps, ViewStyle, GestureResponderEvent, StyleProp } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -10,7 +10,7 @@ import * as Haptics from "expo-haptics";
 
 interface AnimatedPressableProps extends PressableProps {
   children: ReactNode;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   scaleValue?: number;
   enableHaptic?: boolean;
   hapticType?: "light" | "medium" | "heavy";
