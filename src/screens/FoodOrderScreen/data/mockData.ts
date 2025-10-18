@@ -644,7 +644,7 @@ export const mockFoodData: Food[] = [
     title: `Món ăn đặc biệt ${i + 41}`,
     subtitle: `Quán ${Math.floor(i / 10) + 1}`,
     address: getAddress(i),
-    rating: 4.3 + (Math.random() * 0.6),
+    rating: 4.3 + Math.random() * 0.6,
     ratingCount: `${Math.floor(Math.random() * 10) + 1}k+`,
     isFavorite: Math.random() > 0.7,
     time: `${5 + Math.floor(Math.random() * 20)}-${10 + Math.floor(Math.random() * 20)}`,
@@ -653,4 +653,3 @@ export const mockFoodData: Food[] = [
     category: ["com", "bun", "pho", "mi", "trasua", "caphe", "anvat", "banhmi"][i % 8],
   })),
 ].map((item, index) => ({ ...item, address: item.address || getAddress(index) }));
-

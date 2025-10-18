@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, ImageSourcePropType } from "react-native";
+import { View, Text, StyleSheet, Image, ImageSourcePropType, TouchableOpacity } from "react-native";
 import AnimatedPressable from "./AnimatedPressable";
 import { COLORS, TEXT_STYLES, SIZES } from "@constants/index";
 
@@ -10,6 +10,7 @@ export interface MenuItemCardProps {
   originalPrice?: number;
   image: ImageSourcePropType;
   onPress?: () => void;
+  onAdd?: () => void;
 }
 
 const MenuItemCard: React.FC<MenuItemCardProps> = ({
@@ -18,6 +19,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({
   originalPrice,
   image,
   onPress,
+  onAdd,
 }) => {
   const formatPrice = (price: number) => {
     return `${price.toLocaleString("vi-VN")}đ`;
@@ -43,6 +45,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({
           </View>
         )}
       </View>
+
       <View style={styles.content}>
         <Text style={styles.name} numberOfLines={2}>
           {name}
@@ -52,11 +55,30 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({
           {hasDiscount && <Text style={styles.originalPrice}>{formatPrice(originalPrice)}</Text>}
         </View>
       </View>
+
+      {/* Add button */}
+      <TouchableOpacity style={styles.addButton} onPress={onAdd} activeOpacity={0.8}>
+        <Text style={styles.addButtonText}>+</Text>
+      </TouchableOpacity>
     </AnimatedPressable>
   );
 };
 
 const styles = StyleSheet.create({
+  addButton: {
+    alignItems: "center",
+    backgroundColor: COLORS.PRIMARY,
+    borderRadius: 20,
+    height: 36,
+    justifyContent: "center",
+    marginLeft: SIZES.SPACING.SM,
+    width: 36,
+  },
+  addButtonText: {
+    color: COLORS.TEXT_WHITE,
+    fontSize: 20,
+    fontWeight: "700",
+  },
   container: {
     alignItems: "center",
     backgroundColor: COLORS.BACKGROUND,

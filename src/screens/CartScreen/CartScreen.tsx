@@ -235,4 +235,8 @@ const styles = StyleSheet.create({
   },
 });
 
+// Disable ScreenContainer's ScrollView because this screen uses VirtualizedLists (Animated.FlatList)
+type _StaticOpts = { useScreenScroll?: boolean };
+(CartScreen as unknown as _StaticOpts).useScreenScroll = false;
+
 export default withScreenContainer(CartScreen);

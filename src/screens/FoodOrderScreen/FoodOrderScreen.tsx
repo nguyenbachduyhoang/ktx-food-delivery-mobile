@@ -51,8 +51,7 @@ const FoodOrderScreen: React.FC = () => {
       const query = searchQuery.toLowerCase();
       result = result.filter(
         (food) =>
-          food.title.toLowerCase().includes(query) ||
-          food.subtitle.toLowerCase().includes(query)
+          food.title.toLowerCase().includes(query) || food.subtitle.toLowerCase().includes(query)
       );
     }
 
@@ -159,7 +158,9 @@ const FoodOrderScreen: React.FC = () => {
 
   const renderFoodItem = ({ item, index }: { item: Food; index: number }) => (
     <Animated.View
-      entering={FadeInUp.delay(700 + index * 50).duration(500).springify()}
+      entering={FadeInUp.delay(700 + index * 50)
+        .duration(500)
+        .springify()}
     >
       <FoodItemCard
         image={item.image}
@@ -223,8 +224,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withScreenContainer(FoodOrderScreen);
-
 // Disable scroll since we're using FlatList
 type _StaticOpts = { useScreenScroll?: boolean };
 (FoodOrderScreen as unknown as _StaticOpts).useScreenScroll = false;
+
+export default withScreenContainer(FoodOrderScreen);

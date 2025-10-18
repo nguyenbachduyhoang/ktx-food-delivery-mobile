@@ -1,5 +1,6 @@
 import React from "react";
 import { View, StyleSheet, ImageSourcePropType } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Avatar from "../Avatar";
 import UserInfo from "../UserInfo";
 import IconButton from "../IconButton";
@@ -21,19 +22,24 @@ const HomeHeader: React.FC<HomeHeaderProps> = ({
   onNotificationPress,
   onCartPress,
   onSearchPress,
-}) => (
-  <View style={styles.container}>
-    <View style={styles.row}>
-      <Avatar source={avatarSource} />
-      <UserInfo name={userName} />
-      <View style={styles.icons}>
-        <IconButton name="notifications-outline" onPress={onNotificationPress} />
-        <IconButton name="bag-handle-outline" onPress={onCartPress} />
+}) => {
+  // use safe area insets to avoid overlap with status bar / notch
+  const insets = useSafeAreaInsets();
+
+  return (
+    <View style={[styles.container, { paddingTop: insets.top + SIZES.HEADER.PADDING_VERTICAL }]}>
+      <View style={styles.row}>
+        <Avatar source={avatarSource} />
+        <UserInfo name={userName} />
+        <View style={styles.icons}>
+          <IconButton name="notifications-outline" onPress={onNotificationPress} />
+          <IconButton name="bag-handle-outline" onPress={onCartPress} />
+        </View>
       </View>
+      <SearchBox onPress={onSearchPress} />
     </View>
-    <SearchBox onPress={onSearchPress} />
-  </View>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

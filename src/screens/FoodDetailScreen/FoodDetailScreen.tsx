@@ -29,7 +29,7 @@ import {
 } from "./components";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const FoodDetailScreen = ({ navigation }: any) => {
+const FoodDetailScreen = ({ navigation, route }: any) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const scrollY = useSharedValue(0);
   const [quantity, setQuantity] = useState(1);
@@ -155,7 +155,7 @@ const FoodDetailScreen = ({ navigation }: any) => {
           />
 
           {/* Food Title */}
-          <FoodInfo title="Phở bò" label="Thô-bò" />
+          <FoodInfo title={route?.params?.itemName ?? "Phở bò"} label="Thô-bò" />
 
           {/* Stats */}
           <FoodStats rating={4.8} orderCount="300+" deliveryTime="15 phút" />
@@ -197,7 +197,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withScreenContainer(FoodDetailScreen);
-
+// Disable the ScreenContainer ScrollView for this screen because it uses VirtualizedLists / Animated.ScrollView
 type _StaticOpts = { useScreenScroll?: boolean };
 (FoodDetailScreen as unknown as _StaticOpts).useScreenScroll = false;
+
+export default withScreenContainer(FoodDetailScreen);

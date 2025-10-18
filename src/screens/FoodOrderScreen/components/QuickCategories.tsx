@@ -8,7 +8,7 @@ import { COLORS, TEXT_STYLES, SIZES } from "@constants/index";
 interface Category {
   id: string;
   label: string;
-  icon: any;
+  icon: keyof typeof Ionicons.glyphMap;
 }
 
 interface QuickCategoriesProps {
@@ -46,10 +46,7 @@ const QuickCategories: React.FC<QuickCategoriesProps> = ({
               color={selectedCategory === category.id ? COLORS.BACKGROUND : COLORS.PRIMARY}
             />
             <Text
-              style={[
-                styles.chipText,
-                selectedCategory === category.id && styles.chipTextActive,
-              ]}
+              style={[styles.chipText, selectedCategory === category.id && styles.chipTextActive]}
             >
               {category.label}
             </Text>
@@ -97,4 +94,3 @@ const styles = StyleSheet.create({
 });
 
 export default QuickCategories;
-

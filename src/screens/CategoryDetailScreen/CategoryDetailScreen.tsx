@@ -13,8 +13,6 @@ import Animated, { FadeInDown, Layout } from "react-native-reanimated";
 import AnimatedPressable from "@components/AnimatedPressable";
 import { SkeletonListItem } from "@components/SkeletonLoader";
 import withScreenContainer from "@components/layouts/withScreenContainer";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { RouteProp } from "@react-navigation/native";
 import MenuItemCard from "@components/MenuItemCard";
 import {
   CategoryHeader,
@@ -24,23 +22,14 @@ import {
   FilterOptions,
 } from "./components";
 import { COLORS, SIZES, TEXT_STYLES } from "@constants/index";
+import { showToast } from "@components/Toast";
 
 // Mock data
 import food1 from "../../../assets/banner/food1.png";
 import food2 from "../../../assets/banner/food2.png";
 import defaultCategory from "../../../assets/category/pho.png";
 
-type RootStackParamList = {
-  CategoryDetail: {
-    categoryName: string;
-    categoryImage: ImageSourcePropType;
-  };
-};
-
-interface CategoryDetailScreenProps {
-  navigation: StackNavigationProp<RootStackParamList, "CategoryDetail">;
-  route: RouteProp<RootStackParamList, "CategoryDetail">;
-}
+// navigation/route types intentionally omitted here to keep the file flexible for navigator usage
 
 interface MenuItem {
   id: string;
@@ -157,7 +146,8 @@ const tabs = [
   { id: "danhGia", label: "Đánh giá" },
 ];
 
-const CategoryDetailScreen: React.FC<CategoryDetailScreenProps> = ({ navigation, route }) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function CategoryDetailScreen({ navigation, route }: any) {
   // defensive: route.params may be undefined when navigating from some places
   const params =
     route.params ?? ({} as Partial<{ categoryName: string; categoryImage: ImageSourcePropType }>);
@@ -198,8 +188,13 @@ const CategoryDetailScreen: React.FC<CategoryDetailScreenProps> = ({ navigation,
   };
 
   const handleMenuItemPress = (item: MenuItem) => {
-    console.log("Menu item pressed:", item.name);
-    // TODO: Navigate to FoodDetail screen
+    // navigate to FoodDetail screen — pass the item id/name for the detail screen
+    navigation.navigate("FoodDetail", { itemId: item.id, itemName: item.name });
+  };
+
+  const handleAddToCart = (item: MenuItem) => {
+    // TODO: integrate cart logic; show toast for now
+    showToast({ message: `Đã thêm ${item.name} vào giỏ hàng`, type: "success", duration: 1500 });
   };
 
   const handleApplyFilters = (newFilters: FilterOptions) => {
@@ -290,6 +285,7 @@ const CategoryDetailScreen: React.FC<CategoryDetailScreenProps> = ({ navigation,
           originalPrice={item.originalPrice}
           image={item.image}
           onPress={() => handleMenuItemPress(item)}
+          onAdd={() => handleAddToCart(item)}
         />
       </Animated.View>
     );
@@ -363,6 +359,7 @@ const CategoryDetailScreen: React.FC<CategoryDetailScreenProps> = ({ navigation,
             data={filteredData}
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
+            style={styles.list}
             contentContainerStyle={styles.listContainer}
             showsVerticalScrollIndicator={false}
             refreshControl={
@@ -390,11 +387,14 @@ const CategoryDetailScreen: React.FC<CategoryDetailScreenProps> = ({ navigation,
       />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.BACKGROUND_LIGHT,
+    flex: 1,
+  },
+  list: {
     flex: 1,
   },
   listContainer: {
@@ -446,7 +446,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withScreenContainer(CategoryDetailScreen);
-
+// Disable the ScreenContainer ScrollView for this screen because it uses FlatList (virtualized lists)
 type _StaticOpts = { useScreenScroll?: boolean };
 (CategoryDetailScreen as unknown as _StaticOpts).useScreenScroll = false;
+
+export default withScreenContainer(CategoryDetailScreen);

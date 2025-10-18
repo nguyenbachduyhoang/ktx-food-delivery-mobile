@@ -7,4 +7,3 @@ export { default as ResultsHeader } from "./ResultsHeader";
 export { default as EmptyState } from "./EmptyState";
 export { default as PaginationFooter } from "./PaginationFooter";
 export { default as SectionHeader } from "./SectionHeader";
-

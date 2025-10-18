@@ -12,6 +12,8 @@ import * as Haptics from "expo-haptics";
 import AnimatedPressable from "@components/AnimatedPressable";
 import { COLORS, TEXT_STYLES, SIZES } from "@constants/index";
 
+const SHIMMER_COLOR = "rgba(255, 255, 255, 0.3)";
+
 interface FoodItemCardProps {
   image: ImageSourcePropType;
   title: string;
@@ -79,7 +81,7 @@ const FoodItemCard: React.FC<FoodItemCardProps> = ({
       {/* Image Section */}
       <View style={styles.imageContainer}>
         <Image source={image} style={styles.image} />
-        
+
         {/* Shimmer overlay effect */}
         <Animated.View style={[styles.shimmer, shimmerStyle]} />
 
@@ -148,17 +150,6 @@ const FoodItemCard: React.FC<FoodItemCardProps> = ({
 };
 
 const styles = StyleSheet.create({
-  address: {
-    ...TEXT_STYLES.CAPTION,
-    color: COLORS.TEXT_LIGHT,
-    flex: 1,
-    marginLeft: SIZES.SPACING.XS / 2,
-  },
-  addressRow: {
-    alignItems: "center",
-    flexDirection: "row",
-    marginTop: SIZES.SPACING.XS,
-  },
   addButton: {
     alignItems: "center",
     backgroundColor: COLORS.PRIMARY,
@@ -171,6 +162,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 4,
     width: 36,
+  },
+  address: {
+    ...TEXT_STYLES.CAPTION,
+    color: COLORS.TEXT_LIGHT,
+    flex: 1,
+    marginLeft: SIZES.SPACING.XS / 2,
+  },
+  addressRow: {
+    alignItems: "center",
+    flexDirection: "row",
+    marginTop: SIZES.SPACING.XS,
   },
   bottomRow: {
     alignItems: "center",
@@ -260,13 +262,8 @@ const styles = StyleSheet.create({
     flex: 1,
     fontWeight: "700",
   },
-  topRow: {
-    alignItems: "center",
-    flexDirection: "row",
-    marginBottom: SIZES.SPACING.XS / 2,
-  },
   shimmer: {
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: SHIMMER_COLOR,
     height: "100%",
     left: 0,
     position: "absolute",
@@ -278,7 +275,11 @@ const styles = StyleSheet.create({
     color: COLORS.TEXT_SECONDARY,
     marginTop: SIZES.SPACING.XS / 2,
   },
+  topRow: {
+    alignItems: "center",
+    flexDirection: "row",
+    marginBottom: SIZES.SPACING.XS / 2,
+  },
 });
 
 export default FoodItemCard;
-

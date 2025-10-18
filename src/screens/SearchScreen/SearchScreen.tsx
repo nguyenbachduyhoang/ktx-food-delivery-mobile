@@ -161,7 +161,9 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ navigation }) => {
             /* Search Suggestions */
             <Animated.View entering={FadeIn} style={styles.section}>
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Kết quả cho &quot;{debouncedSearchText}&quot;</Text>
+                <Text style={styles.sectionTitle}>
+                  Kết quả cho &quot;{debouncedSearchText}&quot;
+                </Text>
                 <Text style={styles.resultCount}>{searchSuggestions.length} kết quả</Text>
               </View>
               {searchSuggestions.length > 0 ? (

@@ -42,14 +42,18 @@ const TopRatedCarousel: React.FC<TopRatedCarouselProps> = ({ foods }) => {
 
   const renderItem = ({ item, index }: { item: Food; index: number }) => (
     <Animated.View
-      entering={ZoomIn.delay(index * 100).duration(500).springify()}
+      entering={ZoomIn.delay(index * 100)
+        .duration(500)
+        .springify()}
     >
       <TouchableOpacity style={styles.card} activeOpacity={0.9}>
         <Image source={item.image} style={styles.image} />
-        
+
         {/* Badge */}
-        <Animated.View 
-          entering={FadeInRight.delay(index * 100 + 200).duration(400).springify()}
+        <Animated.View
+          entering={FadeInRight.delay(index * 100 + 200)
+            .duration(400)
+            .springify()}
           style={styles.badge}
         >
           <Ionicons name="trophy" size={16} color={COLORS.WARNING} />
@@ -245,4 +249,3 @@ const styles = StyleSheet.create({
 });
 
 export default TopRatedCarousel;
-

@@ -205,36 +205,6 @@ const HomeScreen: React.FC = () => {
           <CategoryGrid data={categories} style={styles.section} />
         </Animated.View>
 
-        <Animated.View entering={FadeInDown.delay(300).duration(400)}>
-          {/* Quick actions */}
-          <View style={styles.quickActions}>
-            <AnimatedPressable
-              style={styles.quickActionCard}
-              onPress={() => console.log("Favorites")}
-              scaleValue={0.95}
-            >
-              <Text style={styles.quickActionText}>❤️</Text>
-              <Text style={styles.quickActionLabel}>Yêu thích</Text>
-            </AnimatedPressable>
-            <AnimatedPressable
-              style={styles.quickActionCard}
-              onPress={() => console.log("Repeat")}
-              scaleValue={0.95}
-            >
-              <Text style={styles.quickActionText}>🔄</Text>
-              <Text style={styles.quickActionLabel}>Đặt lại</Text>
-            </AnimatedPressable>
-            <AnimatedPressable
-              style={styles.quickActionCard}
-              onPress={() => console.log("Recent")}
-              scaleValue={0.95}
-            >
-              <Text style={styles.quickActionText}>🕐</Text>
-              <Text style={styles.quickActionLabel}>Gần đây</Text>
-            </AnimatedPressable>
-          </View>
-        </Animated.View>
-
         <Animated.View entering={FadeInDown.delay(400).duration(400)}>
           <Label
             title="Món ăn nổi bật"
@@ -335,34 +305,7 @@ const styles = StyleSheet.create({
     marginRight: SIZES.SPACING.SM,
     width: 200,
   },
-  quickActionCard: {
-    alignItems: "center",
-    backgroundColor: COLORS.BACKGROUND,
-    borderRadius: SIZES.RADIUS.LARGE,
-    elevation: 2,
-    flex: 1,
-    marginHorizontal: SIZES.SPACING.XS,
-    paddingVertical: SIZES.SPACING.MD,
-    shadowColor: COLORS.SHADOW,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-  },
-  quickActionLabel: {
-    ...TEXT_STYLES.CAPTION,
-    color: COLORS.TEXT_PRIMARY,
-    fontWeight: "600",
-    marginTop: SIZES.SPACING.XS,
-  },
-  quickActionText: {
-    fontSize: 24,
-  },
-  quickActions: {
-    flexDirection: "row",
-    gap: SIZES.SPACING.SM,
-    marginTop: SIZES.SPACING.SM,
-    paddingHorizontal: SIZES.SPACING.MD,
-  },
+
   retryButton: {
     backgroundColor: COLORS.PRIMARY,
     borderRadius: SIZES.RADIUS.MEDIUM,
@@ -379,8 +322,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withScreenContainer(HomeScreen);
-
 // Disable the ScreenContainer ScrollView for this screen because it uses FlatList (virtualized lists)
 type _StaticOpts = { useScreenScroll?: boolean };
 (HomeScreen as unknown as _StaticOpts).useScreenScroll = false;
+
+export default withScreenContainer(HomeScreen);

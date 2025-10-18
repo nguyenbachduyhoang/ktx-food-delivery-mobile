@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { COLORS, TEXT_STYLES, SIZES } from "@constants/index";
 
 interface SectionHeaderProps {
-  icon: any;
+  icon: keyof typeof Ionicons.glyphMap;
   iconColor: string;
   title: string;
   children?: React.ReactNode;
@@ -42,4 +42,3 @@ const styles = StyleSheet.create({
 });
 
 export default SectionHeader;
-

@@ -19,7 +19,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
   hasActiveFilters,
 }) => {
   return (
-    <Animated.View entering={FadeInUp.delay(200).duration(500).springify()} style={styles.container}>
+    <Animated.View
+      entering={FadeInUp.delay(200).duration(500).springify()}
+      style={styles.container}
+    >
       <View style={styles.searchBox}>
         <Ionicons name="search" size={20} color={COLORS.TEXT_LIGHT} />
         <TextInput
@@ -96,4 +99,3 @@ const styles = StyleSheet.create({
 });
 
 export default SearchBar;
-
