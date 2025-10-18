@@ -11,6 +11,7 @@ import { COLORS, SIZES } from "@constants/index";
 // Mock data
 import food1 from "../../../assets/banner/food1.png";
 import food2 from "../../../assets/banner/food2.png";
+import defaultCategory from "../../../assets/category/pho.png";
 
 type RootStackParamList = {
   CategoryDetail: {
@@ -95,7 +96,12 @@ const tabs = [
 ];
 
 const CategoryDetailScreen: React.FC<CategoryDetailScreenProps> = ({ navigation, route }) => {
-  const { categoryName, categoryImage } = route.params;
+  // defensive: route.params may be undefined when navigating from some places
+  const params =
+    route.params ?? ({} as Partial<{ categoryName: string; categoryImage: ImageSourcePropType }>);
+  const categoryName = params.categoryName ?? "Danh mục";
+  const categoryImage = params.categoryImage ?? defaultCategory;
+  console.log("CategoryDetail route params:", route.params);
   const [activeTab, setActiveTab] = useState("monAn");
   // safe area handled by HOC ScreenContainer
 
@@ -139,13 +145,15 @@ const CategoryDetailScreen: React.FC<CategoryDetailScreenProps> = ({ navigation,
 
       <CategoryTabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
-      <FlatList
-        data={getCurrentData()}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-      />
+      <View style={styles.listWrap}>
+        <FlatList
+          data={getCurrentData()}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContainer}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
     </View>
   );
 };
@@ -157,6 +165,9 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     padding: SIZES.SPACING.MD,
+  },
+  listWrap: {
+    flex: 1,
   },
 });
 

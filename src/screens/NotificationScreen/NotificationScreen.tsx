@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, FlatList } from "react-native";
+import { StyleSheet, FlatList, View } from "react-native";
 import withScreenContainer from "@components/layouts/withScreenContainer";
 import { SharedHeader } from "@components/shared";
 import { NotificationItem, EmptyNotification } from "./components";
@@ -93,19 +93,24 @@ const NotificationScreen: React.FC = () => {
         rightButtonText={unreadCount > 0 ? "Đánh dấu đã đọc" : undefined}
         onRightButtonPress={unreadCount > 0 ? markAllAsRead : undefined}
       />
-      <FlatList
-        data={notifications}
-        renderItem={renderNotificationItem}
-        keyExtractor={(item) => item.id}
-        style={styles.list}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.listContent}
-      />
+      <View style={styles.flexFill}>
+        <FlatList
+          data={notifications}
+          renderItem={renderNotificationItem}
+          keyExtractor={(item) => item.id}
+          style={styles.list}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listContent}
+        />
+      </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  flexFill: {
+    flex: 1,
+  },
   list: {
     flex: 1,
   },

@@ -5,14 +5,12 @@ import {
   Text,
   ActivityIndicator,
   ImageSourcePropType,
-  TextInput,
   FlatList,
   TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeHeader } from "@components/shared";
-import { Ionicons } from "@expo/vector-icons";
 import Label from "@components/Label";
 import Carousel from "@components/Carousel";
 import CategoryGrid, { CategoryItem } from "@components/CategoryGrid";
@@ -43,7 +41,7 @@ const HomeScreen: React.FC = () => {
   const { products, loading, error } = useProducts();
 
   // Local state for basic typeahead/search suggestions
-  const [query, setQuery] = React.useState("");
+  const [query] = React.useState("");
   const [suggestions, setSuggestions] = React.useState<typeof products>([]);
 
   React.useEffect(() => {
@@ -149,20 +147,6 @@ const HomeScreen: React.FC = () => {
         onSearchPress={handleSearchPress}
       />
 
-      {/* Search row */}
-      <View style={styles.headerRow}>
-        <TextInput
-          value={query}
-          onChangeText={setQuery}
-          placeholder="Tìm món, quán..."
-          style={styles.searchInput}
-          returnKeyType="search"
-        />
-        <TouchableOpacity style={styles.filterButton} onPress={() => console.log("Filter")}>
-          <Ionicons name="filter" size={20} color={COLORS.ICON_PRIMARY} />
-        </TouchableOpacity>
-      </View>
-
       <Label title="Món ăn giảm giá" style={styles.section} allStyle={styles.labelAllBlue} />
       <Carousel style={styles.section} />
       <CategoryGrid data={categories} style={styles.section} />
@@ -253,19 +237,10 @@ const styles = StyleSheet.create({
     fontSize: SIZES.FONT.MEDIUM,
     textAlign: "center",
   },
-  filterButton: {
-    marginLeft: SIZES.SPACING.SM,
-    padding: SIZES.SPACING.SM,
-  },
+
   foodCardWrapper: {
     marginBottom: SIZES.SPACING.SM,
     width: "48%",
-  },
-  headerRow: {
-    alignItems: "center",
-    flexDirection: "row",
-    marginTop: SIZES.SPACING.SM,
-    paddingHorizontal: SIZES.SPACING.MD,
   },
   labelAllBlue: {
     color: COLORS.SECONDARY,
@@ -299,12 +274,7 @@ const styles = StyleSheet.create({
     marginTop: SIZES.SPACING.SM,
     paddingHorizontal: SIZES.SPACING.MD,
   },
-  searchInput: {
-    backgroundColor: COLORS.INPUT_BACKGROUND,
-    borderRadius: SIZES.RADIUS.MEDIUM,
-    flex: 1,
-    padding: SIZES.SPACING.SM,
-  },
+
   section: {
     marginVertical: SIZES.SPACING.SM,
   },

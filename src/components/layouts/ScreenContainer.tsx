@@ -24,6 +24,7 @@ const ScreenContainer: React.FC<ScreenContainerProps> = ({
 
   const contentPadding = {
     paddingHorizontal: SIZES.SPACING.MD,
+    paddingTop: insets.top + SIZES.SPACING.SM,
     paddingBottom: insets.bottom + SIZES.SPACING.LG,
   };
 
