@@ -98,11 +98,13 @@ const Toast: React.FC<ToastProps> = ({ message, type = "info", duration = 3000, 
 };
 
 // Toast Manager Hook
-let toastCallback: Function | null = null;
+// The parameter name in the function type may trigger unused-var lint in some configs; disable for this line
+let toastCallback: unknown = null;
 
 export const showToast = (toastProps: ToastProps) => {
-  if (toastCallback) {
-    toastCallback(toastProps);
+  if (typeof toastCallback === "function") {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (toastCallback as any)(toastProps);
   }
 };
 

@@ -53,7 +53,14 @@ export default function Button({
       {loading ? (
         <ActivityIndicator color={variant === "outline" ? COLORS.PRIMARY : COLORS.TEXT_WHITE} />
       ) : (
-        <Text style={[getTextStyle(), textStyle, disabled && styles.textDisabled]}>{title}</Text>
+        <Text
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.85}
+          style={[getTextStyle(), textStyle, disabled && styles.textDisabled, styles.textCenter]}
+        >
+          {title}
+        </Text>
       )}
     </AnimatedPressable>
   );
@@ -88,6 +95,9 @@ const styles = StyleSheet.create({
     ...TEXT_STYLES.BUTTON_MEDIUM,
     color: COLORS.TEXT_WHITE,
     fontWeight: "600",
+  },
+  textCenter: {
+    textAlign: "center",
   },
   textDisabled: {
     color: COLORS.TEXT_LIGHT,

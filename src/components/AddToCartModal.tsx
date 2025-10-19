@@ -1,23 +1,28 @@
+/* eslint-disable react-native/no-color-literals */
 import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
   Modal,
-  ScrollView,
   TextInput,
   TouchableOpacity,
   Image,
   ImageSourcePropType,
   Dimensions,
 } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  withSpring,
   withTiming,
   runOnJS,
 } from "react-native-reanimated";
+import {
+  PanGestureHandler,
+  State,
+  PanGestureHandlerGestureEvent,
+} from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import AnimatedPressable from "@components/AnimatedPressable";
@@ -75,6 +80,9 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
 
   const translateY = useSharedValue(SCREEN_HEIGHT);
   const backdropOpacity = useSharedValue(0);
+  const scrollOffsetRef = React.useRef(0);
+  const panRef = React.useRef(null);
+  const scrollRef = React.useRef(null);
 
   useEffect(() => {
     if (visible) {
@@ -85,7 +93,7 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
 
   const handleClose = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    
+
     translateY.value = withTiming(SCREEN_HEIGHT, { duration: 300 }, () => {
       runOnJS(onClose)();
     });
@@ -147,151 +155,208 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
     setQuantity((prev) => Math.max(1, prev + delta));
   };
 
-  if (!visible) return null;
+  // Gesture handling for drag-to-dismiss
+  const onPanGestureEvent = (e: PanGestureHandlerGestureEvent) => {
+    // Only handle when at top of scroll
+    if (scrollOffsetRef.current > 5) return;
+
+    const ty = e.nativeEvent.translationY;
+    if (ty > 0) {
+      translateY.value = ty;
+    }
+  };
+
+  const onPanHandlerStateChange = (e: PanGestureHandlerGestureEvent) => {
+    const { state, translationY, velocityY } = e.nativeEvent;
+
+    if (state === State.END || state === State.CANCELLED || state === State.FAILED) {
+      const shouldClose = translationY > SCREEN_HEIGHT * 0.25 || velocityY > 1000;
+      if (shouldClose) {
+        translateY.value = withTiming(SCREEN_HEIGHT, { duration: 250 }, () => {
+          runOnJS(onClose)();
+        });
+        backdropOpacity.value = withTiming(0, { duration: 200 });
+      } else {
+        translateY.value = withTiming(0, { duration: 200 });
+      }
+    }
+  };
 
   return (
-    <Modal visible={visible} transparent animationType="none" onRequestClose={handleClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="none"
+      statusBarTranslucent={true}
+      onRequestClose={handleClose}
+    >
       <View style={styles.modalWrapper}>
         {/* Backdrop */}
         <Animated.View style={[styles.backdrop, backdropAnimatedStyle]}>
-          <TouchableOpacity 
-            style={styles.backdropTouchable} 
-            activeOpacity={1} 
-            onPress={handleClose} 
+          <TouchableOpacity
+            style={styles.backdropTouchable}
+            activeOpacity={1}
+            onPress={handleClose}
           />
         </Animated.View>
 
         {/* Modal Content */}
         <Animated.View style={[styles.modalContainer, modalAnimatedStyle]}>
-          <View style={styles.modal}>
+          <Animated.View style={styles.modal}>
             {/* Close Button - Floating */}
             <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
               <Ionicons name="close" size={28} color={COLORS.BACKGROUND} />
             </TouchableOpacity>
 
-            <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
-              {/* Food Image - Large Hero */}
+            {/* Drag handle area - only active at top of scroll */}
+            <PanGestureHandler
+              ref={panRef}
+              onGestureEvent={onPanGestureEvent}
+              onHandlerStateChange={onPanHandlerStateChange}
+              activeOffsetY={15}
+              failOffsetY={-5}
+            >
+              <Animated.View style={styles.dragHandleArea}>
+                <View style={styles.dragIndicator} />
+              </Animated.View>
+            </PanGestureHandler>
+
+            <ScrollView
+              ref={scrollRef}
+              showsVerticalScrollIndicator={false}
+              bounces={true}
+              onScroll={(e) => {
+                const y = e.nativeEvent.contentOffset.y;
+                scrollOffsetRef.current = y;
+              }}
+              scrollEventThrottle={16}
+            >
+              {/* Food Image - Large Hero (inside ScrollView so it scrolls) */}
               <View style={styles.imageContainer}>
-                <Image source={foodImage} style={styles.foodImage} />
+                {foodImage ? (
+                  <Image source={foodImage} style={styles.foodImage} />
+                ) : (
+                  <View style={styles.imagePlaceholder}>
+                    <Text style={styles.imagePlaceholderText}>Hình ảnh đang tải...</Text>
+                  </View>
+                )}
               </View>
 
               {/* Content */}
               <View style={styles.contentContainer}>
-                {/* Drag Indicator */}
-                <View style={styles.dragIndicator} />
-
                 {/* Food Info */}
                 <View style={styles.foodInfo}>
                   <Text style={styles.foodName}>{foodName}</Text>
                   <Text style={styles.restaurantName}>{restaurant}</Text>
                   <Text style={styles.basePrice}>{foodPrice}</Text>
-                  {description && (
-                    <Text style={styles.foodDescription}>{description}</Text>
-                  )}
+                  {description && <Text style={styles.foodDescription}>{description}</Text>}
                 </View>
 
-            {/* Quantity */}
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Số lượng</Text>
-              <View style={styles.quantityContainer}>
-                <AnimatedPressable
-                  style={[styles.quantityButton, quantity <= 1 && styles.quantityButtonDisabled]}
-                  onPress={() => handleQuantityChange(-1)}
-                  disabled={quantity <= 1}
-                  scaleValue={0.9}
-                >
-                  <Ionicons
-                    name="remove"
-                    size={20}
-                    color={quantity <= 1 ? COLORS.TEXT_LIGHT : COLORS.PRIMARY}
+                {/* Quantity */}
+                <View style={styles.section}>
+                  <Text style={styles.sectionTitle}>Số lượng</Text>
+                  <View style={styles.quantityContainer}>
+                    <AnimatedPressable
+                      style={[
+                        styles.quantityButton,
+                        quantity <= 1 && styles.quantityButtonDisabled,
+                      ]}
+                      onPress={() => handleQuantityChange(-1)}
+                      disabled={quantity <= 1}
+                      scaleValue={0.9}
+                    >
+                      <Ionicons
+                        name="remove"
+                        size={20}
+                        color={quantity <= 1 ? COLORS.TEXT_LIGHT : COLORS.PRIMARY}
+                      />
+                    </AnimatedPressable>
+                    <Text style={styles.quantityText}>{quantity}</Text>
+                    <AnimatedPressable
+                      style={styles.quantityButton}
+                      onPress={() => handleQuantityChange(1)}
+                      scaleValue={0.9}
+                    >
+                      <Ionicons name="add" size={20} color={COLORS.PRIMARY} />
+                    </AnimatedPressable>
+                  </View>
+                </View>
+
+                {/* Toppings */}
+                <View style={styles.section}>
+                  <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>Topping</Text>
+                    <Text style={styles.sectionNote}>Không bắt buộc, tối đa 3</Text>
+                  </View>
+                  <View style={styles.optionsList}>
+                    {TOPPINGS.map((topping) => {
+                      const isSelected = selectedToppings.includes(topping.id);
+                      return (
+                        <TouchableOpacity
+                          key={topping.id}
+                          style={styles.checkboxOption}
+                          onPress={() => handleToppingToggle(topping.id)}
+                          activeOpacity={0.7}
+                        >
+                          <View style={styles.checkboxContainer}>
+                            <View style={[styles.checkbox, isSelected && styles.checkboxChecked]}>
+                              {isSelected && (
+                                <Ionicons name="checkmark" size={16} color={COLORS.BACKGROUND} />
+                              )}
+                            </View>
+                            <Text style={styles.optionLabel}>{topping.name}</Text>
+                          </View>
+                          <Text style={styles.optionPrice}>+{topping.price.toLocaleString()}đ</Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                </View>
+
+                {/* Spicy Level */}
+                <View style={styles.section}>
+                  <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>Mức độ cay</Text>
+                    <Text style={styles.sectionNote}>Chọn 1</Text>
+                  </View>
+                  <View style={styles.optionsList}>
+                    {SPICY_LEVELS.map((spicy) => {
+                      const isSelected = selectedSpicy === spicy.id;
+                      return (
+                        <TouchableOpacity
+                          key={spicy.id}
+                          style={styles.checkboxOption}
+                          onPress={() => handleSpicySelect(spicy.id)}
+                          activeOpacity={0.7}
+                        >
+                          <View style={styles.checkboxContainer}>
+                            <View style={[styles.radio, isSelected && styles.radioSelected]}>
+                              {isSelected && <View style={styles.radioDot} />}
+                            </View>
+                            <Text style={styles.optionLabel}>{spicy.name}</Text>
+                          </View>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                </View>
+
+                {/* Note */}
+                <View style={styles.section}>
+                  <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>Thêm lưu ý cho quán</Text>
+                    <Text style={styles.sectionNote}>Không bắt buộc</Text>
+                  </View>
+                  <TextInput
+                    style={styles.noteInput}
+                    placeholder="Việc thực hiện yêu cầu còn tùy thuộc vào khả năng của quán."
+                    placeholderTextColor={COLORS.TEXT_LIGHT}
+                    value={note}
+                    onChangeText={setNote}
+                    multiline
+                    numberOfLines={4}
+                    textAlignVertical="top"
                   />
-                </AnimatedPressable>
-                <Text style={styles.quantityText}>{quantity}</Text>
-                <AnimatedPressable
-                  style={styles.quantityButton}
-                  onPress={() => handleQuantityChange(1)}
-                  scaleValue={0.9}
-                >
-                  <Ionicons name="add" size={20} color={COLORS.PRIMARY} />
-                </AnimatedPressable>
-              </View>
-            </View>
-
-            {/* Toppings */}
-            <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Topping</Text>
-                <Text style={styles.sectionNote}>Không bắt buộc, tối đa 3</Text>
-              </View>
-              <View style={styles.optionsList}>
-                {TOPPINGS.map((topping) => {
-                  const isSelected = selectedToppings.includes(topping.id);
-                  return (
-                    <TouchableOpacity
-                      key={topping.id}
-                      style={styles.checkboxOption}
-                      onPress={() => handleToppingToggle(topping.id)}
-                      activeOpacity={0.7}
-                    >
-                      <View style={styles.checkboxContainer}>
-                        <View style={[styles.checkbox, isSelected && styles.checkboxChecked]}>
-                          {isSelected && (
-                            <Ionicons name="checkmark" size={16} color={COLORS.BACKGROUND} />
-                          )}
-                        </View>
-                        <Text style={styles.optionLabel}>{topping.name}</Text>
-                      </View>
-                      <Text style={styles.optionPrice}>+{topping.price.toLocaleString()}đ</Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            </View>
-
-            {/* Drinks */}
-            <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Mức độ cay</Text>
-                <Text style={styles.sectionNote}>Chọn 1</Text>
-              </View>
-              <View style={styles.optionsList}>
-                {SPICY_LEVELS.map((spicy) => {
-                  const isSelected = selectedSpicy === spicy.id;
-                  return (
-                    <TouchableOpacity
-                      key={spicy.id}
-                      style={styles.checkboxOption}
-                      onPress={() => handleSpicySelect(spicy.id)}
-                      activeOpacity={0.7}
-                    >
-                      <View style={styles.checkboxContainer}>
-                        <View style={[styles.radio, isSelected && styles.radioSelected]}>
-                          {isSelected && <View style={styles.radioDot} />}
-                        </View>
-                        <Text style={styles.optionLabel}>{spicy.name}</Text>
-                      </View>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            </View>
-
-            {/* Note */}
-            <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Thêm lưu ý cho quán</Text>
-                <Text style={styles.sectionNote}>Không bắt buộc</Text>
-              </View>
-              <TextInput
-                style={styles.noteInput}
-                placeholder="Việc thực hiện yêu cầu còn tùy thuộc vào khả năng của quán."
-                placeholderTextColor={COLORS.TEXT_LIGHT}
-                value={note}
-                onChangeText={setNote}
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
-              />
                 </View>
               </View>
             </ScrollView>
@@ -309,7 +374,7 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
                 textStyle={styles.addButtonText}
               />
             </View>
-          </View>
+          </Animated.View>
         </Animated.View>
 
         {/* Toast */}
@@ -337,6 +402,7 @@ const styles = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0, 0, 0, 0.6)",
+    zIndex: 1,
   },
   backdropTouchable: {
     flex: 1,
@@ -346,12 +412,6 @@ const styles = StyleSheet.create({
     color: COLORS.PRIMARY,
     fontWeight: "800",
     marginTop: SIZES.SPACING.XS,
-  },
-  foodDescription: {
-    ...TEXT_STYLES.BODY_MEDIUM,
-    color: COLORS.TEXT_SECONDARY,
-    lineHeight: 20,
-    marginTop: SIZES.SPACING.MD,
   },
   checkbox: {
     alignItems: "center",
@@ -398,13 +458,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: SIZES.SPACING.LG,
     paddingTop: SIZES.SPACING.MD,
   },
+  dragHandleArea: {
+    alignItems: "center",
+    paddingVertical: SIZES.SPACING.SM,
+    width: "100%",
+  },
   dragIndicator: {
     alignSelf: "center",
     backgroundColor: COLORS.TEXT_LIGHT,
     borderRadius: 3,
     height: 5,
-    marginBottom: SIZES.SPACING.LG,
     width: 50,
+  },
+  foodDescription: {
+    ...TEXT_STYLES.BODY_MEDIUM,
+    color: COLORS.TEXT_SECONDARY,
+    lineHeight: 20,
+    marginTop: SIZES.SPACING.MD,
   },
   foodImage: {
     height: 250,
@@ -439,22 +509,36 @@ const styles = StyleSheet.create({
     height: 250,
     width: "100%",
   },
+  imagePlaceholder: {
+    alignItems: "center",
+    backgroundColor: COLORS.BACKGROUND_LIGHT,
+    height: 250,
+    justifyContent: "center",
+    width: "100%",
+  },
+  imagePlaceholderText: {
+    ...TEXT_STYLES.BODY_MEDIUM,
+    color: COLORS.TEXT_SECONDARY,
+  },
   modal: {
     backgroundColor: COLORS.BACKGROUND,
     flex: 1,
-    overflow: "hidden",
   },
   modalContainer: {
     backgroundColor: COLORS.BACKGROUND,
     borderTopLeftRadius: SIZES.RADIUS.EXTRA_LARGE,
     borderTopRightRadius: SIZES.RADIUS.EXTRA_LARGE,
+    bottom: 0,
     elevation: 20,
+    left: 0,
     maxHeight: "92%",
-    overflow: "hidden",
+    position: "absolute",
+    right: 0,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.25,
     shadowRadius: 12,
+    zIndex: 2,
   },
   modalWrapper: {
     flex: 1,
@@ -577,4 +661,3 @@ const styles = StyleSheet.create({
 });
 
 export default AddToCartModal;
-

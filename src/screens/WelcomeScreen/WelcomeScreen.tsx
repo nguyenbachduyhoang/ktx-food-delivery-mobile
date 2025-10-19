@@ -1,8 +1,7 @@
 import React from "react";
+import withScreenContainer from "@components/layouts/withScreenContainer";
 import { Text, StyleSheet, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import withScreenContainer from "@components/layouts/withScreenContainer";
 import Button from "../../components/Button";
 import deliveryImg from "../../../assets/welcome/delivery.png"; // ✅ import thay cho require
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -22,13 +21,8 @@ interface WelcomeScreenProps {
 }
 
 function WelcomeScreen({ navigation }: WelcomeScreenProps) {
-  const insets = useSafeAreaInsets();
-
   return (
-    <LinearGradient
-      colors={BG_GRADIENT}
-      style={[styles.container, { paddingTop: insets.top + 20 }]}
-    >
+    <LinearGradient colors={BG_GRADIENT} style={styles.container}>
       <Text style={styles.title}>
         Dorm
         <Text style={{ color: MAIN_COLOR }}>F</Text>
@@ -58,7 +52,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 24,
   },
   desc: {
     ...TEXT_STYLES.BODY_MEDIUM,
@@ -84,4 +77,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withScreenContainer(WelcomeScreen);
+export default withScreenContainer(WelcomeScreen, {
+  center: true,
+  scrollable: false,
+});

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { StyleSheet, FlatList, View } from "react-native";
 import withScreenContainer from "@components/layouts/withScreenContainer";
+import { StyleSheet, FlatList, View } from "react-native";
 import { SharedHeader } from "@components/shared";
 import { NotificationItem, EmptyNotification } from "./components";
 import { SIZES } from "@constants/index";
@@ -72,7 +72,7 @@ const NotificationScreen: React.FC = () => {
 
   if (notifications.length === 0) {
     return (
-      <View style={styles.container}>
+      <>
         <SharedHeader
           title="Thông báo"
           showNotificationBadge={false}
@@ -80,12 +80,12 @@ const NotificationScreen: React.FC = () => {
           onRightButtonPress={markAllAsRead}
         />
         <EmptyNotification />
-      </View>
+      </>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <>
       <SharedHeader
         title="Thông báo"
         showNotificationBadge={true}
@@ -103,14 +103,11 @@ const NotificationScreen: React.FC = () => {
           contentContainerStyle={styles.listContent}
         />
       </View>
-    </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   flexFill: {
     flex: 1,
   },
@@ -122,8 +119,7 @@ const styles = StyleSheet.create({
   },
 });
 
-// Disable the ScreenContainer ScrollView for this screen because it uses FlatList (virtualized lists)
-type _StaticOpts = { useScreenScroll?: boolean };
-(NotificationScreen as unknown as _StaticOpts).useScreenScroll = false;
-
-export default withScreenContainer(NotificationScreen);
+export default withScreenContainer(NotificationScreen, {
+  center: false,
+  scrollable: false,
+});

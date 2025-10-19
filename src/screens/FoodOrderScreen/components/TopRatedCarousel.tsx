@@ -19,6 +19,7 @@ const CARD_SPACING = SIZES.SPACING.MD;
 
 interface TopRatedCarouselProps {
   foods: Food[];
+  // eslint-disable-next-line no-unused-vars
   onFoodPress?: (food: Food) => void;
 }
 

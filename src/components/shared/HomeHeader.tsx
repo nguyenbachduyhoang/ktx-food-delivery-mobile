@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, ImageSourcePropType } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import Avatar from "../Avatar";
 import UserInfo from "../UserInfo";
 import IconButton from "../IconButton";
@@ -11,6 +11,7 @@ import { COLORS, SIZES } from "@constants/index";
 interface HomeHeaderProps {
   userName?: string;
   avatarSource?: ImageSourcePropType;
+  transparent?: boolean;
   onNotificationPress?: () => void;
   onCartPress?: () => void;
   onSearchPress?: () => void;
@@ -19,15 +20,14 @@ interface HomeHeaderProps {
 const HomeHeader: React.FC<HomeHeaderProps> = ({
   userName = "Đạt Nguyễn",
   avatarSource = avatarImg as ImageSourcePropType,
+  transparent = false,
   onNotificationPress,
   onCartPress,
   onSearchPress,
 }) => {
-  // use safe area insets to avoid overlap with status bar / notch
-  const insets = useSafeAreaInsets();
-
+  // ScreenContainer already applies safe-area top padding. Keep header padding constant.
   return (
-    <View style={[styles.container, { paddingTop: insets.top + SIZES.HEADER.PADDING_VERTICAL }]}>
+    <View style={[styles.container, transparent && styles.containerTransparent]}>
       <View style={styles.row}>
         <Avatar source={avatarSource} />
         <UserInfo name={userName} />
@@ -47,6 +47,9 @@ const styles = StyleSheet.create({
     paddingBottom: SIZES.SPACING.SM,
     paddingHorizontal: SIZES.HEADER.PADDING_HORIZONTAL,
     paddingTop: SIZES.HEADER.PADDING_VERTICAL,
+  },
+  containerTransparent: {
+    backgroundColor: COLORS.TRANSPARENT,
   },
   icons: {
     flexDirection: "row",

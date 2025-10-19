@@ -1,7 +1,10 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState, useMemo, useRef, useEffect, useCallback } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import withScreenContainer from "@components/layouts/withScreenContainer";
+import { View, StyleSheet, FlatList, ImageSourcePropType } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SharedHeader } from "@components/shared";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { useFocusEffect, useScrollToTop } from "@react-navigation/native";
 import AddToCartModal from "@components/AddToCartModal";
@@ -116,7 +119,7 @@ const FoodOrderScreen: React.FC = () => {
   });
 
   // Get safe area insets for proper spacing
-  const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
+  const { bottom: bottomInset } = useSafeAreaInsets();
 
   // Enable scroll-to-top when re-tapping the active bottom tab icon
   useScrollToTop(flatListRef);
@@ -214,15 +217,20 @@ const FoodOrderScreen: React.FC = () => {
     // Sử dụng requestAnimationFrame để đảm bảo DOM đã render xong
     const frameId = requestAnimationFrame(() => {
       if (flatListRef.current) {
-        console.log('📜 Scrolling to top... Current page:', currentPage, 'Items:', paginatedFoods.length);
-        
+        console.log(
+          "📜 Scrolling to top... Current page:",
+          currentPage,
+          "Items:",
+          paginatedFoods.length
+        );
+
         // Scroll ngay lập tức (animated: false) để UX tốt hơn
-        flatListRef.current.scrollToOffset({ 
-          offset: 0, 
-          animated: false 
+        flatListRef.current.scrollToOffset({
+          offset: 0,
+          animated: false,
         });
-        
-        console.log('✅ ScrollToOffset(0) called');
+
+        console.log("✅ ScrollToOffset(0) called");
       }
     });
 
@@ -251,8 +259,12 @@ const FoodOrderScreen: React.FC = () => {
   }, []);
 
   const handleAddToCart = (food: Food) => {
+    // Ensure selectedFood is applied before showing the modal on native.
+    // If the modal mounts while selectedFood is still null, the <Image>
+    // inside the modal may receive an undefined source and crash on mobile.
     setSelectedFood(food);
-    setAddToCartModalVisible(true);
+    // Defer opening the modal to the next frame so the state update has applied.
+    requestAnimationFrame(() => setAddToCartModalVisible(true));
   };
 
   const hasActiveFilters =
@@ -305,7 +317,8 @@ const FoodOrderScreen: React.FC = () => {
   const renderEmpty = () => <EmptyState />;
 
   return (
-    <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
+    <View style={styles.container}>
+      <SharedHeader title="Đặt món" showSearch onSearchPress={() => setFilterModalVisible(true)} />
       <FlatList
         ref={flatListRef}
         data={paginatedFoods}
@@ -333,11 +346,11 @@ const FoodOrderScreen: React.FC = () => {
         ListEmptyComponent={renderEmpty}
         contentContainerStyle={[
           styles.listContent,
-          { 
-            paddingTop: topInset + SIZES.SPACING.MD,
+          {
+            paddingTop: SIZES.SPACING.MD,
             // Tab bar height (62) + bottom inset + extra spacing
-            paddingBottom: 80 + bottomInset
-          }
+            paddingBottom: 80 + bottomInset,
+          },
         ]}
         showsVerticalScrollIndicator={false}
       />
@@ -349,18 +362,20 @@ const FoodOrderScreen: React.FC = () => {
         currentFilters={filters}
       />
 
-      {selectedFood && (
+      {/* Render modal whenever it's requested to open. Use optional chaining so
+          we don't crash if selectedFood hasn't been set yet due to batching. */}
+      {(selectedFood || addToCartModalVisible) && (
         <AddToCartModal
           visible={addToCartModalVisible}
           onClose={() => setAddToCartModalVisible(false)}
-          foodImage={selectedFood.image}
-          foodName={selectedFood.title}
-          foodPrice={selectedFood.price}
-          restaurant={selectedFood.subtitle}
-          description={selectedFood.description}
+          foodImage={selectedFood?.image as ImageSourcePropType}
+          foodName={selectedFood?.title ?? ""}
+          foodPrice={selectedFood?.price ?? "0đ"}
+          restaurant={selectedFood?.subtitle ?? ""}
+          description={selectedFood?.description}
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -374,4 +389,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FoodOrderScreen;
+export default withScreenContainer(FoodOrderScreen, { center: false, scrollable: false });

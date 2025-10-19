@@ -1,106 +1,101 @@
 import React from "react";
-import { View, StyleSheet, ViewProps, ScrollView } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { COLORS, SIZES } from "@constants/index";
+import {
+  View,
+  StyleSheet,
+  ViewProps,
+  ScrollView,
+  StyleProp,
+  ViewStyle,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-interface ScreenContainerProps extends ViewProps {
-  children: React.ReactNode;
+const BG_COLOR = "#fff";
+
+type ScreenContainerProps = ViewProps & {
+  center?: boolean;
   scrollable?: boolean;
-}
+  showsVerticalScrollIndicator?: boolean;
+  contentContainerStyle?: StyleProp<ViewStyle>;
+  keyboardAvoidingView?: boolean;
+  bottomSpacing?: number;
+};
 
-/**
- * Centralized screen wrapper used by withScreenContainer.
- * - Default: scrollable (ScrollView inside SafeAreaView)
- * - If `scrollable` is false, renders a View that can safely contain VirtualizedLists (FlatList/SectionList).
- * This component also standardizes paddings and centers content with a maxWidth so all screens look consistent.
- */
 const ScreenContainer: React.FC<ScreenContainerProps> = ({
   children,
   style,
+  center,
   scrollable = true,
+  showsVerticalScrollIndicator = false,
+  contentContainerStyle,
+  bottomSpacing = 100,
   ...props
 }) => {
   const insets = useSafeAreaInsets();
+  const paddingTop = insets.top || 24;
+  const paddingBottom = (insets.bottom || 24) + bottomSpacing;
 
-  // Tab bar height is 62 + insets.bottom, so we need enough padding to avoid overlap
-  const TAB_BAR_HEIGHT = 62;
-  const contentPadding = {
-    paddingHorizontal: SIZES.SPACING.MD,
-    paddingTop: insets.top + SIZES.SPACING.SM,
-    paddingBottom: TAB_BAR_HEIGHT + insets.bottom + SIZES.SPACING.SM,
+  const containerStyle = [styles.container, { paddingTop, paddingBottom }, style];
+
+  // If centering is requested, and scrollable, center via contentContainerStyle so it works with ScrollView
+  const centerContentStyle: StyleProp<ViewStyle> = center
+    ? ({ flexGrow: 1, justifyContent: "center", alignItems: "center" } as ViewStyle)
+    : undefined;
+
+  const Inner = () => {
+    if (!scrollable) {
+      const nonScrollStyle: StyleProp<ViewStyle> = center
+        ? ({ justifyContent: "center", alignItems: "center" } as ViewStyle)
+        : undefined;
+
+      return (
+        <View style={[containerStyle, nonScrollStyle]} {...props}>
+          {children}
+        </View>
+      );
+    }
+
+    return (
+      <View style={containerStyle} {...props}>
+        <ScrollView
+          showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+          // paddingTop is already applied to the outer container to handle safe-area.
+          // Keep the ScrollView content container free of duplicate top padding to avoid extra gap.
+          contentContainerStyle={[centerContentStyle, contentContainerStyle]}
+        >
+          {children}
+        </ScrollView>
+      </View>
+    );
   };
 
-  if (scrollable) {
+  // props may include keyboardAvoidingView from HOC via extra props
+  const useKeyboardAvoiding = (props as ScreenContainerProps).keyboardAvoidingView;
+
+  if (useKeyboardAvoiding) {
+    // If caller passed keyboardAvoidingView prop or HOC set it, wrap with KeyboardAvoidingView
     return (
-      <SafeAreaView
-        style={[styles.safeArea, { backgroundColor: COLORS.BACKGROUND }]}
-        edges={["bottom", "left", "right"]}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboardAvoid}
       >
-        {/* Invisible blocker for status bar area: consumes touch events so taps there
-            don't reach underlying app UI (prevents accidental interactions). */}
-        <View
-          style={[styles.statusBarBlocker, { height: insets.top }]}
-          // capture touches in this region
-          onStartShouldSetResponder={() => true}
-        />
-        <ScrollView
-          style={[styles.scroll, { backgroundColor: COLORS.BACKGROUND }, style]}
-          contentContainerStyle={[styles.contentContainer, contentPadding]}
-          showsVerticalScrollIndicator={false}
-          {...props}
-        >
-          <View style={styles.centered}>{children}</View>
-        </ScrollView>
-      </SafeAreaView>
+        <Inner />
+      </KeyboardAvoidingView>
     );
   }
 
-  return (
-    <SafeAreaView
-      style={[styles.safeArea, { backgroundColor: COLORS.BACKGROUND }]}
-      edges={["bottom", "left", "right"]}
-      {...props}
-    >
-      {/* Invisible blocker for status bar area. */}
-      <View
-        style={[styles.statusBarBlocker, { height: insets.top }]}
-        onStartShouldSetResponder={() => true}
-      />
-      <View
-        style={[
-          styles.innerContainer,
-          {
-            paddingTop: insets.top + SIZES.SPACING.SM,
-            paddingBottom: TAB_BAR_HEIGHT + insets.bottom + SIZES.SPACING.SM,
-          },
-          style,
-        ]}
-      >
-        {/* allow the centered wrapper to grow so VirtualizedLists can expand to fill the screen */}
-        <View style={styles.centered}>{children}</View>
-      </View>
-    </SafeAreaView>
-  );
+  return <Inner />;
 };
 
 const styles = StyleSheet.create({
-  centered: {
-    alignSelf: "center",
+  container: {
+    backgroundColor: BG_COLOR,
     flex: 1,
-    maxWidth: 900,
-    width: "100%",
+    paddingHorizontal: 16,
   },
-  contentContainer: { flexGrow: 1 },
-  innerContainer: { flex: 1 },
-  safeArea: { flex: 1 },
-  scroll: { flex: 1 },
-  statusBarBlocker: {
-    backgroundColor: COLORS.TRANSPARENT,
-    left: 0,
-    position: "absolute",
-    right: 0,
-    top: 0,
-    zIndex: 50,
+  keyboardAvoid: {
+    flex: 1,
   },
 });
 

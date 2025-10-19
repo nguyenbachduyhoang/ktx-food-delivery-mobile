@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
 import withScreenContainer from "@components/layouts/withScreenContainer";
+import { View, StyleSheet, FlatList } from "react-native";
 import { SharedHeader } from "@components/shared";
 import OrderTabs from "./components/OrderTabs";
 import EmptyOrder from "./components/EmptyOrder";
@@ -41,7 +41,7 @@ const OrderScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <>
       <SharedHeader
         title="Đơn hàng"
         showSearch={true}
@@ -50,14 +50,11 @@ const OrderScreen: React.FC = () => {
       />
       <OrderTabs activeTab={activeTab} onTabChange={handleTabChange} />
       <View style={styles.content}>{renderContent()}</View>
-    </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   content: {
     flex: 1,
   },
@@ -67,7 +64,7 @@ const styles = StyleSheet.create({
 });
 
 // Disable the ScreenContainer ScrollView for this screen because it uses FlatList
-type _StaticOpts = { useScreenScroll?: boolean };
-(OrderScreen as unknown as _StaticOpts).useScreenScroll = false;
-
-export default withScreenContainer(OrderScreen);
+export default withScreenContainer(OrderScreen, {
+  center: false,
+  scrollable: false,
+});
