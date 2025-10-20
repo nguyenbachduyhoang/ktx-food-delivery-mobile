@@ -1,5 +1,5 @@
 /* eslint-disable react-native/sort-styles */
-import React from "react";
+
 import { createBottomTabNavigator, BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import {
