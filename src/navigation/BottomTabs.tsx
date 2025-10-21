@@ -1,5 +1,5 @@
 /* eslint-disable react-native/sort-styles */
-import React from "react";
+
 import { createBottomTabNavigator, BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -17,7 +17,6 @@ import DatMonScreen from "@screens/FoodOrderScreen/FoodOrderScreen";
 import NotificationScreen from "@screens/NotificationScreen/NotificationScreen";
 import ProfileScreen from "@screens/ProfileScreen/ProfileScreen";
 import CartScreen from "@screens/CartScreen/CartScreen";
-import withScreenContainer from "@components/layouts/withScreenContainer";
 import { COLORS, SIZES, TEXT_STYLES } from "@constants/index";
 
 const Tab = createBottomTabNavigator();
@@ -37,7 +36,7 @@ function CustomTabBarButton({
         onPress={onPress}
         background={TouchableNativeFeedback.Ripple("rgba(0,0,0,0.08)", true)} // ripple rất nhạt
         accessibilityLabel={accessibilityLabel}
-        accessibilityRole={accessibilityRole}
+        // withScreenContainer deprecated
         accessibilityState={accessibilityState}
         testID={testID}
       >
@@ -136,28 +135,29 @@ export default function BottomTabs() {
           tabBarButton: (props) => <CustomTabBarButton {...props} />,
         })}
       >
-        <Tab.Screen name="Trang chủ" component={withScreenContainer(HomeScreen)} />
+        <Tab.Screen name="Trang chủ" component={HomeScreen} />
+
         {/* FoodOrderScreen tự quản lý SafeAreaView, không cần wrap */}
         <Tab.Screen name="Đặt món" component={DatMonScreen} />
         {/* Cart tab (center) */}
         <Tab.Screen
           name="Giỏ hàng"
-          component={withScreenContainer(CartScreen)}
+          component={CartScreen}
           options={{
             tabBarIcon: ({ focused, color }) => (
               <Ionicons name={focused ? "cart" : "cart-outline"} size={24} color={color} />
             ),
           }}
         />
-        <Tab.Screen name="Đơn hàng" component={withScreenContainer(OrderScreen)} />
+        <Tab.Screen name="Đơn hàng" component={OrderScreen} />
         <Tab.Screen
           name="Thông báo"
-          component={withScreenContainer(NotificationScreen)}
+          component={NotificationScreen}
           options={{
             tabBarBadge: notifCount > 0 ? String(notifCount) : undefined,
           }}
         />
-        <Tab.Screen name="Tài khoản" component={withScreenContainer(ProfileScreen)} />
+        <Tab.Screen name="Tài khoản" component={ProfileScreen} />
       </Tab.Navigator>
       {/* Center Cart exists as a regular tab now */}
     </>

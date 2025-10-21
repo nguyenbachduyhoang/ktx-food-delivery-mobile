@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, TextInput, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
+import withScreenContainer from "@components/layouts/withScreenContainer";
+import { View, Text, TextInput, StyleSheet, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, { FadeInDown, FadeIn, FadeOut } from "react-native-reanimated";
 import AnimatedPressable from "@components/AnimatedPressable";
-import withScreenContainer from "@components/layouts/withScreenContainer";
 import { SharedHeader } from "@components/shared";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { COLORS, TEXT_STYLES, SIZES } from "@constants/index";
@@ -58,7 +58,7 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ navigation }) => {
       const filtered = allItems.filter((item) =>
         item.toLowerCase().includes(debouncedSearchText.toLowerCase())
       );
-      setSearchSuggestions([...new Set(filtered)]);
+      setSearchSuggestions(Array.from(new Set(filtered)));
     } else {
       setSearchSuggestions([]);
     }
@@ -115,7 +115,7 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ navigation }) => {
   const showSuggestions = debouncedSearchText.length > 0;
 
   return (
-    <View style={styles.wrapper}>
+    <>
       <SharedHeader title="Tìm kiếm" showBackButton onBackPress={handleBackPress} />
 
       <View style={styles.container}>
@@ -156,7 +156,7 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ navigation }) => {
           </View>
         </View>
 
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <View style={styles.content}>
           {showSuggestions ? (
             /* Search Suggestions */
             <Animated.View entering={FadeIn} style={styles.section}>
@@ -210,9 +210,9 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ navigation }) => {
               </Animated.View>
             </>
           )}
-        </ScrollView>
+        </View>
       </View>
-    </View>
+    </>
   );
 };
 
@@ -235,8 +235,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: SIZES.SPACING.MD,
-    paddingTop: SIZES.SPACING.SM,
+    paddingTop: SIZES.SPACING.MD,
   },
   emptyState: {
     alignItems: "center",
@@ -275,7 +274,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.BACKGROUND,
     paddingBottom: SIZES.SPACING.MD,
     paddingHorizontal: SIZES.SPACING.MD,
-    paddingTop: SIZES.SPACING.SM,
+    paddingTop: SIZES.SPACING.MD,
   },
   searchIcon: {
     marginRight: SIZES.SPACING.SM,
@@ -318,9 +317,10 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: SIZES.SPACING.SM,
   },
-  wrapper: {
-    flex: 1,
-  },
 });
 
-export default withScreenContainer(SearchScreen);
+export default withScreenContainer(SearchScreen, {
+  center: false,
+  scrollable: true,
+  showsVerticalScrollIndicator: false,
+});

@@ -7,6 +7,7 @@ import { COLORS, SIZES } from "@constants/index";
 
 interface SearchBarProps {
   searchQuery: string;
+  // eslint-disable-next-line no-unused-vars
   onSearchChange: (text: string) => void;
   onFilterPress: () => void;
   hasActiveFilters: boolean;

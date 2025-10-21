@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, StyleSheet, FlatList, View } from "react-native";
+import { Text, StyleSheet, FlatList } from "react-native";
 import Animated, { FadeInLeft } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import AnimatedPressable from "@components/AnimatedPressable";
@@ -14,6 +14,7 @@ interface Category {
 interface QuickCategoriesProps {
   categories: Category[];
   selectedCategory: string | null;
+  // eslint-disable-next-line no-unused-vars
   onCategoryPress: (categoryId: string) => void;
 }
 

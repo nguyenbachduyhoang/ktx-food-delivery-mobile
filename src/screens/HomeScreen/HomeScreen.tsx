@@ -1,4 +1,5 @@
 import React from "react";
+import withScreenContainer from "@components/layouts/withScreenContainer";
 import {
   StyleSheet,
   View,
@@ -6,7 +7,6 @@ import {
   ImageSourcePropType,
   FlatList,
   RefreshControl,
-  ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -18,9 +18,9 @@ import CategoryGrid, { CategoryItem } from "@components/CategoryGrid";
 import FoodCard from "@components/FoodCard";
 import AnimatedPressable from "@components/AnimatedPressable";
 import { SkeletonCard } from "@components/SkeletonLoader";
-import withScreenContainer from "@components/layouts/withScreenContainer";
 import { useProducts } from "@hooks/useProducts";
 import { COLORS, SIZES, TEXT_STYLES } from "@constants/index";
+import authService from "@services/authService";
 
 import phoIcon from "@assets/category/pho.png";
 import goicuonIcon from "@assets/category/goicuon.png";
@@ -43,6 +43,25 @@ const HomeScreen: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { products, loading, error } = useProducts();
   const [refreshing, setRefreshing] = React.useState(false);
+  const [userName, setUserName] = React.useState<string | undefined>(undefined);
+
+  React.useEffect(() => {
+    let mounted = true;
+    const loadUser = async () => {
+      try {
+        const res = await authService.getUser();
+        if (mounted && res && (res.displayName || res.displayName === "")) {
+          setUserName(res.displayName || undefined);
+        }
+      } catch (err) {
+        console.warn("Failed to load user for HomeHeader", err);
+      }
+    };
+    loadUser();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   // Local state for basic typeahead/search suggestions
   const [query] = React.useState("");
@@ -121,23 +140,23 @@ const HomeScreen: React.FC = () => {
   ];
 
   const renderLoadingSkeleton = () => (
-    <ScrollView style={styles.container}>
-      <View style={styles.section}>
-        <FlatList
-          data={[1, 2, 3]}
-          keyExtractor={(item) => `skeleton-${item}`}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          renderItem={() => <SkeletonCard />}
-        />
-      </View>
-    </ScrollView>
+    <View style={styles.section}>
+      <FlatList
+        data={[1, 2, 3]}
+        keyExtractor={(item) => `skeleton-${item}`}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        renderItem={() => <SkeletonCard />}
+      />
+    </View>
   );
 
   if (loading) {
     return (
       <>
         <HomeHeader
+          transparent
+          userName={userName}
           onNotificationPress={() => console.log("Notification pressed")}
           onCartPress={() => console.log("Cart pressed")}
           onSearchPress={handleSearchPress}
@@ -151,28 +170,18 @@ const HomeScreen: React.FC = () => {
     return (
       <>
         <HomeHeader
+          transparent
+          userName={userName}
           onNotificationPress={() => console.log("Notification pressed")}
           onCartPress={() => console.log("Cart pressed")}
           onSearchPress={handleSearchPress}
         />
-        <ScrollView
-          style={styles.container}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              colors={[COLORS.PRIMARY]}
-              tintColor={COLORS.PRIMARY}
-            />
-          }
-        >
-          <View style={styles.centerContainer}>
-            <Text style={styles.errorText}>Có lỗi xảy ra: {error}</Text>
-            <AnimatedPressable style={styles.retryButton} onPress={onRefresh}>
-              <Text style={styles.retryText}>Thử lại</Text>
-            </AnimatedPressable>
-          </View>
-        </ScrollView>
+        <View style={styles.centerContainer}>
+          <Text style={styles.errorText}>Có lỗi xảy ra: {error}</Text>
+          <AnimatedPressable style={styles.retryButton} onPress={onRefresh}>
+            <Text style={styles.retryText}>Thử lại</Text>
+          </AnimatedPressable>
+        </View>
       </>
     );
   }
@@ -180,97 +189,86 @@ const HomeScreen: React.FC = () => {
   return (
     <>
       <HomeHeader
+        transparent
+        userName={userName}
         onNotificationPress={() => console.log("Notification pressed")}
         onCartPress={() => console.log("Cart pressed")}
         onSearchPress={handleSearchPress}
       />
-      <ScrollView
-        style={styles.container}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={[COLORS.PRIMARY]}
-            tintColor={COLORS.PRIMARY}
+      <Animated.View entering={FadeInDown.delay(100).duration(400)}>
+        <Label title="Món ăn giảm giá" style={styles.section} allStyle={styles.labelAllBlue} />
+        <Carousel style={styles.section} />
+      </Animated.View>
+
+      <Animated.View entering={FadeInDown.delay(200).duration(400)}>
+        <CategoryGrid data={categories} style={styles.section} />
+      </Animated.View>
+
+      <Animated.View entering={FadeInDown.delay(400).duration(400)}>
+        <Label
+          title="Món ăn nổi bật"
+          allText="Tất cả"
+          style={styles.section}
+          allStyle={styles.labelAllRed}
+        />
+
+        {/* Suggestions (typeahead) or merchant list */}
+        {query ? (
+          <FlatList
+            data={suggestions}
+            keyExtractor={(item) => String(item.id)}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item, index }) => (
+              <Animated.View
+                entering={FadeInDown.delay(index * 50).duration(400)}
+                style={styles.foodCardWrapper}
+              >
+                <FoodCard
+                  image={item.image}
+                  title={item.title}
+                  subtitle={item.subtitle}
+                  rating={item.rating}
+                  ratingCount={item.ratingCount}
+                  isFavorite={item.isFavorite}
+                  time={item.time}
+                  kcal={item.kcal}
+                  price={item.price}
+                  onAdd={() => {}}
+                  onFavorite={() => {}}
+                />
+              </Animated.View>
+            )}
           />
-        }
-      >
-        <Animated.View entering={FadeInDown.delay(100).duration(400)}>
-          <Label title="Món ăn giảm giá" style={styles.section} allStyle={styles.labelAllBlue} />
-          <Carousel style={styles.section} />
-        </Animated.View>
-
-        <Animated.View entering={FadeInDown.delay(200).duration(400)}>
-          <CategoryGrid data={categories} style={styles.section} />
-        </Animated.View>
-
-        <Animated.View entering={FadeInDown.delay(400).duration(400)}>
-          <Label
-            title="Món ăn nổi bật"
-            allText="Tất cả"
-            style={styles.section}
-            allStyle={styles.labelAllRed}
+        ) : (
+          <FlatList
+            data={products.slice(0, 10)}
+            keyExtractor={(item) => String(item.id)}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item, index }) => (
+              <Animated.View
+                entering={FadeInDown.delay(index * 50).duration(400)}
+                style={styles.merchantCard}
+              >
+                <FoodCard
+                  image={item.image}
+                  title={item.title}
+                  subtitle={`${item.kcal} • ${item.time} phút`}
+                  rating={item.rating}
+                  ratingCount={item.ratingCount}
+                  isFavorite={item.isFavorite}
+                  time={item.time}
+                  kcal={item.kcal}
+                  price={item.price}
+                  onAdd={() => {}}
+                  onFavorite={() => {}}
+                />
+              </Animated.View>
+            )}
           />
-
-          {/* Suggestions (typeahead) or merchant list */}
-          {query ? (
-            <FlatList
-              data={suggestions}
-              keyExtractor={(item) => String(item.id)}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              renderItem={({ item, index }) => (
-                <Animated.View
-                  entering={FadeInDown.delay(index * 50).duration(400)}
-                  style={styles.foodCardWrapper}
-                >
-                  <FoodCard
-                    image={item.image}
-                    title={item.title}
-                    subtitle={item.subtitle}
-                    rating={item.rating}
-                    ratingCount={item.ratingCount}
-                    isFavorite={item.isFavorite}
-                    time={item.time}
-                    kcal={item.kcal}
-                    price={item.price}
-                    onAdd={() => {}}
-                    onFavorite={() => {}}
-                  />
-                </Animated.View>
-              )}
-            />
-          ) : (
-            <FlatList
-              data={products.slice(0, 10)}
-              keyExtractor={(item) => String(item.id)}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              renderItem={({ item, index }) => (
-                <Animated.View
-                  entering={FadeInDown.delay(index * 50).duration(400)}
-                  style={styles.merchantCard}
-                >
-                  <FoodCard
-                    image={item.image}
-                    title={item.title}
-                    subtitle={`${item.kcal} • ${item.time} phút`}
-                    rating={item.rating}
-                    ratingCount={item.ratingCount}
-                    isFavorite={item.isFavorite}
-                    time={item.time}
-                    kcal={item.kcal}
-                    price={item.price}
-                    onAdd={() => {}}
-                    onFavorite={() => {}}
-                  />
-                </Animated.View>
-              )}
-            />
-          )}
-        </Animated.View>
-      </ScrollView>
+        )}
+      </Animated.View>
     </>
   );
 };
@@ -281,9 +279,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     padding: SIZES.SPACING.XL,
-  },
-  container: {
-    flex: 1,
   },
   errorText: {
     ...TEXT_STYLES.BODY_LARGE,
@@ -322,8 +317,8 @@ const styles = StyleSheet.create({
   },
 });
 
-// Disable the ScreenContainer ScrollView for this screen because it uses FlatList (virtualized lists)
-type _StaticOpts = { useScreenScroll?: boolean };
-(HomeScreen as unknown as _StaticOpts).useScreenScroll = false;
-
-export default withScreenContainer(HomeScreen);
+export default withScreenContainer(HomeScreen, {
+  center: false,
+  scrollable: true,
+  showsVerticalScrollIndicator: false,
+});

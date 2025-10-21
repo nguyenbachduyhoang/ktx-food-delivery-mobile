@@ -255,6 +255,7 @@ const styles = StyleSheet.create({
     ...TEXT_STYLES.H6,
     color: COLORS.PRIMARY,
     fontWeight: "700",
+    fontSize: 18, // Tăng kích thước giá lên 2px
   },
   priceContainer: {
     flex: 1,

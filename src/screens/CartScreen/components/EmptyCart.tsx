@@ -12,7 +12,10 @@ const EmptyCart: React.FC<EmptyCartProps> = ({ onStartShopping }) => {
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
-        <Ionicons name="cart-outline" size={80} color={COLORS.TEXT_LIGHT} />
+        <Ionicons name="restaurant-outline" size={60} color={COLORS.PRIMARY} />
+        <View style={styles.cartIcon}>
+          <Ionicons name="cart-outline" size={40} color={COLORS.TEXT_LIGHT} />
+        </View>
       </View>
       <Text style={styles.title}>Giỏ hàng trống</Text>
       <Text style={styles.description}>
@@ -49,6 +52,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: SIZES.SPACING.LG,
     width: 160,
+    position: "relative",
+  },
+  cartIcon: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    backgroundColor: COLORS.PRIMARY_LIGHT + "30",
+    borderRadius: 20,
+    padding: 8,
   },
   title: {
     ...TEXT_STYLES.H3,

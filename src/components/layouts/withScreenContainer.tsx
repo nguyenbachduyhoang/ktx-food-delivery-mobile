@@ -1,23 +1,42 @@
-import * as React from "react";
+import React from "react";
 import ScreenContainer from "./ScreenContainer";
+import { StyleProp, ViewStyle } from "react-native";
 
-function withScreenContainer<P extends object>(Component: React.ComponentType<P>) {
-  type StaticOpts = {
-    useScreenScroll?: boolean;
-  };
+type ScreenOptions = {
+  center?: boolean;
+  scrollable?: boolean;
+  showsVerticalScrollIndicator?: boolean;
+  contentContainerStyle?: StyleProp<ViewStyle>;
+  keyboardAvoidingView?: boolean;
+  bottomSpacing?: number;
+};
 
-  return function Wrapper(props: P) {
-    // Components can set a static boolean `useScreenScroll = false` to opt out of the
-    // ScreenContainer's ScrollView (useful when the screen contains FlatList/SectionList).
-    const ctor = Component as unknown as StaticOpts;
-    const useScreenScroll = ctor.useScreenScroll !== false;
+function withScreenContainer<P extends object>(
+  Component: React.ComponentType<P>,
+  options?: ScreenOptions
+) {
+  const Wrapper: React.FC<P> = (props) => {
+    // allow component to override scroll behavior via a static flag
+    const compWithStatic = Component as unknown as { useScreenScroll?: boolean };
+    const scrollableFromStatic =
+      typeof compWithStatic.useScreenScroll === "boolean"
+        ? compWithStatic.useScreenScroll
+        : undefined;
 
     return (
-      <ScreenContainer scrollable={useScreenScroll}>
+      <ScreenContainer
+        center={options?.center}
+        scrollable={scrollableFromStatic ?? options?.scrollable}
+        showsVerticalScrollIndicator={options?.showsVerticalScrollIndicator}
+        contentContainerStyle={options?.contentContainerStyle}
+        bottomSpacing={options?.bottomSpacing}
+      >
         <Component {...props} />
       </ScreenContainer>
     );
   };
+
+  return Wrapper;
 }
 
 export default withScreenContainer;
