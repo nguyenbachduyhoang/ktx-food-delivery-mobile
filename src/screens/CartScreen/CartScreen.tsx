@@ -13,7 +13,7 @@ import CartItem from "./components/CartItem";
 // import CartFooter from "./components/CartFooter";
 import EmptyCart from "./components/EmptyCart";
 import RestaurantGroup from "./components/RestaurantGroup";
-import VoucherModal from "./components/VoucherModal";
+// Voucher feature removed
 import ConfirmationDialog from "./components/ConfirmationDialog";
 import FloatingActionButton from "./components/FloatingActionButton";
 import sampleImage from "../../../assets/card/01.png";
@@ -29,15 +29,7 @@ interface CartItem {
   rating?: string;
 }
 
-type Voucher = {
-  id: string;
-  code: string;
-  title: string;
-  description: string;
-  discount: string;
-  minOrder: string;
-  isActive: boolean;
-};
+// Voucher type removed
 
 const CartScreen: React.FC = () => {
   const [items, setItems] = useState<CartItem[]>([
@@ -64,10 +56,10 @@ const CartScreen: React.FC = () => {
   ]);
 
   const [expandedRestaurants, setExpandedRestaurants] = useState<Set<string>>(new Set());
-  const [showVoucherModal, setShowVoucherModal] = useState(false);
+  // voucher UI removed
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
-  const [selectedVoucher, setSelectedVoucher] = useState<Voucher | undefined>(undefined);
+  // voucher state removed
 
   const increase = (id: string) => {
     setItems((prev) => prev.map((i) => (i.id === id ? { ...i, qty: i.qty + 1 } : i)));
@@ -194,35 +186,39 @@ const CartScreen: React.FC = () => {
       <View style={styles.container}>
         {/* Select all header */}
         <Animated.View entering={FadeInDown.delay(100)} style={styles.selectAllRow}>
-          <AnimatedPressable
-            style={styles.selectAllButton}
-            onPress={toggleAll}
-            enableHaptic={true}
-            hapticType="light"
-          >
-            <View
-              style={[
-                styles.checkbox,
-                allChecked ? styles.checkboxChecked : styles.checkboxUnchecked,
-              ]}
+          <View style={styles.headerRowLeft}>
+            <AnimatedPressable
+              style={styles.selectAllButton}
+              onPress={toggleAll}
+              enableHaptic={true}
+              hapticType="light"
             >
-              {allChecked && <Ionicons name="checkmark" size={16} color={COLORS.BACKGROUND} />}
-            </View>
-            <Text style={styles.selectAllText}>Chọn tất cả ({items.length})</Text>
-          </AnimatedPressable>
-
-          {checkedCount > 0 && (
-            <Animated.View entering={FadeInDown} exiting={FadeOut}>
-              <AnimatedPressable
-                style={styles.deleteButton}
-                onPress={deleteSelected}
-                hapticType="medium"
+              <View
+                style={[
+                  styles.checkbox,
+                  allChecked ? styles.checkboxChecked : styles.checkboxUnchecked,
+                ]}
               >
-                <Ionicons name="trash-outline" size={20} color={COLORS.ERROR} />
-                <Text style={styles.deleteText}>Xóa ({checkedCount})</Text>
-              </AnimatedPressable>
-            </Animated.View>
-          )}
+                {allChecked && <Ionicons name="checkmark" size={16} color={COLORS.BACKGROUND} />}
+              </View>
+              <Text style={styles.selectAllText}>Chọn tất cả ({items.length})</Text>
+            </AnimatedPressable>
+          </View>
+
+          <View style={styles.headerRowRight}>
+            {checkedCount > 0 && (
+              <Animated.View entering={FadeInDown} exiting={FadeOut}>
+                <AnimatedPressable
+                  style={styles.deleteButton}
+                  onPress={deleteSelected}
+                  hapticType="medium"
+                >
+                  <Ionicons name="trash-outline" size={18} color={COLORS.ERROR} />
+                  <Text style={styles.deleteText}>Xóa ({checkedCount})</Text>
+                </AnimatedPressable>
+              </Animated.View>
+            )}
+          </View>
         </Animated.View>
 
         <Animated.FlatList
@@ -281,13 +277,7 @@ const CartScreen: React.FC = () => {
           visible={checkedCount > 0}
         />
 
-        {/* Voucher Modal */}
-        <VoucherModal
-          visible={showVoucherModal}
-          onClose={() => setShowVoucherModal(false)}
-          onSelectVoucher={(v) => setSelectedVoucher(v)}
-          selectedVoucher={selectedVoucher}
-        />
+        {/* Voucher feature removed */}
 
         {/* Delete Confirmation Dialog */}
         <ConfirmationDialog
@@ -323,7 +313,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.BORDER,
   },
   container: {
-    backgroundColor: COLORS.BACKGROUND_LIGHT,
+    backgroundColor: COLORS.BACKGROUND,
     flex: 1,
   },
   contentContainer: {
@@ -340,6 +330,14 @@ const styles = StyleSheet.create({
     color: COLORS.ERROR,
     fontWeight: "600",
     marginLeft: SIZES.SPACING.XS,
+  },
+  headerRowLeft: {
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  headerRowRight: {
+    alignItems: "center",
+    flexDirection: "row",
   },
   list: {
     flex: 1,
@@ -359,7 +357,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: SIZES.SPACING.MD,
-    paddingVertical: SIZES.SPACING.XS,
+    paddingVertical: SIZES.SPACING.SM,
   },
   selectAllText: {
     ...TEXT_STYLES.BODY_MEDIUM,

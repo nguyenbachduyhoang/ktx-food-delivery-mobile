@@ -1,8 +1,9 @@
+/* eslint-disable react-native/sort-styles */
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import Animated, { FadeIn, FadeOut, SlideInUp, SlideOutDown } from "react-native-reanimated";
+import Animated, { SlideInUp, SlideOutDown } from "react-native-reanimated";
 import { COLORS, SIZES, TEXT_STYLES } from "@constants/index";
 
 interface FloatingActionButtonProps {
@@ -68,8 +69,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: SIZES.SPACING.MD,
-    paddingVertical: SIZES.SPACING.MD,
-    paddingBottom: SIZES.SPACING.MD + 8, // Extra padding for safe area
+    paddingVertical: SIZES.SPACING.SM,
+    minHeight: 64,
   },
   priceSection: {
     flex: 1,
@@ -103,8 +104,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: SIZES.SPACING.LG,
-    paddingVertical: SIZES.SPACING.MD,
-    minHeight: 56,
+    paddingVertical: SIZES.SPACING.SM,
+    minHeight: 48,
+    minWidth: 140,
     elevation: 4,
     shadowColor: COLORS.PRIMARY,
     shadowOffset: { width: 0, height: 2 },

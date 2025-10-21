@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     width: SIZES.HEADER.BUTTON_SIZE,
   },
   container: {
-    backgroundColor: COLORS.BACKGROUND_LIGHT,
+    backgroundColor: COLORS.BACKGROUND,
     flex: 1,
   },
   content: {

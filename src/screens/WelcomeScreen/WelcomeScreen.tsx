@@ -7,7 +7,7 @@ import deliveryImg from "../../../assets/welcome/delivery.png"; // ✅ import th
 import { StackNavigationProp } from "@react-navigation/stack";
 import { COLORS, TEXT_STYLES } from "@constants/index";
 
-const BG_GRADIENT = [COLORS.BACKGROUND_LIGHT, COLORS.BACKGROUND] as [string, string];
+const BG_GRADIENT = [COLORS.BACKGROUND, COLORS.BACKGROUND] as [string, string];
 const MAIN_COLOR = COLORS.PRIMARY;
 const TITLE_COLOR = COLORS.TEXT_PRIMARY;
 const DESC_COLOR = COLORS.TEXT_SECONDARY;

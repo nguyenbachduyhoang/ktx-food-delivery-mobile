@@ -54,7 +54,7 @@ function LoginScreen({ navigation }: LoginScreenProps) {
   );
 
   return (
-    <LinearGradient colors={[COLORS.BACKGROUND_LIGHT, COLORS.BACKGROUND]} style={styles.container}>
+    <LinearGradient colors={[COLORS.BACKGROUND, COLORS.BACKGROUND]} style={styles.container}>
       <View style={styles.scrollContent}>
         {renderTab}
         <LoginForm

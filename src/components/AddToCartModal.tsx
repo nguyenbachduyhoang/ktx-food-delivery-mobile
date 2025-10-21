@@ -1,4 +1,5 @@
 /* eslint-disable react-native/no-color-literals */
+/* eslint-disable react-native/sort-styles */
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -18,6 +19,8 @@ import Animated, {
   withTiming,
   runOnJS,
 } from "react-native-reanimated";
+import { useNavigation } from "@react-navigation/native";
+import { ROUTES } from "@constants/index";
 import {
   PanGestureHandler,
   State,
@@ -77,6 +80,7 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
   const [selectedSpicy, setSelectedSpicy] = useState<string>("1");
   const [note, setNote] = useState("");
   const [showToast, setShowToast] = useState(false);
+  const navigation = useNavigation();
 
   const translateY = useSharedValue(SCREEN_HEIGHT);
   const backdropOpacity = useSharedValue(0);
@@ -148,6 +152,20 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
     setTimeout(() => {
       handleClose();
     }, 1500);
+  };
+
+  const handleBuyNow = () => {
+    // Add to cart (reuse same feedback) then navigate to Cart/Checkout
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    setShowToast(true);
+    // Close modal immediately then navigate
+    translateY.value = withTiming(SCREEN_HEIGHT, { duration: 250 }, () => {
+      runOnJS(onClose)();
+      // navigate after closing modal - cast to any to satisfy navigator typing
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (navigation as any).navigate(ROUTES.THANH_TOAN);
+    });
+    backdropOpacity.value = withTiming(0, { duration: 200 });
   };
 
   const handleQuantityChange = (delta: number) => {
@@ -367,12 +385,20 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
                 <Text style={styles.totalLabel}>Tổng cộng</Text>
                 <Text style={styles.totalPrice}>{calculateTotal().toLocaleString()}đ</Text>
               </View>
-              <Button
-                title="Thêm vào giỏ hàng"
-                onPress={handleAddToCart}
-                style={styles.addButton}
-                textStyle={styles.addButtonText}
-              />
+              <View style={styles.buttonsRow}>
+                <Button
+                  title="Mua ngay"
+                  onPress={handleBuyNow}
+                  style={styles.buyButton}
+                  textStyle={styles.buyButtonText}
+                />
+                <Button
+                  title="Thêm vào giỏ hàng"
+                  onPress={handleAddToCart}
+                  style={styles.addButton}
+                  textStyle={styles.addButtonText}
+                />
+              </View>
             </View>
           </Animated.View>
         </Animated.View>
@@ -593,6 +619,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: SIZES.SPACING.LG,
     paddingVertical: SIZES.SPACING.MD,
   },
+  // Footer button styles (placed alphabetically before 'quantityText')
+  buttonsRow: {
+    alignItems: "center",
+    flex: 1,
+    flexDirection: "row",
+    gap: SIZES.SPACING.MD,
+    justifyContent: "flex-end",
+  },
+  buyButton: {
+    alignItems: "center",
+    backgroundColor: COLORS.BUTTON_SECONDARY,
+    borderRadius: SIZES.RADIUS.EXTRA_LARGE,
+    flex: 0.6,
+    justifyContent: "center",
+    paddingVertical: SIZES.SPACING.SM,
+  },
+  buyButtonText: {
+    ...TEXT_STYLES.BUTTON_MEDIUM,
+    color: COLORS.PRIMARY,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  totalContainer: {
+    alignItems: "flex-start",
+    flex: 0.5,
+    justifyContent: "center",
+  },
   quantityText: {
     ...TEXT_STYLES.H4,
     color: COLORS.TEXT_PRIMARY,
@@ -641,11 +694,6 @@ const styles = StyleSheet.create({
     ...TEXT_STYLES.H6,
     color: COLORS.TEXT_PRIMARY,
     fontWeight: "700",
-  },
-  totalContainer: {
-    alignItems: "flex-start",
-    flex: 1,
-    justifyContent: "center",
   },
   totalLabel: {
     ...TEXT_STYLES.BODY_SMALL,

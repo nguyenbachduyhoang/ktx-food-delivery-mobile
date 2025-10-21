@@ -1,3 +1,4 @@
+/* eslint-disable react-native/sort-styles */
 import React from "react";
 import { Image, ImageSourcePropType, StyleSheet, Text, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -138,16 +139,7 @@ const CartItem: React.FC<CartItemProps> = ({
             </View>
           </View>
 
-          <AnimatedPressable style={styles.voucherRow} scaleValue={0.98} hapticType="light">
-            <View style={styles.voucherIcon}>
-              <Ionicons name="pricetag" size={16} color={COLORS.PRIMARY} />
-            </View>
-            <View style={styles.voucherContent}>
-              <Text style={styles.voucherText}>Áp dụng voucher quán</Text>
-              <Text style={styles.voucherDesc}>Giảm thêm 10% - 20k cho đơn từ 50k</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={COLORS.TEXT_LIGHT} />
-          </AnimatedPressable>
+          {/* voucher UI removed */}
         </Animated.View>
       </GestureDetector>
 
@@ -170,9 +162,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: COLORS.BACKGROUND,
-    borderColor: COLORS.DIVIDER,
     borderRadius: SIZES.RADIUS.MEDIUM,
-    borderWidth: 1,
     elevation: 2,
     padding: SIZES.SPACING.MD,
     position: "relative",
@@ -258,7 +248,8 @@ const styles = StyleSheet.create({
     fontSize: 18, // Tăng kích thước giá lên 2px
   },
   priceContainer: {
-    flex: 1,
+    alignItems: "flex-end",
+    flex: 0,
   },
   qty: {
     ...TEXT_STYLES.BODY_MEDIUM,
@@ -274,13 +265,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     flexDirection: "row",
     gap: SIZES.SPACING.SM,
-    padding: 4,
+    padding: 6,
   },
   qtyPillBtn: {
     alignItems: "center",
-    height: 36,
+    height: 40,
     justifyContent: "center",
-    width: 36,
+    width: 40,
   },
   qtyPillBtnDisabled: {
     opacity: 0.5,
@@ -302,46 +293,18 @@ const styles = StyleSheet.create({
   },
   thumbWrap: {
     borderRadius: SIZES.RADIUS.MEDIUM,
-    height: 80,
+    height: 64,
     marginRight: SIZES.SPACING.MD,
     overflow: "hidden",
     position: "relative",
-    width: 80,
+    width: 64,
   },
   title: {
-    ...TEXT_STYLES.BODY_MEDIUM,
-    color: COLORS.TEXT_SECONDARY,
-  },
-  voucherContent: {
-    flex: 1,
-    marginLeft: SIZES.SPACING.SM,
-  },
-  voucherDesc: {
-    ...TEXT_STYLES.CAPTION,
-    color: COLORS.TEXT_LIGHT,
-    marginTop: 2,
-  },
-  voucherIcon: {
-    alignItems: "center",
-    backgroundColor: COLORS.PRIMARY_LIGHT + "20",
-    borderRadius: SIZES.RADIUS.SMALL,
-    height: 32,
-    justifyContent: "center",
-    width: 32,
-  },
-  voucherRow: {
-    alignItems: "center",
-    backgroundColor: COLORS.BACKGROUND_LIGHT,
-    borderRadius: SIZES.RADIUS.SMALL,
-    flexDirection: "row",
-    marginTop: SIZES.SPACING.MD,
-    padding: SIZES.SPACING.SM,
-  },
-  voucherText: {
     ...TEXT_STYLES.BODY_MEDIUM,
     color: COLORS.TEXT_PRIMARY,
     fontWeight: "600",
   },
+  // voucher styles removed
   wrapper: {
     marginBottom: SIZES.SPACING.MD,
     overflow: "hidden",
