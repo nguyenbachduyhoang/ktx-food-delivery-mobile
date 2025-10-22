@@ -77,6 +77,7 @@ export default function BottomTabs() {
   const insets = useSafeAreaInsets();
   // TODO: replace these placeholders with real state (Redux / Context / hook)
   const notifCount = 0; // e.g. useNotifications().unreadCount
+  const BASE_TABBAR_HEIGHT = 62; // chiều cao nội dung tab (icon + padding top)
 
   return (
     <>
@@ -116,9 +117,10 @@ export default function BottomTabs() {
           },
           tabBarStyle: {
             backgroundColor: COLORS.TAB_BACKGROUND,
-            // compact tab bar height when FAB is used
-            height: 62 + insets.bottom,
-            paddingBottom: insets.bottom > 0 ? insets.bottom + 8 : SIZES.SPACING.SM,
+            // height = base + safe area inset (count inset only here)
+            height: BASE_TABBAR_HEIGHT + (insets.bottom || 0),
+            // paddingBottom chỉ là khoảng nội dung trong tab cho icon, KHÔNG chứa insets
+            paddingBottom: insets.bottom ? 8 : SIZES.SPACING.SM,
             paddingTop: SIZES.SPACING.SM,
             borderTopLeftRadius: SIZES.RADIUS.EXTRA_LARGE,
             borderTopRightRadius: SIZES.RADIUS.EXTRA_LARGE,

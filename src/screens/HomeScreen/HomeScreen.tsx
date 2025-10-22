@@ -1,13 +1,6 @@
 import React from "react";
 import withScreenContainer from "@components/layouts/withScreenContainer";
-import {
-  StyleSheet,
-  View,
-  Text,
-  ImageSourcePropType,
-  FlatList,
-  RefreshControl,
-} from "react-native";
+import { StyleSheet, View, Text, ImageSourcePropType, FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Animated, { FadeInDown } from "react-native-reanimated";
@@ -42,7 +35,6 @@ type RootStackParamList = {
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { products, loading, error } = useProducts();
-  const [refreshing, setRefreshing] = React.useState(false);
   const [userName, setUserName] = React.useState<string | undefined>(undefined);
 
   React.useEffect(() => {
@@ -78,10 +70,9 @@ const HomeScreen: React.FC = () => {
   }, [query, products]);
 
   const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
     // Simulate refresh - in real app, refetch data
     setTimeout(() => {
-      setRefreshing(false);
+      // no-op placeholder
     }, 1500);
   }, []);
 
@@ -219,6 +210,7 @@ const HomeScreen: React.FC = () => {
             keyExtractor={(item) => String(item.id)}
             horizontal
             showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: SIZES.SPACING.MD }}
             renderItem={({ item, index }) => (
               <Animated.View
                 entering={FadeInDown.delay(index * 50).duration(400)}
@@ -246,6 +238,7 @@ const HomeScreen: React.FC = () => {
             keyExtractor={(item) => String(item.id)}
             horizontal
             showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: SIZES.SPACING.MD }}
             renderItem={({ item, index }) => (
               <Animated.View
                 entering={FadeInDown.delay(index * 50).duration(400)}

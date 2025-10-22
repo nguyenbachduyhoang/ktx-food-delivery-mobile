@@ -1,3 +1,4 @@
+/* eslint-disable react-native/sort-styles */
 import React from "react";
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -56,7 +57,9 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
           >
             {/* Icon */}
             <View style={[styles.iconContainer, { backgroundColor: color + "20" }]}>
-              <Ionicons name={icon} size={32} color={color} />
+              {/* cast to any because icon is chosen at runtime */}
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              <Ionicons name={icon as any} size={32} color={color} />
             </View>
 
             {/* Title */}

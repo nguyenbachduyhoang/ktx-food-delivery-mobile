@@ -23,7 +23,7 @@ import {
 import { mockFoodData, topRatedFoods } from "@screens/FoodOrderScreen/data/mockData";
 import type { Food, FilterOptions } from "@screens/FoodOrderScreen/types";
 
-const ITEMS_PER_PAGE = 30;
+const ITEMS_PER_PAGE = 15;
 
 const QUICK_CATEGORIES = [
   { id: "com", label: "Cơm", icon: "restaurant" as const },
@@ -381,7 +381,7 @@ const FoodOrderScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.BACKGROUND_LIGHT,
+    backgroundColor: COLORS.BACKGROUND,
     flex: 1,
   },
   listContent: {
