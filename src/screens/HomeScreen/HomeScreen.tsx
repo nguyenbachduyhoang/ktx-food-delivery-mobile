@@ -7,22 +7,15 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import { HomeHeader } from "@components/shared";
 import Label from "@components/Label";
 import Carousel from "@components/Carousel";
-import CategoryGrid, { CategoryItem } from "@components/CategoryGrid";
+import { CategoryGrid } from "@screens/MerchantListScreen/components";
 import FoodCard from "@components/FoodCard";
 import AnimatedPressable from "@components/AnimatedPressable";
 import { SkeletonCard } from "@components/SkeletonLoader";
 import { useProducts } from "@hooks/useProducts";
+import { useMerchantCategories } from "@hooks/useApiData";
 import { COLORS, SIZES, TEXT_STYLES } from "@constants/index";
+import { MerchantCategory } from "../../types/menu";
 import authService from "@services/authService";
-
-import phoIcon from "@assets/category/pho.png";
-import goicuonIcon from "@assets/category/goicuon.png";
-import comtamIcon from "@assets/category/comtam.png";
-import bundauIcon from "@assets/category/bundau.png";
-import banhmiIcon from "@assets/category/banhmi.png";
-import comcuonIcon from "@assets/category/comcuon.png";
-import trasuaIcon from "@assets/category/trasua.png";
-import capheIcon from "@assets/category/caphe.png";
 
 type RootStackParamList = {
   CategoryDetail: {
@@ -30,11 +23,15 @@ type RootStackParamList = {
     categoryImage: ImageSourcePropType;
   };
   Search: undefined;
+  MerchantListScreen: {
+    category: MerchantCategory;
+  };
 };
 
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { products, loading, error } = useProducts();
+  const { categories: merchantCategories } = useMerchantCategories();
   const [userName, setUserName] = React.useState<string | undefined>(undefined);
 
   React.useEffect(() => {
@@ -76,59 +73,20 @@ const HomeScreen: React.FC = () => {
     }, 1500);
   }, []);
 
-  const handleCategoryPress = (category: CategoryItem) => {
-    navigation.navigate("CategoryDetail", {
-      categoryName: category.label,
-      categoryImage: category.icon,
-    });
+  const handleCategoryPress = (category: MerchantCategory) => {
+    console.log("Category pressed:", category.name);
+    // Navigate directly to MerchantListScreen with category data
+    navigation.navigate("MerchantListScreen", { category });
+  };
+
+  const handleViewAllCategories = () => {
+    console.log("View all categories pressed - feature disabled");
+    // TODO: Implement view all categories screen if needed
   };
 
   const handleSearchPress = () => {
     navigation.navigate("Search");
   };
-
-  const categories: CategoryItem[] = [
-    {
-      label: "Phở",
-      icon: phoIcon,
-      onPress: () => handleCategoryPress({ label: "Phở", icon: phoIcon }),
-    },
-    {
-      label: "Gỏi cuốn",
-      icon: goicuonIcon,
-      onPress: () => handleCategoryPress({ label: "Gỏi cuốn", icon: goicuonIcon }),
-    },
-    {
-      label: "Cơm tấm",
-      icon: comtamIcon,
-      onPress: () => handleCategoryPress({ label: "Cơm tấm", icon: comtamIcon }),
-    },
-    {
-      label: "Bún đậu",
-      icon: bundauIcon,
-      onPress: () => handleCategoryPress({ label: "Bún đậu", icon: bundauIcon }),
-    },
-    {
-      label: "Bánh mì",
-      icon: banhmiIcon,
-      onPress: () => handleCategoryPress({ label: "Bánh mì", icon: banhmiIcon }),
-    },
-    {
-      label: "Cơm cuộn",
-      icon: comcuonIcon,
-      onPress: () => handleCategoryPress({ label: "Cơm cuộn", icon: comcuonIcon }),
-    },
-    {
-      label: "Trà sữa",
-      icon: trasuaIcon,
-      onPress: () => handleCategoryPress({ label: "Trà sữa", icon: trasuaIcon }),
-    },
-    {
-      label: "Cà phê",
-      icon: capheIcon,
-      onPress: () => handleCategoryPress({ label: "Cà phê", icon: capheIcon }),
-    },
-  ];
 
   const renderLoadingSkeleton = () => (
     <View style={styles.section}>
@@ -192,7 +150,11 @@ const HomeScreen: React.FC = () => {
       </Animated.View>
 
       <Animated.View entering={FadeInDown.delay(200).duration(400)}>
-        <CategoryGrid data={categories} style={styles.section} />
+        <CategoryGrid
+          categories={merchantCategories}
+          onCategoryPress={handleCategoryPress}
+          onViewAllPress={handleViewAllCategories}
+        />
       </Animated.View>
 
       <Animated.View entering={FadeInDown.delay(400).duration(400)}>

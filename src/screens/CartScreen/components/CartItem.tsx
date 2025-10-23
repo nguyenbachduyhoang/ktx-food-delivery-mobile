@@ -37,7 +37,7 @@ const CartItem: React.FC<CartItemProps> = ({
   onDelete,
 }) => {
   const translateX = useSharedValue(0);
-  const SWIPE_THRESHOLD = -80;
+  const SWIPE_THRESHOLD = -56; // Giảm từ -80 xuống -56 để phù hợp với nút xóa nhỏ hơn
 
   const panGesture = Gesture.Pan()
     .activeOffsetX([-10, 10])
@@ -146,7 +146,7 @@ const CartItem: React.FC<CartItemProps> = ({
       {/* Delete button (revealed on swipe) */}
       <View style={styles.deleteAction}>
         <AnimatedPressable style={styles.deleteButton} onPress={handleDelete} hapticType="medium">
-          <Ionicons name="trash" size={20} color={COLORS.TEXT_WHITE} />
+          <Ionicons name="trash" size={16} color={COLORS.TEXT_WHITE} />
         </AnimatedPressable>
       </View>
     </View>
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.BACKGROUND,
     borderRadius: SIZES.RADIUS.MEDIUM,
     elevation: 2,
-    padding: SIZES.SPACING.MD,
+    padding: SIZES.SPACING.LG, // Tăng padding từ MD lên LG để có không gian thoải mái hơn
     position: "relative",
     shadowColor: COLORS.SHADOW,
     shadowOffset: { width: 0, height: 2 },
@@ -198,13 +198,14 @@ const styles = StyleSheet.create({
   deleteAction: {
     alignItems: "center",
     backgroundColor: COLORS.ERROR,
-    borderRadius: SIZES.RADIUS.MEDIUM,
-    bottom: 0,
+    borderRadius: SIZES.RADIUS.SMALL,
+    bottom: SIZES.SPACING.SM, // Đặt ở bottom với margin
     justifyContent: "center",
     position: "absolute",
-    right: 0,
-    top: 0,
-    width: 72,
+    right: SIZES.SPACING.SM, // Đặt ở right với margin
+    top: SIZES.SPACING.SM, // Đặt ở top với margin
+    width: 48, // Giảm width từ 72 xuống 48
+    height: 48, // Thêm height để tạo hình vuông
   },
   deleteButton: {
     alignItems: "center",
@@ -306,7 +307,8 @@ const styles = StyleSheet.create({
   },
   // voucher styles removed
   wrapper: {
-    marginBottom: SIZES.SPACING.MD,
+    marginBottom: SIZES.SPACING.LG, // Tăng từ MD lên LG để có khoảng cách lớn hơn
+    marginHorizontal: SIZES.SPACING.XS, // Thêm margin ngang để tạo không gian
     overflow: "hidden",
     position: "relative",
   },

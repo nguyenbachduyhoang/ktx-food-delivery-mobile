@@ -43,8 +43,6 @@ const supportItems = [
 const ProfileScreen = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
 
   const [displayNameVal, setDisplayNameVal] = useState("");
   const [phoneVal, setPhoneVal] = useState("");
@@ -62,7 +60,6 @@ const ProfileScreen = () => {
   useEffect(() => {
     let mounted = true;
     const load = async () => {
-      setLoading(true);
       try {
         const me = await authService.getUser();
         if (!mounted) return;
@@ -76,8 +73,6 @@ const ProfileScreen = () => {
           setGenderVal(me.gender.toLowerCase().startsWith("f") ? 1 : 0);
       } catch (err) {
         console.warn("Failed to load profile", err);
-      } finally {
-        setLoading(false);
       }
     };
     load();
@@ -109,16 +104,10 @@ const ProfileScreen = () => {
         {/* compact read-only summary */}
         <View style={styles.section}>
           <View style={{ padding: SIZES.SPACING.MD }}>
-            <Text style={{ ...TEXT_STYLES.BODY_MEDIUM, marginBottom: 8 }}>{displayNameVal}</Text>
-            <Text style={{ ...TEXT_STYLES.BODY_MEDIUM, color: SUBTEXT_COLOR, marginBottom: 8 }}>
-              {phoneVal}
-            </Text>
-            <Text style={{ ...TEXT_STYLES.BODY_MEDIUM, color: SUBTEXT_COLOR, marginBottom: 8 }}>
-              {emailVal}
-            </Text>
-            <Text style={{ ...TEXT_STYLES.BODY_MEDIUM, color: SUBTEXT_COLOR }}>
-              {dateOfBirthVal}
-            </Text>
+            <Text style={styles.profileText}>{displayNameVal}</Text>
+            <Text style={styles.profileSubtext}>{phoneVal}</Text>
+            <Text style={styles.profileSubtext}>{emailVal}</Text>
+            <Text style={styles.profileSubtextLast}>{dateOfBirthVal}</Text>
           </View>
         </View>
 
@@ -152,7 +141,7 @@ const ProfileScreen = () => {
                   placeholder="Ngày sinh (YYYY-MM-DD)"
                 />
               </View>
-              <View style={{ flexDirection: "row", marginTop: SIZES.SPACING.SM }}>
+              <View style={styles.rowContainer}>
                 <TouchableOpacity
                   style={[styles.genderBtn, genderVal === 0 && styles.genderBtnActive]}
                   onPress={() => setGenderVal(0)}
@@ -166,19 +155,12 @@ const ProfileScreen = () => {
                   <Text style={styles.genderText}>Nữ</Text>
                 </TouchableOpacity>
               </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginTop: SIZES.SPACING.MD,
-                }}
-              >
+              <View style={styles.rowContainerSpaceBetween}>
                 <TouchableOpacity onPress={() => setShowEditModal(false)} style={styles.modalBtn}>
                   <Text>Hủy</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={async () => {
-                    setSaving(true);
                     try {
                       const payload: Record<string, unknown> = {
                         displayName: displayNameVal,
@@ -193,8 +175,6 @@ const ProfileScreen = () => {
                       setShowEditModal(false);
                     } catch (err) {
                       console.warn("Failed to update profile", err);
-                    } finally {
-                      setSaving(false);
                     }
                   }}
                   style={[styles.modalBtn, { backgroundColor: COLORS.PRIMARY }]}
@@ -277,14 +257,25 @@ const styles = StyleSheet.create({
     color: LOGOUT_COLOR,
     marginLeft: SIZES.SPACING.SM,
   },
-  formRow: {
-    marginTop: SIZES.SPACING.MD,
-    width: "100%",
+  profileText: {
+    ...TEXT_STYLES.BODY_MEDIUM,
+    marginBottom: 8,
   },
-  formRowFlex: {
+  profileSubtext: {
+    ...TEXT_STYLES.BODY_MEDIUM,
+    color: SUBTEXT_COLOR,
+    marginBottom: 8,
+  },
+  profileSubtextLast: {
+    ...TEXT_STYLES.BODY_MEDIUM,
+    color: SUBTEXT_COLOR,
+  },
+  rowContainer: {
     flexDirection: "row",
-    marginTop: SIZES.SPACING.SM,
-    width: "100%",
+  },
+  rowContainerSpaceBetween: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   formRowSmall: {
     marginTop: SIZES.SPACING.SM,

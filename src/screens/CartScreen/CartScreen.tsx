@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingBottom: 100, // Space for floating button
+    paddingBottom: 120, // Tăng space cho floating button từ 100 lên 120
   },
   deleteButton: {
     alignItems: "center",
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 1,
-    paddingHorizontal: SIZES.SPACING.MD,
+    paddingHorizontal: SIZES.SPACING.SM, // Giảm padding ngang để tạo không gian cho margin của các item
   },
   selectAllButton: {
     alignItems: "center",
@@ -356,8 +356,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: SIZES.SPACING.MD,
-    paddingVertical: SIZES.SPACING.SM,
+    marginBottom: SIZES.SPACING.SM, // Thêm margin bottom để tạo khoảng cách với danh sách
+    paddingHorizontal: SIZES.SPACING.LG, // Tăng padding ngang từ MD lên LG
+    paddingVertical: SIZES.SPACING.MD, // Tăng padding dọc từ SM lên MD
   },
   selectAllText: {
     ...TEXT_STYLES.BODY_MEDIUM,

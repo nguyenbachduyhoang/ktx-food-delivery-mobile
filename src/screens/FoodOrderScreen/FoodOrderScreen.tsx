@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import React, { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import withScreenContainer from "@components/layouts/withScreenContainer";
 import { View, StyleSheet, FlatList, ImageSourcePropType } from "react-native";
@@ -9,6 +7,9 @@ import Animated, { FadeInUp } from "react-native-reanimated";
 import { useFocusEffect, useScrollToTop } from "@react-navigation/native";
 import AddToCartModal from "@components/AddToCartModal";
 import { COLORS, SIZES } from "@constants/index";
+import { useMenuItems } from "@hooks/useMenuItems";
+import { useMenuCategories } from "@hooks/useApiData";
+import { convertMenuItemsToFoods, getTopRatedFoods } from "@utils/menuAdapter";
 import {
   TopRatedCarousel,
   FilterModal,
@@ -20,7 +21,6 @@ import {
   PaginationFooter,
   SectionHeader,
 } from "@screens/FoodOrderScreen/components";
-import { mockFoodData, topRatedFoods } from "@screens/FoodOrderScreen/data/mockData";
 import type { Food, FilterOptions } from "@screens/FoodOrderScreen/types";
 
 const ITEMS_PER_PAGE = 15;
@@ -39,18 +39,36 @@ const QUICK_CATEGORIES = [
 // Memoized Header Component để animation không re-trigger
 interface FoodListHeaderProps {
   searchQuery: string;
-  onSearchChange: (text: string) => void;
+  // eslint-disable-next-line no-unused-vars
+  onSearchChange: (_text: string) => void;
   onFilterPress: () => void;
   hasActiveFilters: boolean;
   selectedCategory: string | null;
-  onCategoryPress: (categoryId: string) => void;
+  // eslint-disable-next-line no-unused-vars
+  onCategoryPress: (_categoryId: string) => void;
   filteredCount: number;
   currentPage: number;
   totalPages: number;
-  onFoodPress: (food: Food) => void;
+  // eslint-disable-next-line no-unused-vars
+  onFoodPress: (_food: Food) => void;
+  topRatedFoods: Food[];
+  quickCategories: Array<{
+    id: string;
+    label: string;
+    icon:
+      | "restaurant"
+      | "flame"
+      | "cafe"
+      | "fast-food"
+      | "beer"
+      | "cafe-outline"
+      | "pizza"
+      | "nutrition";
+  }>;
 }
 
-// eslint-disable-next-line react/display-name
+// Memoized Header Component để animation không re-trigger
+/* eslint-disable react/prop-types */
 const FoodListHeader = React.memo<FoodListHeaderProps>(
   ({
     searchQuery,
@@ -63,6 +81,8 @@ const FoodListHeader = React.memo<FoodListHeaderProps>(
     currentPage,
     totalPages,
     onFoodPress,
+    topRatedFoods,
+    quickCategories,
   }) => {
     return (
       <View>
@@ -85,7 +105,7 @@ const FoodListHeader = React.memo<FoodListHeaderProps>(
 
         {/* Quick Categories */}
         <QuickCategories
-          categories={QUICK_CATEGORIES}
+          categories={quickCategories}
           selectedCategory={selectedCategory}
           onCategoryPress={onCategoryPress}
         />
@@ -101,6 +121,9 @@ const FoodListHeader = React.memo<FoodListHeaderProps>(
     );
   }
 );
+/* eslint-enable react/prop-types */
+
+FoodListHeader.displayName = "FoodListHeader";
 
 const FoodOrderScreen: React.FC = () => {
   const flatListRef = useRef<FlatList>(null);
@@ -120,6 +143,44 @@ const FoodOrderScreen: React.FC = () => {
 
   // Get safe area insets for proper spacing
   const { bottom: bottomInset } = useSafeAreaInsets();
+
+  // Fetch data from API
+  const { menuItems } = useMenuItems();
+  // const { categories: apiCategories } = useMenuCategories(); // Disabled due to 401 error
+
+  // Create categories from menuItems data
+  const quickCategories = useMemo(() => {
+    // Extract unique categories from menuItems
+    const uniqueCategories = new Map();
+    menuItems.forEach((item) => {
+      if (item.categoryId && !uniqueCategories.has(item.categoryId)) {
+        uniqueCategories.set(item.categoryId, {
+          id: item.categoryId,
+          label: `Category ${item.categoryId.slice(0, 8)}`, // Use first 8 chars as label
+          icon: "restaurant" as const,
+        });
+      }
+    });
+
+    const apiCategories = Array.from(uniqueCategories.values());
+    
+    if (apiCategories.length === 0) {
+      // Fallback to static categories if no categories found
+      return QUICK_CATEGORIES;
+    }
+
+    return apiCategories;
+  }, [menuItems]);
+
+  // Convert API data to Food format
+  const apiFoods = useMemo(() => {
+    return convertMenuItemsToFoods(menuItems);
+  }, [menuItems]);
+
+  // Get top rated foods from API
+  const topRatedFoods = useMemo(() => {
+    return getTopRatedFoods(menuItems);
+  }, [menuItems]);
 
   // Enable scroll-to-top when re-tapping the active bottom tab icon
   useScrollToTop(flatListRef);
@@ -147,7 +208,7 @@ const FoodOrderScreen: React.FC = () => {
 
   // Filter and sort foods
   const filteredFoods = useMemo(() => {
-    let result = [...mockFoodData];
+    let result = [...apiFoods];
 
     // Search filter
     if (searchQuery.trim()) {
@@ -197,7 +258,7 @@ const FoodOrderScreen: React.FC = () => {
     }
 
     return result;
-  }, [searchQuery, selectedCategory, filters]);
+  }, [apiFoods, searchQuery, selectedCategory, filters]);
 
   // Paginated foods
   const paginatedFoods = useMemo(() => {
@@ -217,20 +278,11 @@ const FoodOrderScreen: React.FC = () => {
     // Sử dụng requestAnimationFrame để đảm bảo DOM đã render xong
     const frameId = requestAnimationFrame(() => {
       if (flatListRef.current) {
-        console.log(
-          "📜 Scrolling to top... Current page:",
-          currentPage,
-          "Items:",
-          paginatedFoods.length
-        );
-
         // Scroll ngay lập tức (animated: false) để UX tốt hơn
         flatListRef.current.scrollToOffset({
           offset: 0,
           animated: false,
         });
-
-        console.log("✅ ScrollToOffset(0) called");
       }
     });
 
@@ -279,7 +331,9 @@ const FoodOrderScreen: React.FC = () => {
   // Memoize renderItem to prevent unnecessary re-renders
   const renderFoodItem = useCallback(({ item, index }: { item: Food; index: number }) => {
     const handlePress = () => handleAddToCart(item);
-    const handleFavorite = () => console.log("Favorite:", item.title);
+    const handleFavorite = () => {
+      // TODO: Implement favorite functionality
+    };
 
     return (
       <Animated.View entering={FadeInUp.delay(1000 + index * 100).duration(500)}>
@@ -318,7 +372,7 @@ const FoodOrderScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <SharedHeader title="Đặt món" showSearch onSearchPress={() => setFilterModalVisible(true)} />
+      <SharedHeader title="Thực đơn" />
       <FlatList
         ref={flatListRef}
         data={paginatedFoods}
@@ -340,6 +394,8 @@ const FoodOrderScreen: React.FC = () => {
             currentPage={currentPage}
             totalPages={totalPages}
             onFoodPress={handleAddToCart}
+            topRatedFoods={topRatedFoods}
+            quickCategories={quickCategories}
           />
         }
         ListFooterComponent={renderFooter}

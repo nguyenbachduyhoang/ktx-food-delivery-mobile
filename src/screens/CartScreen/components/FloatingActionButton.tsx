@@ -68,9 +68,10 @@ const styles = StyleSheet.create({
     borderTopRightRadius: SIZES.RADIUS.LARGE,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: SIZES.SPACING.MD,
-    paddingVertical: SIZES.SPACING.SM,
-    minHeight: 64,
+    paddingHorizontal: SIZES.SPACING.LG, // Tăng padding ngang từ MD lên LG
+    paddingVertical: SIZES.SPACING.MD, // Tăng padding dọc từ SM lên MD
+    paddingBottom: SIZES.SPACING.LG, // Tăng padding bottom để có khoảng cách với safe area
+    minHeight: 80, // Tăng chiều cao tối thiểu từ 64 lên 80
   },
   priceSection: {
     flex: 1,

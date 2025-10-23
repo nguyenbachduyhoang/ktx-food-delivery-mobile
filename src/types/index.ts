@@ -43,3 +43,6 @@ export type RootStackParamList = {
 };
 
 export type RouteName = keyof RootStackParamList;
+
+// Export menu types
+export * from "./menu";

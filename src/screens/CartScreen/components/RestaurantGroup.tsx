@@ -73,7 +73,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.BACKGROUND,
     borderRadius: SIZES.RADIUS.MEDIUM,
     elevation: 2,
-    marginBottom: SIZES.SPACING.MD,
+    marginBottom: SIZES.SPACING.LG, // Tăng từ MD lên LG để có khoảng cách lớn hơn
+    marginHorizontal: SIZES.SPACING.XS, // Thêm margin ngang để tạo không gian
     overflow: "hidden",
     shadowColor: COLORS.SHADOW,
     shadowOffset: { width: 0, height: 2 },
@@ -108,6 +109,7 @@ const styles = StyleSheet.create({
   itemsContainer: {
     paddingBottom: SIZES.SPACING.MD,
     paddingHorizontal: SIZES.SPACING.MD,
+    paddingTop: SIZES.SPACING.SM, // Thêm padding top để tạo khoảng cách với header
   },
   meta: {
     ...TEXT_STYLES.CAPTION,

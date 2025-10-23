@@ -4,6 +4,8 @@ import WelcomeScreen from "../screens/WelcomeScreen/WelcomeScreen";
 import BottomTabs from "./BottomTabs";
 import LoginScreen from "../screens/LoginScreen/LoginScreen";
 import SearchScreen from "../screens/SearchScreen/SearchScreen";
+import MerchantListScreen from "../screens/MerchantListScreen/MerchantListScreen";
+import MerchantDetailScreen from "../screens/MerchantDetailScreen/MerchantDetailScreen";
 import { ROUTES } from "@constants/index";
 
 const Stack = createStackNavigator();
@@ -15,6 +17,8 @@ export default function AppNavigator() {
       <Stack.Screen name={ROUTES.HOME} component={BottomTabs} />
       <Stack.Screen name={ROUTES.LOGIN} component={LoginScreen} />
       <Stack.Screen name="Search" component={SearchScreen} />
+      <Stack.Screen name="MerchantListScreen" component={MerchantListScreen} />
+      <Stack.Screen name="MerchantDetailScreen" component={MerchantDetailScreen} />
     </Stack.Navigator>
   );
 }
